@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "qualification": "neural-video-wan21-t2v-1.3b-gguf",
+  "status": "candidate-unqualified-no-download",
+  "asOf": "2026-09-06",
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "vramMiB": 6144,
+    "vramFreeMiBAtAudit": 6002,
+    "driver": "581.86",
+    "ramGiB": 16.87,
+    "cpu": "Intel Core i5-12450HX"
+  },
+  "storageAudit": {
+    "CFreeGiB": 24.49,
+    "DFreeGiB": 72.99,
+    "requiredFreeGiB": 20,
+    "modelRoot": "D:/neural-video/wan21"
+  },
+  "selectedPipeline": {
+    "model": "Wan2.1 T2V 1.3B Q4_K_M GGUF",
+    "runtime": "ComfyUI recent build + city96/ComfyUI-GGUF + Kijai/ComfyUI-WanVideoWrapper",
+    "mode": "text-to-video, CPU/offload-capable qualification at 480p",
+    "reason": "Smallest complete local candidate found that has a quantized DiT and an FP8 UMT5 encoder; original Wan code does not load GGUF directly."
+  },
+  "artifacts": [
+    {
+      "repo": "samuelchristlie/Wan2.1-T2V-1.3B-GGUF",
+      "revision": "5a512b15fc35d1b67a074cfe55a591be9e9ef9b5",
+      "file": "Wan2.1-T2V-1.3B-Q4_K_M.gguf",
+      "bytes": 982716640,
+      "sha256": "1e22a68152e6c4432524c61c78185efa35e6b305483ceb5fe238b2d51964cea7",
+      "license": "Apache-2.0 (derivative card)"
+    },
+    {
+      "repo": "Comfy-Org/Wan_2.1_ComfyUI_repackaged",
+      "revision": "617a7633e636506f850e043bc4605f290a466a8e",
+      "file": "split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+      "bytes": 6735906897,
+      "sha256": "c3355d30191f1f066b26d93fba017ae9809dce6c627dda5f6a66eaa651204f68",
+      "license": "Apache-2.0"
+    },
+    {
+      "repo": "Comfy-Org/Wan_2.1_ComfyUI_repackaged",
+      "revision": "617a7633e636506f850e043bc4605f290a466a8e",
+      "file": "split_files/vae/wan_2.1_vae.safetensors",
+      "bytes": 253815318,
+      "sha256": "2fc39d31359a4b0a64f55876d8ff7fa8d780956ae2cb13463b0223e15148976b",
+      "license": "Apache-2.0"
+    },
+    {
+      "repo": "city96/ComfyUI-GGUF",
+      "revision": "6ea2651e7df66d7585f6ffee804b20e92fb38b8a",
+      "license": "MIT (repository; verify LICENSE at checkout)"
+    },
+    {
+      "repo": "kijai/ComfyUI-WanVideoWrapper",
+      "revision": "088128b224242e110d3906c6750e9a3a348a659b",
+      "license": "verify repository license before install"
+    }
+  ],
+  "estimatedModelGiB": 7.425,
+  "downloadBudgetGiB": 20,
+  "risks": [
+    "6GB VRAM is below Wan official unquantized 1.3B guidance of 8.19 GB; Q4 GGUF and CPU text-encoder/model offload are required and may still OOM at 480p.",
+    "16.87 GiB system RAM is tight for a 6.27 GiB FP8 UMT5 encoder plus ComfyUI, PyTorch and video buffers; use 17-frame smoke test first.",
+    "No ComfyUI/GGUF/Wan wrapper runtime is present in the audited workspace; this is a candidate, not an executed qualification."
+  ],
+  "safeNextStep": "After director approval, place all caches and model files under D:/neural-video/wan21, pin the revisions above, install only into a dedicated Python 3.11 environment, verify SHA-256 before load, then run a 17-frame 480p smoke workflow with model/text encoder CPU offload. Do not use prompt extension or cloud APIs.",
+  "primarySources": {
+    "wanRepository": "https://github.com/Wan-Video/Wan2.1",
+    "wanRevision": "9737cba9c1c3c4d04b33fcad41c111989865d315",
+    "wanLicense": "Apache-2.0 (LICENSE.txt)",
+    "ltxRepository": "https://github.com/Lightricks/LTX-Video",
+    "ltxRevision": "4b2d053057623ddd4d0a1d3e9cd28890e9ef487f"
+  }
+}

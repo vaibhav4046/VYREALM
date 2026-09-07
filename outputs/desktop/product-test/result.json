@@ -1,0 +1,322 @@
+{
+  "schemaVersion": 1,
+  "sourceMethod": "local-generated-keyframes",
+  "shotCount": 6,
+  "shotDurationSeconds": 5,
+  "shots": [
+    {
+      "id": "coastal-dawn",
+      "caption": "We have one chance.",
+      "camera": "slow aerial push toward the coastal city",
+      "asset": "coastal-dawn.png",
+      "subject": "hero and coastal city",
+      "environment": "sunrise coastline",
+      "foreground": "shoreline",
+      "background": "mountains and sun",
+      "lighting": "warm dawn"
+    },
+    {
+      "id": "neon-street",
+      "caption": "Keep moving. They are close.",
+      "camera": "low tracking move past the hero into neon rain",
+      "asset": "neon-street.png",
+      "subject": "hero in jacket",
+      "environment": "neon street",
+      "foreground": "road reflections",
+      "background": "lit buildings",
+      "lighting": "cyan and amber practicals"
+    },
+    {
+      "id": "ship-interior",
+      "caption": "The signal is inside the storm.",
+      "camera": "dolly through a detailed starship cockpit",
+      "asset": "ship-interior.png",
+      "subject": "hero at cockpit",
+      "environment": "starship bridge",
+      "foreground": "console lights",
+      "background": "viewport and panels",
+      "lighting": "cool instrument light"
+    },
+    {
+      "id": "storm-ocean",
+      "caption": "I can still see the shoreline.",
+      "camera": "crane from rough sea to the hero on deck",
+      "asset": "storm-ocean.png",
+      "subject": "hero on deck",
+      "environment": "storm ocean",
+      "foreground": "ship bow and spray",
+      "background": "rain clouds",
+      "lighting": "overcast blue with orange rim"
+    },
+    {
+      "id": "desert-battle",
+      "caption": "Now.",
+      "camera": "handheld arc around the hero and distant action",
+      "asset": "desert-battle.png",
+      "subject": "hero before battle",
+      "environment": "desert basin",
+      "foreground": "dust and rocks",
+      "background": "ridges and action sparks",
+      "lighting": "hard sunset"
+    },
+    {
+      "id": "quiet-face",
+      "caption": "Bring everyone home.",
+      "camera": "gentle portrait push with shallow depth of field",
+      "asset": "quiet-face.png",
+      "subject": "hero portrait",
+      "environment": "quiet night overlook",
+      "foreground": "soft shoulder detail",
+      "background": "moon and distant lights",
+      "lighting": "soft moonlight and warm edge"
+    }
+  ],
+  "outputs": {
+    "video": "trailer-1080p.mp4",
+    "captions": "captions.srt"
+  },
+  "verification": {
+    "ok": true,
+    "checks": {
+      "exists": {
+        "ok": true,
+        "actual": {
+          "bytes": 3839282
+        },
+        "expected": "non-empty regular file",
+        "message": ""
+      },
+      "probe": {
+        "ok": true,
+        "actual": "valid",
+        "expected": "valid ffprobe JSON",
+        "message": ""
+      },
+      "videoStream": {
+        "ok": true,
+        "actual": {
+          "codec": "h264"
+        },
+        "expected": "at least one video stream",
+        "message": ""
+      },
+      "resolution": {
+        "ok": true,
+        "actual": {
+          "width": 1080,
+          "height": 1920
+        },
+        "expected": {
+          "width": 1080,
+          "height": 1920
+        },
+        "message": ""
+      },
+      "duration": {
+        "ok": true,
+        "actual": 30,
+        "expected": 30,
+        "message": ""
+      },
+      "frameRate": {
+        "ok": true,
+        "actual": 24,
+        "expected": 24,
+        "message": ""
+      },
+      "audio": {
+        "ok": true,
+        "actual": {
+          "codec": "aac",
+          "channels": 2
+        },
+        "expected": "at least one audio stream",
+        "message": ""
+      },
+      "captions": {
+        "ok": true,
+        "actual": "cue(s) present",
+        "expected": "SRT file with at least one cue",
+        "message": ""
+      },
+      "visualLuma": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 82.55,
+          "maxRange": 145,
+          "maxFrameLumaDelta": 1.01937
+        },
+        "expected": "mean luma between 24 and 232",
+        "message": ""
+      },
+      "visualContrast": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 82.55,
+          "maxRange": 145,
+          "maxFrameLumaDelta": 1.01937
+        },
+        "expected": "at least 12 levels of luma range",
+        "message": ""
+      },
+      "visualMotion": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 82.55,
+          "maxRange": 145,
+          "maxFrameLumaDelta": 1.01937
+        },
+        "expected": "non-static frame samples",
+        "message": ""
+      }
+    },
+    "diagnostics": [],
+    "probe": {
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "h264",
+          "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+          "profile": "High",
+          "codec_type": "video",
+          "codec_tag_string": "avc1",
+          "codec_tag": "0x31637661",
+          "mime_codec_string": "avc1.640028",
+          "width": 1080,
+          "height": 1920,
+          "coded_width": 1080,
+          "coded_height": 1920,
+          "has_b_frames": 2,
+          "sample_aspect_ratio": "10240:10239",
+          "display_aspect_ratio": "1920:3413",
+          "pix_fmt": "yuv420p",
+          "level": 40,
+          "chroma_location": "left",
+          "field_order": "progressive",
+          "is_avc": "true",
+          "nal_length_size": "4",
+          "id": "0x1",
+          "r_frame_rate": "24/1",
+          "avg_frame_rate": "24/1",
+          "time_base": "1/12288",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "duration_ts": 368640,
+          "duration": "30.000000",
+          "bit_rate": "968883",
+          "bits_per_raw_sample": "8",
+          "nb_frames": "720",
+          "extradata_size": 48,
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0,
+            "multilayer": 0
+          },
+          "tags": {
+            "language": "und",
+            "handler_name": "VideoHandler",
+            "encoder": "Lavc62.28.101 libx264"
+          }
+        },
+        {
+          "index": 1,
+          "codec_name": "aac",
+          "codec_long_name": "AAC (Advanced Audio Coding)",
+          "profile": "LC",
+          "codec_type": "audio",
+          "codec_tag_string": "mp4a",
+          "codec_tag": "0x6134706d",
+          "mime_codec_string": "mp4a.40.2",
+          "sample_fmt": "fltp",
+          "sample_rate": "48000",
+          "channels": 2,
+          "channel_layout": "stereo",
+          "bits_per_sample": 0,
+          "initial_padding": 0,
+          "id": "0x2",
+          "r_frame_rate": "0/0",
+          "avg_frame_rate": "0/0",
+          "time_base": "1/48000",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "duration_ts": 1440000,
+          "duration": "30.000000",
+          "bit_rate": "48966",
+          "nb_frames": "1408",
+          "extradata_size": 5,
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0,
+            "multilayer": 0
+          },
+          "tags": {
+            "language": "und",
+            "handler_name": "SoundHandler"
+          }
+        }
+      ],
+      "format": {
+        "filename": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\desktop\\product-test\\trailer-1080p.mp4",
+        "nb_streams": 2,
+        "nb_programs": 0,
+        "nb_stream_groups": 0,
+        "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+        "format_long_name": "QuickTime / MOV",
+        "start_time": "0.000000",
+        "duration": "30.000000",
+        "size": "3839282",
+        "bit_rate": "1023808",
+        "probe_score": 100,
+        "tags": {
+          "major_brand": "isom",
+          "minor_version": "512",
+          "compatible_brands": "isomiso2avc1mp41",
+          "encoder": "Lavf62.12.101"
+        }
+      }
+    }
+  },
+  "qualityGate": {
+    "rejectedPrimitiveGeometry": true,
+    "rejectedBlackFrames": true,
+    "rejectedDebugText": true,
+    "requiresSubjectEnvironmentDepth": true
+  },
+  "projectId": null,
+  "revision": null
+}

@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "projectId": "c2689d21-5add-4ffc-9ff4-4c7239236353",
+  "revision": 30,
+  "jobCountUnchanged": true,
+  "tests": [
+    {
+      "name": "stale revision",
+      "expected": 409,
+      "actual": 409,
+      "response": {
+        "error": "Project changed; save or refresh before interpolating"
+      }
+    },
+    {
+      "name": "caller filesystem path",
+      "expected": 400,
+      "actual": 400,
+      "response": {
+        "error": "Use a project revision and auto or cpu device; caller source paths are not accepted"
+      }
+    },
+    {
+      "name": "already interpolated",
+      "expected": 409,
+      "actual": 409,
+      "response": {
+        "error": "This delivery is already interpolated. Re-render the edited timeline before another interpolation"
+      }
+    }
+  ]
+}

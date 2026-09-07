@@ -1,0 +1,15 @@
+{
+  "project": "VYRELUM",
+  "version": "1.0.0",
+  "mode": "local-first-production-engine",
+  "bundleLocated": false,
+  "build": "passed",
+  "apiSmoke": "passed",
+  "directorSmoke": "passed",
+  "sceneRenderSmoke": "passed",
+  "desktopShell": "source-configured-unverified",
+  "capabilityRegistry": "passed",
+  "releasePackage": "passed",
+  "lastVerified": "2026-09-06",
+  "knownLimitations": ["Neural-video checkpoint not present", "YouTube publication not connected", "Full catalogue and music adapter remain", "Installers and macOS/Intel acceptance runs not executed", "Bundled FFmpeg/Node sidecars require release build inputs"]
+}

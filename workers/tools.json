@@ -1,0 +1,8 @@
+{
+  "blender": "work/render-development/tools/blender/blender-4.5.13-windows-x64/blender.exe",
+  "blenderVersion": "4.5.13 LTS",
+  "blenderSha256": "b5fdf800ce65fa2f209e8f68d02667e4d720fa1c42f247c72d1882ab04decba6",
+  "ffmpeg": "C:/Users/lalwa/Documents/Codex/2026-08-20/open-and-read-every-file-in/work/video/kodro-ca2-rebuild/tools/ffmpeg.exe",
+  "ffprobe": "C:/Users/lalwa/Documents/Codex/2026-08-20/open-and-read-every-file-in/work/video/kodro-ca2-rebuild/tools/ffprobe.exe",
+  "execution": "CPU-only; set VYRELUM_BLENDER/VYRELUM_FFMPEG/VYRELUM_FFPROBE to override"
+}

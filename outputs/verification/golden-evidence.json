@@ -1,0 +1,25 @@
+{
+  "projectId": "bb415cf9-9795-4fb8-ad75-59895d8ac4ed",
+  "artifacts": [
+    {
+      "canvas": "1920x1080",
+      "jobId": "dca0ce65-fa06-483f-835a-897ed558fa28",
+      "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\golden-1920x1080.mp4",
+      "sourceMethod": "imported media, local Piper narration, local Whisper captions, local FFmpeg edit"
+    },
+    {
+      "canvas": "1080x1920",
+      "jobId": "d0a73749-8fab-4f90-9e9c-222e421b2b60",
+      "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\golden-1080x1920.mp4",
+      "sourceMethod": "imported media, local Piper narration, local Whisper captions, local FFmpeg edit"
+    },
+    {
+      "canvas": "1080x1080",
+      "jobId": "77b06871-57e6-4464-9bff-890ef10d822a",
+      "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\golden-1080x1080.mp4",
+      "sourceMethod": "imported media, local Piper narration, local Whisper captions, local FFmpeg edit"
+    }
+  ],
+  "externalBrowserRequests": [],
+  "pageErrors": []
+}

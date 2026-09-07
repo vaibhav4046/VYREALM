@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "projectId": "c2689d21-5add-4ffc-9ff4-4c7239236353",
+  "projectRevision": 26,
+  "editJobId": "ee19097b-e822-42ce-b10e-4c25b3f1abed",
+  "title": "Rainline - Original local trailer",
+  "sourceMethod": "three local Wan2.2 TI2V Q4 motion shots, local Piper narration, local procedural rain/footsteps, FFmpeg edit",
+  "shots": [
+    {"jobId":"148be8ce-5a53-4b23-9d00-b9280372332d","sourceHash":"1e9051ee0697a5070c576733f0842b1d65f342fc2203200a5f52ebf199f2304c","model":"Wan2.2-TI2V-5B-Q4_K_M.gguf","resolution":"1024x576","fps":24,"frames":120,"durationSeconds":5,"renderSeconds":1838.020,"vramPeakGiB":5.7880859375,"review":"passed"},
+    {"jobId":"2ea931b5-5edd-42ca-bb46-80f5de2a9ed9","sourceHash":"e61107d9ed2b39ee25dba8f814f72962140b70c13e64e148443b6a722cb61410","model":"Wan2.2-TI2V-5B-Q4_K_M.gguf","resolution":"1024x576","fps":24,"frames":120,"durationSeconds":5,"renderSeconds":1716.804,"vramPeakGiB":5.8486328125,"review":"passed; tracks from behind rather than requested front-facing angle"},
+    {"jobId":"7555bcc4-9323-41f4-bfde-e6c1fb0cc406","sourceHash":"74f76581b90e121888dd61cff0b46376e335f487baab908ec9d44f9bbc4c6a92","model":"Wan2.2-TI2V-5B-Q4_K_M.gguf","resolution":"1024x576","fps":24,"frames":120,"durationSeconds":5,"renderSeconds":1413.336,"vramPeakGiB":5.8486328125,"review":"passed; restrained look-back, not complete shelter-entry action"}
+  ],
+  "edit": {"file":"VYREALM_RAINLINE_TRAILER_1080P.mp4","sha256":"12974c3bfc1438c100ceb8f96a8c3e2aed584485c73c2f72d993f070b11a2722","resolution":"1920x1080","fps":24,"frames":360,"durationSeconds":15,"audio":"Piper narration plus procedural sound design; AAC 48 kHz stereo","loudness":"-14.38 LUFS","truePeak":"-2.11 dBTP","contactSheet":"VYREALM_RAINLINE_CONTACT_SHEET.png","review":"operator-reviewed; no primitive/vector/debug/black placeholder detected"},
+  "upscaleSample": {"file":"VYREALM_LOCAL_GENERATION_4K.mp4","resolution":"3840x2160","method":"Real-ESRGAN x4 tiled Vulkan + motion-compensated detail stabilization + Lanczos delivery","source":"five-second first-shot source","durationSeconds":5,"nativeNeural4K":false},
+  "limits": ["Generated source detail is 1024x576.","This evidence is Windows-only on the measured RTX 3050 6 GiB / 16 GiB RAM machine.","No lip-sync, dubbing, diarization, native 4K inference, 60 fps interpolation, macOS qualification or Higgsfield parity claim is made."]
+}

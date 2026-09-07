@@ -1,0 +1,14 @@
+{
+  "productTemplate": "motion-2d",
+  "height": 1920,
+  "width": 1080,
+  "ffprobe": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\workers\\tools\\ffprobe.exe",
+  "aspectRatio": "9:16",
+  "productAssetPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\runtime\\assets\\cinematic\\neon-street.png",
+  "ffmpeg": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\workers\\tools\\ffmpeg.exe",
+  "fps": 24,
+  "template": "motion-2d",
+  "mode": "product",
+  "productCamera": "hero-orbit",
+  "durationSeconds": 15
+}

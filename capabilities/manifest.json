@@ -1,0 +1,412 @@
+{
+  "schemaVersion": 1,
+  "catalogue": "vyrelum-internal-capabilities",
+  "screenedReferences": [{"package":"@hyperframes/core","version":"0.8.23","license":"Apache-2.0","source":"https://github.com/heygen-com/hyperframes","runtime":"reference-only; no hosted renderer bundled"}],
+  "attribution": [
+    {
+      "name": "HyperFrames",
+      "url": "https://github.com/heygen-com/hyperframes",
+      "notice": "Capability names and composition concepts are screened references; no hosted runtime is bundled."
+    },
+    {
+      "name": "React Video Editor concepts",
+      "url": "https://github.com/openvideodev/react-video-editor",
+      "notice": "Timeline behavior is independently implemented; no source code is copied."
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "composition",
+      "label": "Composition and export",
+      "version": "1.0.0",
+      "instructions": "Assemble validated clips and scene outputs into an exportable film while preserving an editable project.",
+      "adapter": "scene-render",
+      "inputs": {
+        "type": "object",
+        "required": [
+          "projectId"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "jobId",
+          "status"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "dependencies": [
+        "render-worker",
+        "blender",
+        "ffmpeg"
+      ],
+      "acceptance": [
+        "A scene request produces a validated MP4 and editable .blend artifact."
+      ],
+      "adapterPath": "./registry.mjs"
+    },
+    {
+      "id": "animation-keyframes",
+      "label": "Animation and keyframes",
+      "version": "1.0.0",
+      "instructions": "Represent animation as typed keyframes and render only affected scene operations.",
+      "adapter": "scene-render",
+      "inputs": {
+        "type": "object",
+        "required": [
+          "projectId",
+          "keyframes"
+        ],
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "keyframes": {
+            "type": "array"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "jobId",
+          "status"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "dependencies": [
+        "render-worker",
+        "blender",
+        "ffmpeg"
+      ],
+      "acceptance": [
+        "Changing a keyframe changes the scene revision and leaves a rerenderable source scene."
+      ],
+      "adapterPath": "./registry.mjs"
+    },
+    {
+      "id": "captions",
+      "label": "Captions and transcription",
+      "version": "1.0.0",
+      "instructions": "Align supplied transcript segments to timeline clips and preserve editable caption text.",
+      "adapter": "captions",
+      "inputs": {
+        "type": "object",
+        "required": [
+          "segments"
+        ],
+        "properties": {
+          "segments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "start",
+                "end",
+                "text"
+              ]
+            }
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "captions"
+        ],
+        "properties": {
+          "captions": {
+            "type": "array"
+          }
+        }
+      },
+      "dependencies": [
+        "node-runtime"
+      ],
+      "acceptance": [
+        "Transcript segments round-trip with monotonic timestamps and editable text."
+      ],
+      "adapterPath": "./registry.mjs"
+    },
+    {
+      "id": "talking-head-editing",
+      "label": "Talking-head editing",
+      "version": "1.0.0",
+      "instructions": "Create a cut list from supplied takes and transcript ranges without uploading footage.",
+      "adapter": "cut-list",
+      "inputs": {
+        "type": "object",
+        "required": [
+          "takes"
+        ],
+        "properties": {
+          "takes": {
+            "type": "array"
+          },
+          "segments": {
+            "type": "array"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "timeline"
+        ],
+        "properties": {
+          "timeline": {
+            "type": "array"
+          }
+        }
+      },
+      "dependencies": [
+        "node-runtime"
+      ],
+      "acceptance": [
+        "A take list produces a deterministic cut list with source references."
+      ],
+      "adapterPath": "./registry.mjs"
+    },
+    {
+      "id": "music-to-video",
+      "label": "Music-to-video",
+      "version": "1.0.0",
+      "instructions": "Map qualified local music beats to visual shot durations; report an actionable diagnostic when ACE-Step is unavailable.",
+      "adapter": "music-beat-map",
+      "inputs": {
+        "type": "object",
+        "required": [
+          "audioPath",
+          "shots"
+        ],
+        "properties": {
+          "audioPath": {
+            "type": "string"
+          },
+          "shots": {
+            "type": "array"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "beats",
+          "shots"
+        ],
+        "properties": {
+          "beats": {
+            "type": "array"
+          },
+          "shots": {
+            "type": "array"
+          }
+        }
+      },
+      "dependencies": [
+        "ace-step-local"
+      ],
+      "acceptance": [
+        "A qualified local music model or supplied beat grid drives shot timing; no hosted fallback is allowed."
+      ],
+      "adapterPath": "./registry.mjs"
+    },
+    {
+      "id": "audio-mixing",
+      "label": "Audio mixing",
+      "version": "1.0.0",
+      "instructions": "Validate an offline mix graph and render it through the bundled FFmpeg adapter when available.",
+      "adapter": "audio-mix",
+      "inputs": {
+        "type": "object",
+        "required": [
+          "tracks"
+        ],
+        "properties": {
+          "tracks": {
+            "type": "array"
+          },
+          "outputPath": {
+            "type": "string"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "mixGraph"
+        ],
+        "properties": {
+          "mixGraph": {
+            "type": "object"
+          },
+          "outputPath": {
+            "type": "string"
+          }
+        }
+      },
+      "dependencies": [
+        "ffmpeg"
+      ],
+      "acceptance": [
+        "A mix graph validates channel gains and produces a local output path or a precise missing-runtime diagnostic."
+      ],
+      "adapterPath": "./registry.mjs"
+    },
+    {
+      "id": "explainers",
+      "label": "Explainers",
+      "version": "1.0.0",
+      "instructions": "Turn a director graph into narrated scenes, captions and visual beats while retaining editable operations.",
+      "adapter": "director",
+      "inputs": {
+        "type": "object",
+        "required": [
+          "brief"
+        ],
+        "properties": {
+          "brief": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "jobId",
+          "status"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "dependencies": [
+        "director-worker",
+        "ollama-loopback"
+      ],
+      "acceptance": [
+        "A fresh brief produces a validated, bounded director graph or a diagnostic naming the unavailable local model."
+      ],
+      "adapterPath": "./registry.mjs"
+    },
+    {
+      "id": "product-videos",
+      "label": "Product videos",
+      "version": "1.0.0",
+      "instructions": "Generate an editable product-video plan from a local product image or clip using a screened template and camera preset. Render only through the local asset-motion adapter; return PRODUCT_ASSET_REQUIRED when no source is attached.",
+      "adapter": "product-video",
+      "inputs": {
+        "type": "object",
+        "required": [
+          "brief",
+          "productAssetId"
+        ],
+        "properties": {
+          "brief": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "jobId",
+          "status"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "dependencies": [
+        "director-worker",
+        "ffmpeg"
+      ],
+      "acceptance": [
+        "A supplied local product image or clip produces a verified MP4 with a named template and camera preset; missing media returns a precise diagnostic."
+      ],
+      "adapterPath": "./registry.mjs"
+    },
+    {
+      "id": "general-filmmaking",
+      "label": "General filmmaking",
+      "version": "1.0.0",
+      "instructions": "Route a production request to the smallest qualified local graph and keep unsupported routes explicit.",
+      "adapter": "director",
+      "inputs": {
+        "type": "object",
+        "required": [
+          "brief"
+        ],
+        "properties": {
+          "brief": {
+            "type": "string"
+          },
+          "projectId": {
+            "type": "string"
+          }
+        }
+      },
+      "outputs": {
+        "type": "object",
+        "required": [
+          "jobId",
+          "status"
+        ],
+        "properties": {
+          "jobId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "dependencies": [
+        "director-worker",
+        "ollama-loopback"
+      ],
+      "acceptance": [
+        "Unsupported neural routes stop with a diagnostic instead of a graphics imitation."
+      ],
+      "adapterPath": "./registry.mjs"
+    }
+  ]
+}

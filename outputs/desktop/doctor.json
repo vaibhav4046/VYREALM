@@ -1,0 +1,385 @@
+{
+  "timestamp": "2026-09-06T18:02:35.821Z",
+  "host": {
+    "platform": "win32",
+    "arch": "x64",
+    "os": "Windows 11 Home Single Language",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12450HX",
+    "cpus": 12,
+    "totalRamBytes": 16873545728,
+    "freeRamBytes": 4444856320
+  },
+  "executables": {
+    "node": {
+      "ok": true,
+      "stdout": "v24.12.0"
+    },
+    "python": {
+      "ok": true,
+      "stdout": "Python 3.13.3"
+    },
+    "ollamaVersion": {
+      "ok": true,
+      "stdout": "ollama version is 0.32.13"
+    },
+    "nvidiaSmi": {
+      "ok": true,
+      "stdout": "NVIDIA GeForce RTX 3050 6GB Laptop GPU, 581.86, 6144, 0, 6002"
+    },
+    "ffmpeg": {
+      "ok": true,
+      "stdout": "ffmpeg version 8.1.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers\r\nbuilt with gcc 15.2.0 (Rev13, Built by MSYS2 project)\r\nconfiguration: --enable-gpl --enable-version3 --enable-static --disable-w32threads --disable-autodetect --enable-cairo --enable-fontconfig --enable-iconv --enable-gnutls --enable-lcms2 --enable-libxml2 --enable-gmp --enable-bzlib --enable-lzma --enable-libsnappy --enable-zlib --enable-librist --enable-libsrt --enable-libssh --enable-libzmq --enable-avisynth --enable-libbluray --enable-libcaca --enable-libdvdnav --enable-libdvdread --enable-sdl2 --enable-libaribb24 --enable-libaribcaption --enable-libdav1d --enable-libdavs2 --enable-libopenjpeg --enable-libquirc --enable-libuavs3d --enable-libxevd --enable-libzvbi --enable-liboapv --enable-libqrencode --enable-librav1e --enable-libsvtav1 --enable-libvvenc --enable-libwebp --enable-libx264 --enable-libx265 --enable-libxavs2 --enable-libxeve --enable-libxvid --enable-libaom --enable-libjxl --enable-libsvtjpegxs --enable-libvpx --enable-mediafoundation --enable-libass --enable-frei0r --enable-libfreetype --enable-libfribidi --enable-libharfbuzz --enable-liblensfun --enable-libvidstab --enable-libvmaf --enable-libzimg --enable-amf --enable-cuda-llvm --enable-cuvid --enable-dxva2 --enable-d3d11va --enable-d3d12va --enable-ffnvcodec --enable-libvpl --enable-nvdec --enable-nvenc --enable-vaapi --enable-libshaderc --enable-vulkan --enable-libplacebo --enable-opencl --enable-libcdio --enable-openal --enable-libgme --enable-libmodplug --enable-libopenmpt --enable-libopencore-amrwb --enable-libmp3lame --enable-libshine --enable-libtheora --enable-libtwolame --enable-libvo-amrwbenc --enable-libcodec2 --enable-libilbc --enable-libgsm --enable-liblc3 --enable-libopencore-amrnb --enable-libopus --enable-libspeex --enable-libvorbis --enable-ladspa --enable-libbs2b --enable-libflite --enable-libmysofa --enable-librubberband --enable-libsoxr --enable-chromaprint --enable-whisper\r\nlibavutil      60. 26.101 / 60. 26.101\r\nlibavcodec     62. 28.101 / 62. 28.101\r\nlibavformat    62. 12.101 / 62. 12.101\r\nlibavdevice    62.  3.101 / 62.  3.101\r\nlibavfilter    11. 14.101 / 11. 14.101\r\nlibswscale      9.  5.101 /  9.  5.101\r\nlibswresample   6.  3.101 /  6.  3.101\r\n\r\nExiting with exit code 0"
+    },
+    "blender": {
+      "ok": false,
+      "error": "ENOENT"
+    }
+  },
+  "ollama": {
+    "ok": true,
+    "json": {
+      "models": [
+        {
+          "name": "samantha-v0.1:latest",
+          "model": "samantha-v0.1:latest",
+          "modified_at": "2026-08-15T14:38:17.8191607+01:00",
+          "size": 2497293534,
+          "digest": "403e14422d9f349705fc2c45b1cc5e5d391969cbb04efacd04361649ccbf8aa1",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "qwen3",
+            "families": [
+              "qwen3"
+            ],
+            "parameter_size": "4.0B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 262144,
+            "embedding_length": 2560
+          },
+          "capabilities": [
+            "completion",
+            "tools"
+          ]
+        },
+        {
+          "name": "samantha-core:latest",
+          "model": "samantha-core:latest",
+          "modified_at": "2026-08-14T20:53:32.567654+01:00",
+          "size": 2497293819,
+          "digest": "b7c705adc68aab8aef94b0b162c01a58c9a464122e5a3a5d63656014fb25c2de",
+          "details": {
+            "parent_model": "qwen3:4b-instruct",
+            "format": "gguf",
+            "family": "qwen3",
+            "families": [
+              "qwen3"
+            ],
+            "parameter_size": "4.0B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 262144,
+            "embedding_length": 2560
+          },
+          "capabilities": [
+            "completion",
+            "tools"
+          ]
+        },
+        {
+          "name": "qwen3:4b-instruct",
+          "model": "qwen3:4b-instruct",
+          "modified_at": "2026-08-14T20:48:28.4631842+01:00",
+          "size": 2497293803,
+          "digest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "qwen3",
+            "families": [
+              "qwen3"
+            ],
+            "parameter_size": "4.0B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 262144,
+            "embedding_length": 2560
+          },
+          "capabilities": [
+            "completion",
+            "tools"
+          ]
+        },
+        {
+          "name": "qwen3.5:4b",
+          "model": "qwen3.5:4b",
+          "modified_at": "2026-08-14T20:44:25.1887001+01:00",
+          "size": 3389983735,
+          "digest": "2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "qwen35",
+            "families": [
+              "qwen35"
+            ],
+            "parameter_size": "4.7B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 262144,
+            "embedding_length": 2560
+          },
+          "capabilities": [
+            "vision",
+            "completion",
+            "tools",
+            "thinking"
+          ]
+        },
+        {
+          "name": "qwen3:4b",
+          "model": "qwen3:4b",
+          "modified_at": "2026-08-14T20:39:07.8851366+01:00",
+          "size": 2497293931,
+          "digest": "359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "qwen3",
+            "families": [
+              "qwen3"
+            ],
+            "parameter_size": "4.0B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 262144,
+            "embedding_length": 2560
+          },
+          "capabilities": [
+            "completion",
+            "tools",
+            "thinking"
+          ]
+        },
+        {
+          "name": "qwen3:8b",
+          "model": "qwen3:8b",
+          "modified_at": "2026-08-14T20:34:54.3473851+01:00",
+          "size": 5225388164,
+          "digest": "500a1f067a9f782620b40bee6f7b0c89e17ae61f686b92c24933e4ca4b2b8b41",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "qwen3",
+            "families": [
+              "qwen3"
+            ],
+            "parameter_size": "8.2B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 40960,
+            "embedding_length": 4096
+          },
+          "capabilities": [
+            "completion",
+            "tools",
+            "thinking"
+          ]
+        },
+        {
+          "name": "qwen2.5-coder:3b",
+          "model": "qwen2.5-coder:3b",
+          "modified_at": "2026-07-17T01:42:26.9215444+01:00",
+          "size": 1929912626,
+          "digest": "f72c60cabf6237b07f6e632b2c48d533cef25eda2efbd34bed21c5e9c01e6225",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "qwen2",
+            "families": [
+              "qwen2"
+            ],
+            "parameter_size": "3.1B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 32768,
+            "embedding_length": 2048
+          },
+          "capabilities": [
+            "completion",
+            "tools",
+            "insert"
+          ]
+        },
+        {
+          "name": "kodro-fast:latest",
+          "model": "kodro-fast:latest",
+          "modified_at": "2026-06-15T02:38:05.382815+01:00",
+          "size": 1321083421,
+          "digest": "e519b4cf2718ca73f0d0649485f11828eb2fa32a31d28f4671c7a73afecae03d",
+          "details": {
+            "parent_model": "C:\\Users\\lalwa\\.ollama\\models\\blobs\\sha256-806746d0ebc2cb5f82a5a696026bbd08cc49d78c11a15c20fb4bcb8b7b129d6d",
+            "format": "gguf",
+            "family": "llama",
+            "families": [
+              "llama"
+            ],
+            "parameter_size": "1.2B",
+            "quantization_level": "Q8_0",
+            "context_length": 131072,
+            "embedding_length": 2048
+          },
+          "capabilities": [
+            "completion"
+          ]
+        },
+        {
+          "name": "kodro-coder:latest",
+          "model": "kodro-coder:latest",
+          "modified_at": "2026-06-15T01:46:11.205841+01:00",
+          "size": 2019379306,
+          "digest": "60d11d6b1d6d3a04e51340521e6a5676f892aec72cd5e50944bf4102ec676f0c",
+          "details": {
+            "parent_model": "C:\\Users\\lalwa\\.ollama\\models\\blobs\\sha256-abd0d587b2543f08c72fed4137573227cca8d9f2525a58410c8eab5d5b8cf670",
+            "format": "gguf",
+            "family": "llama",
+            "families": [
+              "llama"
+            ],
+            "parameter_size": "3.2B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 131072,
+            "embedding_length": 3072
+          },
+          "capabilities": [
+            "completion"
+          ]
+        },
+        {
+          "name": "kodro-tutor:latest",
+          "model": "kodro-tutor:latest",
+          "modified_at": "2026-06-13T18:29:46.7232155+01:00",
+          "size": 3338802984,
+          "digest": "0c91892f54780e0c6eb576d7c8c47f56f7cfbd63e28943cfac0c33f1bd27eb14",
+          "details": {
+            "parent_model": "gemma3:4b",
+            "format": "gguf",
+            "family": "gemma3",
+            "families": [
+              "gemma3"
+            ],
+            "parameter_size": "4.3B",
+            "quantization_level": "Q4_K_M"
+          },
+          "capabilities": [
+            "completion"
+          ]
+        },
+        {
+          "name": "robolearn-fast:latest",
+          "model": "robolearn-fast:latest",
+          "modified_at": "2026-06-11T22:20:41.3957074+01:00",
+          "size": 815321660,
+          "digest": "125d40d9f4b84946a7a67b7ef315c7de8af7a752bd38ec5791805ed964b26109",
+          "details": {
+            "parent_model": "gemma3:1b",
+            "format": "gguf",
+            "family": "gemma3",
+            "families": [
+              "gemma3"
+            ],
+            "parameter_size": "999.89M",
+            "quantization_level": "Q4_K_M"
+          },
+          "capabilities": [
+            "completion"
+          ]
+        },
+        {
+          "name": "gemma3:1b",
+          "model": "gemma3:1b",
+          "modified_at": "2026-06-11T01:48:03.9620566+01:00",
+          "size": 815319791,
+          "digest": "8648f39daa8fbf5b18c7b4e6a8fb4990c692751d49917417b8842ca5758e7ffc",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "gemma3",
+            "families": [
+              "gemma3"
+            ],
+            "parameter_size": "999.89M",
+            "quantization_level": "Q4_K_M"
+          },
+          "capabilities": [
+            "completion"
+          ]
+        },
+        {
+          "name": "gemma3:4b",
+          "model": "gemma3:4b",
+          "modified_at": "2026-05-27T18:37:19.3526641+01:00",
+          "size": 3338801804,
+          "digest": "a2af6cc3eb7fa8be8504abaf9b04e88f17a119ec3f04a3addf55f92841195f5a",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "gemma3",
+            "families": [
+              "gemma3"
+            ],
+            "parameter_size": "4.3B",
+            "quantization_level": "Q4_K_M"
+          },
+          "capabilities": [
+            "completion"
+          ]
+        },
+        {
+          "name": "llama3.2:3b",
+          "model": "llama3.2:3b",
+          "modified_at": "2026-05-27T10:51:32.8419205+01:00",
+          "size": 2019393189,
+          "digest": "a80c4f17acd55265feec403c7aef86be0c25983ab279d83f3bcd3abbcb5b8b72",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "llama",
+            "families": [
+              "llama"
+            ],
+            "parameter_size": "3.2B",
+            "quantization_level": "Q4_K_M",
+            "context_length": 131072,
+            "embedding_length": 3072
+          },
+          "capabilities": [
+            "completion",
+            "tools"
+          ]
+        },
+        {
+          "name": "nomic-embed-text:latest",
+          "model": "nomic-embed-text:latest",
+          "modified_at": "2026-05-27T10:50:21.7923808+01:00",
+          "size": 274302450,
+          "digest": "0a109f422b47e3a30ba2b10eca18548e944e8a23073ee3f3e947efcf3c45e59f",
+          "details": {
+            "parent_model": "",
+            "format": "gguf",
+            "family": "nomic-bert",
+            "families": [
+              "nomic-bert"
+            ],
+            "parameter_size": "137M",
+            "quantization_level": "F16",
+            "context_length": 2048,
+            "embedding_length": 768
+          },
+          "capabilities": [
+            "embedding"
+          ]
+        }
+      ]
+    }
+  },
+  "policy": {
+    "loopbackOnly": true,
+    "downloadsPerformed": 0,
+    "paidInference": false
+  }
+}

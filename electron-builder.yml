@@ -1,0 +1,64 @@
+appId: com.vyrealm.studio
+productName: VYREALM
+artifactName: VYREALM-${version}-${os}-${arch}.${ext}
+# The source is bundled for review; installers are produced only when Electron
+# and electron-builder are installed in a controlled build environment.
+directories:
+  output: release
+  buildResources: desktop/resources
+files:
+  - "desktop/**/*"
+  - "app.js"
+  - "index.html"
+  - "styles.css"
+  - "server.js"
+  - "mcp-server.mjs"
+  - "cli.mjs"
+  - "scripts/**/*"
+  - "publishing/**/*"
+  - "capabilities/**/*"
+  - "runtime/**/*"
+  - "workers/**/*"
+  # Include the qualified Blender build when present; no installer is called
+  # verified until this binary and a compatible FFmpeg build are packaged and
+  # exercised on the target OS.
+  - "package.json"
+  - "!data{,/**/*}"
+  - "!outputs{,/**/*}"
+  - "!dist{,/**/*}"
+  - "!node_modules{,/**/*}"
+asar: true
+asarUnpack:
+  - "app.js"
+  - "index.html"
+  - "styles.css"
+  - "server.js"
+  - "publishing/**"
+  - "capabilities/**"
+  - "scripts/**"
+  - "mcp-server.mjs"
+  - "cli.mjs"
+  - "runtime/**"
+  - "workers/**"
+  - "runtime/node/**"
+  - "workers/tools/**"
+extraResources:
+  - from: "work/render-development/tools/blender/blender-4.5.13-windows-x64"
+    to: "blender-runtime"
+win:
+  target:
+    - nsis
+  signAndEditExecutable: false
+  verifyUpdateCodeSignature: false
+mac:
+  target:
+    - dmg
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  category: public.app-category.video
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true

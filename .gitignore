@@ -1,0 +1,52 @@
+node_modules/
+
+# Build output and packaged installers (hundreds of MB each)
+dist/
+release/
+release-final/
+release-final2/
+win-unpacked/
+*.exe
+*.blockmap
+*.asar
+
+# Rendered media and large evidence bundles.
+# Keep the small JSON evidence files; those are the proof, not the payload.
+outputs/**/*.mp4
+outputs/**/*.mkv
+outputs/**/*.mov
+outputs/**/*.webm
+outputs/**/*.wav
+outputs/**/*.mp3
+outputs/**/*.m4a
+outputs/**/*.png
+outputs/**/*.jpg
+outputs/**/*.blend
+outputs/**/*.blend1
+outputs/**/*PROJECT.json
+outputs/formats/.work/
+outputs/**/.work/
+
+# Local runtime state, model weights, caches
+data/
+data-product-e2e/
+sample-out-new/
+work/
+evidence/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.gguf
+*.safetensors
+*.onnx
+*.ckpt
+*.pt
+
+# Local machine noise
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.local
+playwright-report/
+test-results/

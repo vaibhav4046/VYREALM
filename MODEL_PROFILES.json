@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "profiles": [
+    {"id":"director-qwen3-4b-instruct","task":"director","runtime":"Ollama 0.32.13","model":"qwen3:4b-instruct","digest":"0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0","license":"Apache-2.0","status":"qualified","evidence":"work/runtime-audit/inference-3.json","notes":"Loopback structured JSON; unloaded with keep_alive=0."},
+    {"id":"director-qwen35-4b","task":"director","runtime":"Ollama 0.32.13","model":"qwen3.5:4b","digest":"2a654d98e6fba55d452b7043684e9b57a947e393bbffa62485a7aac05ee4eefd","license":"Apache-2.0","status":"qualified-with-context-limit","evidence":"work/runtime-audit/inference-1.json","notes":"Valid 3-shot output at 2048 context; constrained 512/1024 context failures retained."},
+    {"id":"editable-scene-cpu","task":"3d-render","runtime":"Blender 4.5.13 + FFmpeg","status":"qualified","evidence":"outputs/renderer-evidence/violet-test/result.json","notes":"Native Blender scene with 7 objects, animated camera, H.264 MP4 and ffprobe validation."},
+    {"id":"neural-video","task":"neural-video","status":"unqualified","evidence":null,"notes":"No local neural-video checkpoint was present; no download attempted."}
+  ]
+}

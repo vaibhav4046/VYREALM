@@ -1,0 +1,15 @@
+1
+00:00:00,000 --> 00:00:02,000
+1. The Shattered Moon
+
+2
+00:00:02,000 --> 00:00:05,000
+2. Boarding the Drifting Starship
+
+3
+00:00:05,000 --> 00:00:11,000
+3. Voyage Through the Violet Nebula
+
+4
+00:00:11,000 --> 00:00:12,000
+4. The Last Sunrise

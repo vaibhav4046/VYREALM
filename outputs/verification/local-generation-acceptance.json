@@ -1,0 +1,35 @@
+{
+  "sourceJobId": "148be8ce-5a53-4b23-9d00-b9280372332d",
+  "enhancementJobId": "5f33ae4c-2f33-4f49-998e-2b09861c16bc",
+  "runtimeStartup": {
+    "status": "ready",
+    "pid": 36576,
+    "parentPid": 7196,
+    "ownership": "managed",
+    "provider": "ComfyUI",
+    "controlPlane": "source application"
+  },
+  "durationSeconds": 5,
+  "fps": 24,
+  "installedVersionVerified": false,
+  "sourceGenerationSeconds": 1838,
+  "native4K": false,
+  "outputHash": "e1a99625fe66ed1d2435998d53a6129a7f4439ac9b6b2292ab1f9bd0b772bf07",
+  "resolution": "3840x2160",
+  "wholeGpuMemoryPeakGiB": 5.788,
+  "audioDurationSeconds": 5,
+  "enhancementSeconds": 1078,
+  "goldenBrowserJourney": "passed",
+  "lipSync": false,
+  "sourceResolution": "1024x576",
+  "installation": {
+    "status": "blocked-by-automatic-approval-review",
+    "reason": "blocked by policy; no more specific reason supplied",
+    "version": "1.0.1",
+    "signing": "unsigned",
+    "sha256": "E8958634B8882E119FA110BA1E40DBE1FDCA4D03B728A2B2B3CA2210FA4EEC41"
+  },
+  "frames": 120,
+  "audioSampleRate": 48000,
+  "editJobId": "29a49460-efac-4920-a7ba-5aaffd891ad5"
+}

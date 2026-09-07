@@ -1,0 +1,288 @@
+{
+  "schemaVersion": 1,
+  "sourceMethod": "local-textured-raster-keyframes",
+  "shotCount": 3,
+  "shotDurationSeconds": 5,
+  "shots": [
+    {
+      "id": "rain-market-close",
+      "caption": "Did you hear that?",
+      "camera": "close handheld reaction in a rain-soaked night market",
+      "asset": "rain-market-close.png",
+      "subject": "original woman with wet hair and textured jacket",
+      "environment": "neon night market",
+      "foreground": "rain and out-of-focus stalls",
+      "background": "lit awnings and bokeh",
+      "lighting": "cyan practicals with warm rim"
+    },
+    {
+      "id": "rain-market-run",
+      "caption": "Run.",
+      "camera": "tracking move as she runs through the market",
+      "asset": "rain-market-run.png",
+      "subject": "same woman and wardrobe in motion",
+      "environment": "rainy market aisle",
+      "foreground": "posts and rain crossing lens",
+      "background": "receding stalls and signs",
+      "lighting": "mixed neon reflections"
+    },
+    {
+      "id": "rain-market-shelter",
+      "caption": "Not yet.",
+      "camera": "slow push-in as she looks back from shelter",
+      "asset": "rain-market-shelter.png",
+      "subject": "same woman with expressive face",
+      "environment": "covered market shelter",
+      "foreground": "shelter frame and wet shoulder",
+      "background": "distant lights and falling rain",
+      "lighting": "soft practical key and blue edge"
+    }
+  ],
+  "outputs": {
+    "video": "trailer-1080p.mp4"
+  },
+  "verification": {
+    "ok": true,
+    "checks": {
+      "exists": {
+        "ok": true,
+        "actual": {
+          "bytes": 6082177
+        },
+        "expected": "non-empty regular file",
+        "message": ""
+      },
+      "probe": {
+        "ok": true,
+        "actual": "valid",
+        "expected": "valid ffprobe JSON",
+        "message": ""
+      },
+      "videoStream": {
+        "ok": true,
+        "actual": {
+          "codec": "h264"
+        },
+        "expected": "at least one video stream",
+        "message": ""
+      },
+      "resolution": {
+        "ok": true,
+        "actual": {
+          "width": 1920,
+          "height": 1080
+        },
+        "expected": {
+          "width": 1920,
+          "height": 1080
+        },
+        "message": ""
+      },
+      "duration": {
+        "ok": true,
+        "actual": 15,
+        "expected": 15,
+        "message": ""
+      },
+      "frameRate": {
+        "ok": true,
+        "actual": 24,
+        "expected": 24,
+        "message": ""
+      },
+      "audio": {
+        "ok": true,
+        "actual": {
+          "codec": "aac",
+          "channels": 2
+        },
+        "expected": "at least one audio stream",
+        "message": ""
+      },
+      "captions": {
+        "ok": true,
+        "actual": "file present",
+        "expected": "optional SRT file",
+        "message": ""
+      },
+      "visualLuma": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 53.681,
+          "maxRange": 243,
+          "maxFrameLumaDelta": 5.01463
+        },
+        "expected": "mean luma between 24 and 232",
+        "message": ""
+      },
+      "visualContrast": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 53.681,
+          "maxRange": 243,
+          "maxFrameLumaDelta": 5.01463
+        },
+        "expected": "at least 12 levels of luma range",
+        "message": ""
+      },
+      "visualMotion": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 53.681,
+          "maxRange": 243,
+          "maxFrameLumaDelta": 5.01463
+        },
+        "expected": "non-static frame samples",
+        "message": ""
+      }
+    },
+    "diagnostics": [],
+    "probe": {
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "h264",
+          "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+          "profile": "High",
+          "codec_type": "video",
+          "codec_tag_string": "avc1",
+          "codec_tag": "0x31637661",
+          "mime_codec_string": "avc1.640028",
+          "width": 1920,
+          "height": 1080,
+          "coded_width": 1920,
+          "coded_height": 1080,
+          "has_b_frames": 2,
+          "pix_fmt": "yuv420p",
+          "level": 40,
+          "chroma_location": "left",
+          "field_order": "progressive",
+          "is_avc": "true",
+          "nal_length_size": "4",
+          "id": "0x1",
+          "r_frame_rate": "24/1",
+          "avg_frame_rate": "24/1",
+          "time_base": "1/12288",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "duration_ts": 184320,
+          "duration": "15.000000",
+          "bit_rate": "3045553",
+          "bits_per_raw_sample": "8",
+          "nb_frames": "360",
+          "extradata_size": 47,
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0,
+            "multilayer": 0
+          },
+          "tags": {
+            "language": "und",
+            "handler_name": "VideoHandler",
+            "encoder": "Lavc62.28.101 libx264"
+          }
+        },
+        {
+          "index": 1,
+          "codec_name": "aac",
+          "codec_long_name": "AAC (Advanced Audio Coding)",
+          "profile": "LC",
+          "codec_type": "audio",
+          "codec_tag_string": "mp4a",
+          "codec_tag": "0x6134706d",
+          "mime_codec_string": "mp4a.40.2",
+          "sample_fmt": "fltp",
+          "sample_rate": "48000",
+          "channels": 2,
+          "channel_layout": "stereo",
+          "bits_per_sample": 0,
+          "initial_padding": 0,
+          "id": "0x2",
+          "r_frame_rate": "0/0",
+          "avg_frame_rate": "0/0",
+          "time_base": "1/48000",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "duration_ts": 720000,
+          "duration": "15.000000",
+          "bit_rate": "191688",
+          "nb_frames": "705",
+          "extradata_size": 5,
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0,
+            "multilayer": 0
+          },
+          "tags": {
+            "language": "und",
+            "handler_name": "SoundHandler"
+          }
+        }
+      ],
+      "format": {
+        "filename": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\desktop\\cinematic-15b\\trailer-1080p.mp4",
+        "nb_streams": 2,
+        "nb_programs": 0,
+        "nb_stream_groups": 0,
+        "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+        "format_long_name": "QuickTime / MOV",
+        "start_time": "0.000000",
+        "duration": "15.000000",
+        "size": "6082177",
+        "bit_rate": "3243827",
+        "probe_score": 100,
+        "tags": {
+          "major_brand": "isom",
+          "minor_version": "512",
+          "compatible_brands": "isomiso2avc1mp41",
+          "encoder": "Lavf62.12.101"
+        }
+      }
+    }
+  },
+  "qualityGate": {
+    "rejectedPrimitiveGeometry": true,
+    "rejectedBlackFrames": true,
+    "rejectedDebugText": true,
+    "requiresSubjectEnvironmentDepth": true,
+    "requiresRecognisableSubject": true,
+    "requiresMotionAndSound": true
+  },
+  "projectId": null,
+  "revision": null
+}

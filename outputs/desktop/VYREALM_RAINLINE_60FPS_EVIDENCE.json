@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "projectId": "c2689d21-5add-4ffc-9ff4-4c7239236353",
+  "sourceMethod": "Three original local Wan2.2 TI2V5B Q4 clips at1024x576/24fps; edited to1080p; RIFE v4.6 interpolation to60fps",
+  "originalSourceEvidence": "VYREALM_RAINLINE_EVIDENCE.json",
+  "initialInterpolation": {
+    "jobId": "f6714a87-1376-41e6-90a2-8c647b77e12d",
+    "renderTimeMs": 314336,
+    "vramPeakGb": 0.47265625,
+    "review": {
+      "verdict": "rejected",
+      "notes": "Technical timing and audio preservation pass. One-second contact sheet shows recognizable original subject/environment. In-between-frame inspection found caption ghosting/warping at frame86 (1.433s) as the burned caption ends. Reject this delivery until caption-boundary intervals hold the original source frame. No neural shot regeneration required. Face/motion retains the source limitations; no hosted-model parity claim.",
+      "reviewer": "operator-visual-review",
+      "reviewedAt": "2026-09-07T17:05:41.381Z",
+      "outputHash": "fc7e1ec4b10ef22e984609c968f23d311df1c7783baa056d24dfeb9578f93af6",
+      "scope": "visual inspection; no automated realism score"
+    }
+  },
+  "repair": {
+    "jobId": "99200737-d638-436a-a4d0-cc33548517bd",
+    "renderTimeMs": 46564,
+    "sourceHash": "12974c3bfc1438c100ceb8f96a8c3e2aed584485c73c2f72d993f070b11a2722",
+    "outputHash": "a6914b5f74c4f898f4a3697ef89e06f1c9f61ba580188842758fb0611eb99813",
+    "segments": [
+      {
+        "index": 0,
+        "sourceFrames": 120,
+        "outputFrames": 300,
+        "synthesizedFrames": 236,
+        "protectedCaptionFrames": [
+          86,
+          87
+        ],
+        "reusedFromJobId": "f6714a87-1376-41e6-90a2-8c647b77e12d",
+        "sha256": "e2bbb2f51fb567a1e91a7adb36e50570eb950b03c93817ea05ed4fc3ba02a308",
+        "frameLedgerHash": "9c6227e4596edba477e970ebf81bff8935565c1a707b7f4f36faf7780f36dcb6",
+        "path": "D:\\VYREALM-runtime\\interpolation-work\\99200737-d638-436a-a4d0-cc33548517bd\\shot-0\\segment.mp4"
+      },
+      {
+        "index": 1,
+        "sourceFrames": 120,
+        "outputFrames": 300,
+        "synthesizedFrames": 238,
+        "sha256": "d32b74d185fb03c3e6f7a9105d0a8153fb423e1507e6ce212a452bcf90e1ac6f",
+        "frameLedgerHash": "068d54cf64efd19db2fb8e278496ab41151c218b92ac6ea9b2521529c8172e54",
+        "path": "D:\\VYREALM-runtime\\interpolation-work\\99200737-d638-436a-a4d0-cc33548517bd\\shot-1\\segment.mp4",
+        "reusedFromJobId": "f6714a87-1376-41e6-90a2-8c647b77e12d",
+        "cached": true
+      },
+      {
+        "index": 2,
+        "sourceFrames": 120,
+        "outputFrames": 300,
+        "synthesizedFrames": 238,
+        "sha256": "d8c856193b959e92605057b0ef2508941ceca298fb1dae6e294f401f3d1c255a",
+        "frameLedgerHash": "8da47949fe27d5ecda04806d44ec7edd8db6b6fea06b30ac5170b9b12cf81af9",
+        "path": "D:\\VYREALM-runtime\\interpolation-work\\99200737-d638-436a-a4d0-cc33548517bd\\shot-2\\segment.mp4",
+        "reusedFromJobId": "f6714a87-1376-41e6-90a2-8c647b77e12d",
+        "cached": true
+      }
+    ],
+    "modelInvokedThisAttempt": false,
+    "review": {
+      "verdict": "passed",
+      "notes": "Inspected the full one-second contact sheet plus in-between frames and exact cut pairs. Caption frames86/87 now retain readable original text; frame88 has no caption ghost. Cut pairs299/300 and599/600 remain separate scenes with no cross-shot blend. Recognizable face, wet hair, jacket and market depth are retained. Source limitations remain: rear tracking in shot2, restrained look-back in shot3; mild native blur during turns. 24fps source was RIFE-interpolated to60fps, not natively generated at60fps. Technical checks:900 frames,15.000s video and audio,identical AAC bitstream. Review qualifies this local motion study only; no cinematic-parity score.",
+      "reviewer": "operator-visual-review",
+      "reviewedAt": "2026-09-07T17:12:47.211Z",
+      "outputHash": "a6914b5f74c4f898f4a3697ef89e06f1c9f61ba580188842758fb0611eb99813",
+      "scope": "visual inspection; no automated realism score"
+    }
+  },
+  "output": {
+    "file": "VYREALM_RAINLINE_TRAILER_1080P_60FPS.mp4",
+    "width": 1920,
+    "height": 1080,
+    "fps": 60,
+    "frames": 900,
+    "durationSeconds": 15,
+    "sha256": "a6914b5f74c4f898f4a3697ef89e06f1c9f61ba580188842758fb0611eb99813",
+    "bytes": 19522080,
+    "audioDurationSeconds": 15,
+    "audioBitstreamPreserved": true,
+    "audioHash": "SHA256=5d67050037738adbf5bb3b96730ea33ed0ed65d45f75887cc7e433f84517eace"
+  },
+  "setup": {
+    "status": "installed",
+    "root": "D:\\VYREALM-runtime\\rife-onboarding-test\\VYREALM-interpolation-20221029\\runtime",
+    "model": "rife-v4.6",
+    "platform": "Windows x64",
+    "device": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+    "deviceProbe": {
+      "gpuId": 1,
+      "gpuName": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+      "cpuProbe": "passed",
+      "gpuProbe": "passed",
+      "scope": "64x64 startup/model probe only; full output quality and performance require a real export",
+      "devices": [
+        {
+          "id": 0,
+          "name": "Intel(R) UHD Graphics 770"
+        },
+        {
+          "id": 1,
+          "name": "NVIDIA GeForce RTX 3050 6GB Laptop GPU"
+        }
+      ]
+    },
+    "credentialsRequired": false,
+    "frameInterpolationTest": "small-startup-probe-only",
+    "archiveSha256": "d8e4d772d26cd8006ef0ad0bc82eb191b53c68677d1ae2f42506d74cbbbea606",
+    "message": "Pinned runtime installed. A real export and visual review are still required."
+  },
+  "cpuFallback": {
+    "status": "passed",
+    "scope": "one-second 128x72 CPU fixture; not 1080p CPU throughput qualification",
+    "firstRenderMs": 3762,
+    "rerunMs": 565,
+    "sourceHash": "7449c002f7a4351ffa7bf9f47a180075855e55a132f25e8a3115a00bba861b77",
+    "outputHash": "cc8fdd421e883ad865ed3ff50891ff55413800b5b8e45e72922a1050db191b3b",
+    "frames": 60,
+    "fps": 60,
+    "durationSeconds": 1,
+    "audioBitstreamPreserved": true,
+    "cachedRetry": true
+  },
+  "limitations": [
+    "Not native1080p/4K/60fps generation",
+    "Sampled visual review, not a calibrated automated realism evaluator",
+    "Original shot action and camera limitations remain",
+    "Source caption-boundary timing retains24fps quantization; two in-between frames hold the prior original sample",
+    "Full-resolution CPU throughput and macOS not qualified",
+    "Updated Windows installer has not been installed"
+  ]
+}

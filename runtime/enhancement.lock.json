@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "release": "Real-ESRGAN v0.2.5.0 / ncnn 20220424",
+  "archiveSha256": "abc02804e17982a3be33675e4d471e91ea374e65b70167abc09e31acb412802d",
+  "artifacts": [
+    {
+      "path": "realesrgan-ncnn-vulkan.exe",
+      "sha256": "07e49f7cbb4ede01ae4dd4c399d3a7e5846e3d2085c3128eff881e55cb7b1a0c"
+    },
+    {
+      "path": "models\\realesrgan-x4plus.bin",
+      "sha256": "713ee713b0353afaa27976f0563a64a5043bd70b9bd8936c2e26e25ebcdbcddf"
+    },
+    {
+      "path": "models\\realesrgan-x4plus.param",
+      "sha256": "35330ececcea33b6c397a72548e788d5d53becee4734c50b7fada36e89f10a86"
+    }
+  ],
+  "qualification": "not-yet-run",
+  "checksumOrigin": "observed download hash from official v0.2.5.0 release; no upstream digest was published",
+  "download": "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesrgan-ncnn-vulkan-20220424-windows.zip"
+}

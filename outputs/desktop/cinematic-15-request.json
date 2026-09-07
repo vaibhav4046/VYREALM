@@ -1,0 +1,12 @@
+{
+  "brief": "Original woman in rain market",
+  "ffmpeg": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\workers\\tools\\ffmpeg.exe",
+  "sampleId": "rain-market",
+  "durationSeconds": 15,
+  "fps": 24,
+  "height": 1080,
+  "ffprobe": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\workers\\tools\\ffprobe.exe",
+  "mode": "cinematic",
+  "captions": false,
+  "width": 1920
+}

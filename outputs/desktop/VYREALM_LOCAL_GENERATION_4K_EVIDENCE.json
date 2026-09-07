@@ -1,0 +1,488 @@
+{
+  "schemaVersion": 1,
+  "kind": "timeline",
+  "projectId": "c2689d21-5add-4ffc-9ff4-4c7239236353",
+  "revision": 12,
+  "inputHash": "a08ac1294951598a8f90fe04bd4363494834962677be13322936ea203a92b2f6",
+  "provenance": {
+    "generationStatus": "edited",
+    "providerId": "ffmpeg-local",
+    "sourceMethod": "local-timeline-edit",
+    "outputHash": "e1a99625fe66ed1d2435998d53a6129a7f4439ac9b6b2292ab1f9bd0b772bf07",
+    "deliveryResolution": {
+      "width": 3840,
+      "height": 2160
+    },
+    "fps": 24,
+    "renderTimeMs": 125226,
+    "sources": [
+      {
+        "assetId": "de150dac-3951-4ee1-b5c1-df5c93c067ed",
+        "sourceHash": "16ec7d41ed12c6166bc9a9e8db80956abb71e062b0ce2bedbaea0bc15f09bd8f",
+        "upstream": {
+          "generationStatus": "upscaled",
+          "sourceMethod": "local-neural-source",
+          "providerId": "realesrgan-ncnn-vulkan",
+          "modelId": "realesrgan-x4plus",
+          "source": {
+            "status": "generated",
+            "providerId": "comfyui-local",
+            "modelId": "Wan2.2-TI2V-5B-Q4_K_M.gguf",
+            "workflowHash": "d0bff5049bf68b83bcae264fa8bd9e9fe46e0faa2c2f01e339524fb1c14ab0e2",
+            "seed": 7092026,
+            "prompt": "An original adult woman with short dark wet hair, wearing a detailed charcoal rain jacket, stands beneath a warm stall lamp in a busy rain-soaked night market. Close cinematic portrait, her face clearly visible, fabric texture, market stalls in the middle distance, soft neon reflections behind her, shallow depth of field. She hears a sound, turns her head and looks over her shoulder, eyebrows rising, wet strands of hair move, rain falls continuously, distant people move naturally. Slow restrained handheld camera push in, realistic skin and materials, coherent lighting. No text or watermark.",
+            "outputPath": "generated-source.mp4",
+            "outputHash": "1e9051ee0697a5070c576733f0842b1d65f342fc2203200a5f52ebf199f2304c",
+            "durationSeconds": 5,
+            "resolution": {
+              "width": 1024,
+              "height": 576
+            },
+            "fps": 24,
+            "vramPeakGb": 5.7880859375,
+            "renderTimeMs": 1838020,
+            "providerPromptId": "2e207853-dce9-48ac-b27c-a955b6d4f6aa",
+            "evidenceHash": "2e8e50ca872f86af527f62ea5071563855b72a1811fc8626aa885081b6e62a97",
+            "frameCount": 120,
+            "lineage": [
+              {
+                "index": 0,
+                "rgbRmse": 2.3199,
+                "threshold": 16
+              },
+              {
+                "index": 60,
+                "rgbRmse": 2.4824,
+                "threshold": 16
+              },
+              {
+                "index": 119,
+                "rgbRmse": 2.967,
+                "threshold": 16
+              }
+            ],
+            "generationStatus": "generated",
+            "keyframe": {
+              "promptId": "10ac067c-6d42-4e2f-b63c-b04abea9477f",
+              "outputHash": "b074b653d11cab721fecac1ca49ab2989aacd3cc4a43ae9a2fa938415d608bda"
+            },
+            "deliveryMethod": "1080p-lanczos-from-1024x576",
+            "deliveryResolution": {
+              "width": 1920,
+              "height": 1080
+            },
+            "fourKMethod": "not-run",
+            "semanticQuality": "operator-reviewed"
+          },
+          "sourceHash": "1e9051ee0697a5070c576733f0842b1d65f342fc2203200a5f52ebf199f2304c",
+          "outputHash": "16ec7d41ed12c6166bc9a9e8db80956abb71e062b0ce2bedbaea0bc15f09bd8f",
+          "resolution": {
+            "width": 1024,
+            "height": 576
+          },
+          "deliveryResolution": {
+            "width": 3840,
+            "height": 2160
+          },
+          "fourKMethod": "Real-ESRGAN x4 + motion-compensated detail + Lanczos to UHD",
+          "temporalMethod": "backward-flow-photometric-mask-detail-blend-v1",
+          "renderTimeMs": 1077676,
+          "semanticQuality": "unreviewed"
+        }
+      }
+    ],
+    "fourKMethod": "Edit of verified AI-upscaled source"
+  },
+  "cache": {
+    "clips": [
+      {
+        "id": "f5fde5dc-02e0-4fff-a9ca-7c26777b75dc",
+        "assetId": "de150dac-3951-4ee1-b5c1-df5c93c067ed",
+        "sourceHash": "16ec7d41ed12c6166bc9a9e8db80956abb71e062b0ce2bedbaea0bc15f09bd8f",
+        "cacheKey": "51a690919fb3c9b3ba9be26906c45e34470224e66329ce9c9d12d22cff762a69",
+        "cacheHit": false,
+        "duration": 5,
+        "requestedDuration": 5,
+        "trimStart": 0
+      }
+    ]
+  },
+  "outputs": {
+    "video": "render.mp4",
+    "poster": "poster.png",
+    "captions": "captions.srt",
+    "ffprobe": "ffprobe.json"
+  },
+  "ffprobe": {
+    "streams": [
+      {
+        "index": 0,
+        "codec_name": "h264",
+        "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+        "profile": "High",
+        "codec_type": "video",
+        "codec_tag_string": "avc1",
+        "codec_tag": "0x31637661",
+        "mime_codec_string": "avc1.640033",
+        "width": 3840,
+        "height": 2160,
+        "coded_width": 3840,
+        "coded_height": 2160,
+        "has_b_frames": 2,
+        "sample_aspect_ratio": "1:1",
+        "display_aspect_ratio": "16:9",
+        "pix_fmt": "yuv420p",
+        "level": 51,
+        "chroma_location": "left",
+        "field_order": "progressive",
+        "is_avc": "true",
+        "nal_length_size": "4",
+        "id": "0x1",
+        "r_frame_rate": "24/1",
+        "avg_frame_rate": "24/1",
+        "time_base": "1/12288",
+        "start_pts": 0,
+        "start_time": "0.000000",
+        "duration_ts": 61440,
+        "duration": "5.000000",
+        "bit_rate": "60053297",
+        "bits_per_raw_sample": "8",
+        "nb_frames": "120",
+        "extradata_size": 58,
+        "disposition": {
+          "default": 1,
+          "dub": 0,
+          "original": 0,
+          "comment": 0,
+          "lyrics": 0,
+          "karaoke": 0,
+          "forced": 0,
+          "hearing_impaired": 0,
+          "visual_impaired": 0,
+          "clean_effects": 0,
+          "attached_pic": 0,
+          "timed_thumbnails": 0,
+          "non_diegetic": 0,
+          "captions": 0,
+          "descriptions": 0,
+          "metadata": 0,
+          "dependent": 0,
+          "still_image": 0,
+          "multilayer": 0
+        },
+        "tags": {
+          "language": "und",
+          "handler_name": "VideoHandler",
+          "encoder": "Lavc62.28.101 libx264"
+        }
+      },
+      {
+        "index": 1,
+        "codec_name": "aac",
+        "codec_long_name": "AAC (Advanced Audio Coding)",
+        "profile": "LC",
+        "codec_type": "audio",
+        "codec_tag_string": "mp4a",
+        "codec_tag": "0x6134706d",
+        "mime_codec_string": "mp4a.40.2",
+        "sample_fmt": "fltp",
+        "sample_rate": "48000",
+        "channels": 2,
+        "channel_layout": "stereo",
+        "bits_per_sample": 0,
+        "initial_padding": 0,
+        "id": "0x2",
+        "r_frame_rate": "0/0",
+        "avg_frame_rate": "0/0",
+        "time_base": "1/48000",
+        "start_pts": 0,
+        "start_time": "0.000000",
+        "duration_ts": 240000,
+        "duration": "5.000000",
+        "bit_rate": "58462",
+        "nb_frames": "236",
+        "extradata_size": 5,
+        "disposition": {
+          "default": 1,
+          "dub": 0,
+          "original": 0,
+          "comment": 0,
+          "lyrics": 0,
+          "karaoke": 0,
+          "forced": 0,
+          "hearing_impaired": 0,
+          "visual_impaired": 0,
+          "clean_effects": 0,
+          "attached_pic": 0,
+          "timed_thumbnails": 0,
+          "non_diegetic": 0,
+          "captions": 0,
+          "descriptions": 0,
+          "metadata": 0,
+          "dependent": 0,
+          "still_image": 0,
+          "multilayer": 0
+        },
+        "tags": {
+          "language": "und",
+          "handler_name": "SoundHandler"
+        }
+      }
+    ],
+    "format": {
+      "filename": "C:\\Users\\lalwa\\AppData\\Roaming\\vyrelum\\data\\jobs\\29a49460-efac-4920-a7ba-5aaffd891ad5\\render.mp4",
+      "nb_streams": 2,
+      "nb_programs": 0,
+      "nb_stream_groups": 0,
+      "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+      "format_long_name": "QuickTime / MOV",
+      "start_time": "0.000000",
+      "duration": "5.000000",
+      "size": "37574902",
+      "bit_rate": "60119843",
+      "probe_score": 100,
+      "tags": {
+        "major_brand": "isom",
+        "minor_version": "512",
+        "compatible_brands": "isomiso2avc1mp41",
+        "encoder": "Lavf62.12.101"
+      }
+    }
+  },
+  "verification": {
+    "ok": true,
+    "checks": {
+      "exists": {
+        "ok": true,
+        "actual": {
+          "bytes": 37574902
+        },
+        "expected": "non-empty regular file",
+        "message": ""
+      },
+      "probe": {
+        "ok": true,
+        "actual": "valid",
+        "expected": "valid ffprobe JSON",
+        "message": ""
+      },
+      "videoStream": {
+        "ok": true,
+        "actual": {
+          "codec": "h264"
+        },
+        "expected": "at least one video stream",
+        "message": ""
+      },
+      "resolution": {
+        "ok": true,
+        "actual": {
+          "width": 3840,
+          "height": 2160
+        },
+        "expected": {
+          "width": 3840,
+          "height": 2160
+        },
+        "message": ""
+      },
+      "duration": {
+        "ok": true,
+        "actual": 5,
+        "expected": 5,
+        "message": ""
+      },
+      "frameRate": {
+        "ok": true,
+        "actual": 24,
+        "expected": 24,
+        "message": ""
+      },
+      "audio": {
+        "ok": true,
+        "actual": {
+          "codec": "aac",
+          "channels": 2
+        },
+        "expected": "at least one audio stream",
+        "message": ""
+      },
+      "captions": {
+        "ok": true,
+        "actual": "cue(s) present",
+        "expected": "SRT file with at least one cue",
+        "message": ""
+      },
+      "visualLuma": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 94.117,
+          "maxRange": 255,
+          "maxFrameLumaDelta": 18.6229
+        },
+        "expected": "mean luma between 24 and 232",
+        "message": ""
+      },
+      "visualContrast": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 94.117,
+          "maxRange": 255,
+          "maxFrameLumaDelta": 18.6229
+        },
+        "expected": "at least 12 levels of luma range",
+        "message": ""
+      },
+      "visualMotion": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 94.117,
+          "maxRange": 255,
+          "maxFrameLumaDelta": 18.6229
+        },
+        "expected": "non-static frame samples",
+        "message": ""
+      }
+    },
+    "diagnostics": [],
+    "probe": {
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "h264",
+          "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+          "profile": "High",
+          "codec_type": "video",
+          "codec_tag_string": "avc1",
+          "codec_tag": "0x31637661",
+          "mime_codec_string": "avc1.640033",
+          "width": 3840,
+          "height": 2160,
+          "coded_width": 3840,
+          "coded_height": 2160,
+          "has_b_frames": 2,
+          "sample_aspect_ratio": "1:1",
+          "display_aspect_ratio": "16:9",
+          "pix_fmt": "yuv420p",
+          "level": 51,
+          "chroma_location": "left",
+          "field_order": "progressive",
+          "is_avc": "true",
+          "nal_length_size": "4",
+          "id": "0x1",
+          "r_frame_rate": "24/1",
+          "avg_frame_rate": "24/1",
+          "time_base": "1/12288",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "duration_ts": 61440,
+          "duration": "5.000000",
+          "bit_rate": "60053297",
+          "bits_per_raw_sample": "8",
+          "nb_frames": "120",
+          "extradata_size": 58,
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0,
+            "multilayer": 0
+          },
+          "tags": {
+            "language": "und",
+            "handler_name": "VideoHandler",
+            "encoder": "Lavc62.28.101 libx264"
+          }
+        },
+        {
+          "index": 1,
+          "codec_name": "aac",
+          "codec_long_name": "AAC (Advanced Audio Coding)",
+          "profile": "LC",
+          "codec_type": "audio",
+          "codec_tag_string": "mp4a",
+          "codec_tag": "0x6134706d",
+          "mime_codec_string": "mp4a.40.2",
+          "sample_fmt": "fltp",
+          "sample_rate": "48000",
+          "channels": 2,
+          "channel_layout": "stereo",
+          "bits_per_sample": 0,
+          "initial_padding": 0,
+          "id": "0x2",
+          "r_frame_rate": "0/0",
+          "avg_frame_rate": "0/0",
+          "time_base": "1/48000",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "duration_ts": 240000,
+          "duration": "5.000000",
+          "bit_rate": "58462",
+          "nb_frames": "236",
+          "extradata_size": 5,
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0,
+            "multilayer": 0
+          },
+          "tags": {
+            "language": "und",
+            "handler_name": "SoundHandler"
+          }
+        }
+      ],
+      "format": {
+        "filename": "C:\\Users\\lalwa\\AppData\\Roaming\\vyrelum\\data\\jobs\\29a49460-efac-4920-a7ba-5aaffd891ad5\\render.mp4",
+        "nb_streams": 2,
+        "nb_programs": 0,
+        "nb_stream_groups": 0,
+        "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+        "format_long_name": "QuickTime / MOV",
+        "start_time": "0.000000",
+        "duration": "5.000000",
+        "size": "37574902",
+        "bit_rate": "60119843",
+        "probe_score": 100,
+        "tags": {
+          "major_brand": "isom",
+          "minor_version": "512",
+          "compatible_brands": "isomiso2avc1mp41",
+          "encoder": "Lavf62.12.101"
+        }
+      }
+    }
+  }
+}

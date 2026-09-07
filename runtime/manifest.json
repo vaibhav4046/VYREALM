@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "product": "VYRELUM",
+  "channel": "local-first",
+  "artifacts": [
+    {"id":"node-runtime","path":"runtime/node","kind":"runtime","required":false,"status":"optional-sidecar"},
+    {"id":"blender-renderer","path":"workers/tools/blender","kind":"renderer","required":false,"status":"qualified-when-present"},
+    {"id":"ffmpeg","path":"workers/tools/ffmpeg","kind":"exporter","required":false,"status":"qualified-when-present"},
+    {"id":"ollama","path":"http://127.0.0.1:11434","kind":"model-runtime","required":false,"status":"development-host-only"}
+  ],
+  "policy": {
+    "network": "deny-by-default",
+    "downloads": "user-authorized-only",
+    "integrity": "sha256-required-before-repair",
+    "rollback": "retain-previous-version"
+  }
+}

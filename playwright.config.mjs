@@ -1,0 +1,2 @@
+import { defineConfig } from '@playwright/test';
+export default defineConfig({testDir:'./tests',testMatch:'local-engine-golden.spec.mjs',workers:1,fullyParallel:false,timeout:300000,reporter:[['list'],['json',{outputFile:'outputs/verification/playwright-results.json'}]],use:{baseURL:process.env.VYREALM_TEST_URL||'http://127.0.0.1:4174',viewport:{width:1440,height:1000},trace:'retain-on-failure',screenshot:'only-on-failure',launchOptions:process.env.VYREALM_CHROMIUM?{executablePath:process.env.VYREALM_CHROMIUM}:{}}});

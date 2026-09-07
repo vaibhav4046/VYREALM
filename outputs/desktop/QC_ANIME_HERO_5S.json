@@ -121,6 +121,13 @@
     "longestStallRun": 0,
     "nearDuplicateThresholdMae": 0.5
   },
+  "cadence": {
+    "rgbMaeAutocorrLag1": -0.8127161550778786,
+    "rgbMaeAutocorrLag2": 0.875223094518323,
+    "rgbMaeAlternationRatio": 2.6344243325614234,
+    "flowAlternationRatio": 5.265083841920519,
+    "steppedMotionSuspected": true
+  },
   "colourDrift": {
     "slopePerSec": {
       "b": -0.06932636173642635,
@@ -144,8 +151,13 @@
       "max": 1716.2610693449747,
       "p95": 1556.4336719670116
     },
+    "median": 1382.3274239247612,
     "slopePerSec": -36.928243077140955,
-    "relativeSlopePctPerSec": -2.752237079944369
+    "relativeSlopePctPerSec": -2.752237079944369,
+    "maxSingleFrameDropRatio": 1.2349735097599819,
+    "maxSingleFrameDropAtFrame": 112,
+    "minOverMedian": 0.5041058561728763,
+    "fracBelowHalfMedian": 0.0
   },
   "artefacts": {
     "blockinessRatio": {

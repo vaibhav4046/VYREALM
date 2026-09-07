@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 1,
+  "voice": "en_US-ljspeech-high.onnx",
+  "engine": "piper-local",
+  "items": {
+    "cold-open-question": {
+      "path": "cold-open-question.wav",
+      "text": "Can you make film on your laptop with no internet?",
+      "seconds": 2.879,
+      "sampleRate": 22050
+    },
+    "false-start-loop": {
+      "path": "false-start-loop.wav",
+      "text": "This video failed. It didn\u2019t. You just needed a laptop.",
+      "seconds": 3.773,
+      "sampleRate": 22050
+    },
+    "transformation-reveal": {
+      "path": "transformation-reveal.wav",
+      "text": "Your laptop becomes a full filmmaking studio.",
+      "seconds": 2.786,
+      "sampleRate": 22050
+    },
+    "before-after-split": {
+      "path": "before-after-split.wav",
+      "text": "Before: one laptop. After: full film. No cloud. No limits.",
+      "seconds": 5.143,
+      "sampleRate": 22050
+    },
+    "numbered-listicle": {
+      "path": "numbered-listicle.wav",
+      "text": "Numbered listicle. Made offline on one laptop.",
+      "seconds": 3.17,
+      "sampleRate": 22050
+    },
+    "satisfying-loop": {
+      "path": "satisfying-loop.wav",
+      "text": "Laptop. Film. Done. No cloud. No limits.",
+      "seconds": 3.111,
+      "sampleRate": 22050
+    },
+    "pov-immersion": {
+      "path": "pov-immersion.wav",
+      "text": "I'm sitting here. My laptop. My world.",
+      "seconds": 2.856,
+      "sampleRate": 22050
+    },
+    "micro-horror-turn": {
+      "path": "micro-horror-turn.wav",
+      "text": "The lights are on. The room is dark.",
+      "seconds": 2.345,
+      "sampleRate": 22050
+    },
+    "story-narrative-30": {
+      "path": "story-narrative-30.wav",
+      "text": "The screen flickers. Then it shows nothing. Only the laptop. And the film begins.",
+      "seconds": 5.016,
+      "sampleRate": 22050
+    },
+    "text-story-scroll": {
+      "path": "text-story-scroll.wav",
+      "text": "Wind rises. A single frame. No clouds. No credits. Just you.",
+      "seconds": 5.085,
+      "sampleRate": 22050
+    },
+    "anime-character-intro": {
+      "path": "anime-character-intro.wav",
+      "text": "She stands still. The screen reads: VYREALM.",
+      "seconds": 3.46,
+      "sampleRate": 22050
+    },
+    "anime-action-beat": {
+      "path": "anime-action-beat.wav",
+      "text": "A sword slices through a mountain made of paper.",
+      "seconds": 3.193,
+      "sampleRate": 22050
+    },
+    "anime-short-film": {
+      "path": "anime-short-film.wav",
+      "text": "Your laptop. Your studio. Your masterpiece.",
+      "seconds": 3.042,
+      "sampleRate": 22050
+    },
+    "cinematic-trailer-30": {
+      "path": "cinematic-trailer-30.wav",
+      "text": "A full feature film. Rendered. On. Your. Laptop.",
+      "seconds": 3.274,
+      "sampleRate": 22050
+    },
+    "cinematic-trailer-60": {
+      "path": "cinematic-trailer-60.wav",
+      "text": "A film. No cloud. No credits. Just you.",
+      "seconds": 3.297,
+      "sampleRate": 22050
+    },
+    "establishing-mood": {
+      "path": "establishing-mood.wav",
+      "text": "Close up: dust on a lens.",
+      "seconds": 2.322,
+      "sampleRate": 22050
+    },
+    "product-proof-15": {
+      "path": "product-proof-15.wav",
+      "text": "Laptop starts. Film runs. No cloud. No credits. Full control.",
+      "seconds": 5.306,
+      "sampleRate": 22050
+    },
+    "product-hero-orbit": {
+      "path": "product-hero-orbit.wav",
+      "text": "Product hero orbit. Made offline on one laptop.",
+      "seconds": 3.483,
+      "sampleRate": 22050
+    },
+    "ugc-testimonial": {
+      "path": "ugc-testimonial.wav",
+      "text": "UGC testimonial. Made offline on one laptop.",
+      "seconds": 3.773,
+      "sampleRate": 22050
+    },
+    "unboxing-reveal": {
+      "path": "unboxing-reveal.wav",
+      "text": "Laptop runs full film studio. No cloud. No credits. No limits.",
+      "seconds": 5.248,
+      "sampleRate": 22050
+    },
+    "product-launch-film": {
+      "path": "product-launch-film.wav",
+      "text": "If you stop now, you lose your freedom to create.",
+      "seconds": 3.576,
+      "sampleRate": 22050
+    },
+    "tech-spec-flyover": {
+      "path": "tech-spec-flyover.wav",
+      "text": "Tech spec flyover. Made offline on one laptop.",
+      "seconds": 3.251,
+      "sampleRate": 22050
+    },
+    "ai-model-demo": {
+      "path": "ai-model-demo.wav",
+      "text": "See it run. No cloud. No credits. Just your laptop.",
+      "seconds": 4.052,
+      "sampleRate": 22050
+    },
+    "tech-review-longform": {
+      "path": "tech-review-longform.wav",
+      "text": "Tech review long-form. Made offline on one laptop.",
+      "seconds": 3.669,
+      "sampleRate": 22050
+    },
+    "explainer-diagram": {
+      "path": "explainer-diagram.wav",
+      "text": "People think filmmaking needs cloud, credits, and limits.",
+      "seconds": 4.052,
+      "sampleRate": 22050
+    },
+    "tutorial-15s": {
+      "path": "tutorial-15s.wav",
+      "text": "See this film. Made on your laptop. No cloud. No credits. Full control.",
+      "seconds": 5.19,
+      "sampleRate": 22050
+    },
+    "tutorial-longform": {
+      "path": "tutorial-longform.wav",
+      "text": "If you stop now, you lose the power to make films without internet.",
+      "seconds": 4.481,
+      "sampleRate": 22050
+    },
+    "myth-vs-fact": {
+      "path": "myth-vs-fact.wav",
+      "text": "Belief: Filmmaking needs cloud storage. Fact: VYREALM works entirely on your laptop.",
+      "seconds": 6.548,
+      "sampleRate": 22050
+    },
+    "mistake-warning": {
+      "path": "mistake-warning.wav",
+      "text": "You\u2019re probably thinking you need a cloud to film.",
+      "seconds": 3.019,
+      "sampleRate": 22050
+    },
+    "music-video-loop": {
+      "path": "music-video-loop.wav",
+      "text": "A beat drops. Then light. Then VYREALM.",
+      "seconds": 2.937,
+      "sampleRate": 22050
+    },
+    "day-in-life": {
+      "path": "day-in-life.wav",
+      "text": "Hands on keyboard. Film in progress. No cloud. No credits. Just me.",
+      "seconds": 5.143,
+      "sampleRate": 22050
+    },
+    "behind-the-scenes": {
+      "path": "behind-the-scenes.wav",
+      "text": "Hands on laptop. Film running. No cloud. No credits. Just you.",
+      "seconds": 4.783,
+      "sampleRate": 22050
+    },
+    "reaction-commentary": {
+      "path": "reaction-commentary.wav",
+      "text": "Laptop. No cloud. No credits. Just film.",
+      "seconds": 3.379,
+      "sampleRate": 22050
+    },
+    "quote-card-motion": {
+      "path": "quote-card-motion.wav",
+      "text": "Filming starts now. No cloud. No credits. Just you.",
+      "seconds": 4.226,
+      "sampleRate": 22050
+    },
+    "documentary-chapter": {
+      "path": "documentary-chapter.wav",
+      "text": "Documentary chapter. Made offline on one laptop.",
+      "seconds": 3.553,
+      "sampleRate": 22050
+    },
+    "what-if-micro-doc": {
+      "path": "what-if-micro-doc.wav",
+      "text": "What if filmmaking worked without the internet?",
+      "seconds": 2.543,
+      "sampleRate": 22050
+    }
+  },
+  "count": 36
+}

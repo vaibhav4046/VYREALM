@@ -1,0 +1,171 @@
+/**
+ * Static assertions over public/catalogue.html.
+ *
+ * There is no DOM library in this project and no new dependency is allowed, so
+ * these are string and regex assertions over the file text. That is weaker than
+ * parsing, so each check is written to fail on the thing that would actually
+ * break the product: a network reference sneaking into an offline page, the
+ * evidence path drifting away from what render-format-batch.mjs writes, the
+ * provenance panel losing the fields that are the whole point of the page.
+ */
+
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const here = dirname(fileURLToPath(import.meta.url));
+const HTML = await readFile(join(here, 'catalogue.html'), 'utf8');
+
+/** Every src=/href= value in the document, quotes stripped. */
+function attributeValues(name) {
+  return [...HTML.matchAll(new RegExp(`\\b${name}\\s*=\\s*"([^"]*)"`, 'g'))].map(m => m[1]);
+}
+
+test('no external network references in src or href', () => {
+  const values = [...attributeValues('src'), ...attributeValues('href')];
+  assert.ok(values.length > 0, 'expected the page to reference at least one resource');
+  for (const value of values) {
+    assert.ok(!/^\s*(https?:)?\/\//i.test(value), `external reference in src/href: ${value}`);
+  }
+});
+
+test('the only http string anywhere in the file is the SVG XML namespace', () => {
+  // A data: URI SVG needs xmlns='http://www.w3.org/2000/svg'. That token is an
+  // XML namespace identifier, never fetched. Nothing else may carry http.
+  const found = [...HTML.matchAll(/https?:\/\/[^\s"'<>)]*/g)].map(m => m[0]);
+  assert.deepEqual([...new Set(found)], ['http://www.w3.org/2000/svg'], `unexpected URLs: ${found.join(', ')}`);
+});
+
+test('no CDN, module import or remote font is pulled in', () => {
+  assert.ok(!/<link[^>]+rel\s*=\s*"stylesheet"/i.test(HTML), 'external stylesheet link present');
+  assert.ok(!/@import\s/i.test(HTML), 'CSS @import present');
+  // Statement form only: a dynamic import() quoted inside a comment is documentation,
+  // not a load. What must not exist is a real module import in the page script.
+  assert.ok(!/^\s*import\s+[\w{*]/m.test(HTML), 'JS module import statement present');
+  assert.ok(!/cdn|unpkg|jsdelivr|googleapis|gstatic/i.test(HTML), 'CDN host referenced');
+});
+
+test('reads the batch evidence file that render-format-batch.mjs writes', () => {
+  assert.match(HTML, /outputs\/formats\/BATCH_EVIDENCE\.json/,
+    'the evidence path must match scripts/render-format-batch.mjs');
+  assert.match(HTML, /\.\.\/outputs\/formats\/BATCH_EVIDENCE\.json/,
+    'needs a path relative to public/ so the page works opened from disk');
+  assert.match(HTML, /fetch\(/, 'the evidence has to actually be read');
+  assert.match(HTML, /receipts/, 'the evidence receipts array must be consumed');
+});
+
+test('degrades honestly when there is no evidence and never invents films', () => {
+  assert.match(HTML, /No films rendered yet/);
+  assert.match(HTML, /scripts\/render-format-batch\.mjs/,
+    'the empty state must name the command that fixes it');
+  assert.ok(!/lorem ipsum/i.test(HTML), 'filler copy present');
+  // The real test of "no fake films": not a word blocklist, but the absence of any
+  // baked-in film. Every card has to come from a receipt, so the only .mp4 the page
+  // may name is the glob it documents in the footer.
+  const mp4s = [...HTML.matchAll(/[\w*.-]+\.mp4/g)].map(m => m[0]);
+  assert.deepEqual([...new Set(mp4s)], ['*.mp4'], `hard-coded film file(s): ${mp4s.join(', ')}`);
+});
+
+test('provenance fields from the render receipt are referenced', () => {
+  // These names come from renderPlan() in runtime/format-render.mjs and the
+  // fields render-format-batch.mjs adds to each receipt.
+  for (const field of [
+    'generationStatus',   // composited / generated / upscaled / edited
+    'sourceMethod',       // e.g. composited-from-existing-footage
+    'shotProvenance',     // per-shot origin: local-neural-source, blender-3d, composited
+    'syntheticSeconds',   // how much runtime is time-extension, not original footage
+    'extensions',         // which beats were extended and by which strategy
+    'hookSource',         // who wrote the hook line
+    'durationExact',
+    'measured',
+    'captions',
+    'audio',
+    'lint',
+    'note'
+  ]) {
+    assert.match(HTML, new RegExp(`\\b${field}\\b`), `receipt field not referenced: ${field}`);
+  }
+});
+
+test('the local LLM hook line is read from the real hooks file', () => {
+  assert.match(HTML, /runtime\/assets\/format-hooks\.json/);
+  assert.match(HTML, /\bhook\.line\b|\bhooks\[/, 'the hook line itself must be surfaced');
+});
+
+test('provenance classes cover generated, composited, upscaled and interpolated', () => {
+  for (const kind of ['locally-generated', 'composited', 'upscaled', 'interpolated', 'time-extended']) {
+    assert.ok(HTML.includes(kind), `provenance class missing: ${kind}`);
+  }
+});
+
+test('quality scores are rendered when the evidence carries them', () => {
+  assert.match(HTML, /Quality scores/);
+  assert.match(HTML, /\.scores\b/);
+});
+
+test('filter controls exist for platform, niche and provenance', () => {
+  assert.match(HTML, /id="f-platform"/);
+  assert.match(HTML, /id="f-niche"/);
+  assert.match(HTML, /id="f-prov"/);
+  for (const legend of ['Platform', 'Niche', 'Provenance']) {
+    assert.match(HTML, new RegExp(`<legend>${legend}</legend>`), `missing filter legend: ${legend}`);
+  }
+  assert.match(HTML, /<input id="q" type="search"/, 'text filter input missing');
+  assert.match(HTML, /aria-pressed/, 'filter chips must expose pressed state');
+  assert.match(HTML, /id="reset"/, 'a way to clear the filters must exist');
+});
+
+test('inline video uses preload=metadata as its own poster, with a real transport', () => {
+  assert.match(HTML, /<video[^>]*preload="metadata"/);
+  assert.match(HTML, /<video[^>]*\bcontrols\b/);
+  assert.ok(!/<dialog|lightbox|modal-overlay/i.test(HTML), 'must not fight the browser with a lightbox');
+});
+
+test('every video carries an aria-label and the page carries a real alt', () => {
+  assert.match(HTML, /<video[^>]*aria-label="/, 'video needs an accessible name');
+  const images = [...HTML.matchAll(/<img\b[^>]*>/g)].map(m => m[0]);
+  assert.ok(images.length > 0, 'expected at least one image');
+  for (const img of images) {
+    assert.match(img, /\balt="[^"]*"/, `img without alt: ${img.slice(0, 80)}`);
+  }
+  assert.match(HTML, /alt="VYREALM"/, 'the brand mark needs real alt text, not an empty string');
+});
+
+test('aria wiring for the disclosure, live region and landmarks is present', () => {
+  assert.match(HTML, /aria-expanded="false"/);
+  assert.match(HTML, /aria-controls="/);
+  assert.match(HTML, /aria-live="polite"/);
+  assert.match(HTML, /role="status"/);
+  assert.match(HTML, /role="img"[^>]*aria-label="|aria-label="[^"]*"[^>]*role="img"/,
+    'the provenance ledger graphic needs an accessible name');
+  assert.match(HTML, /aria-labelledby="/);
+  assert.match(HTML, /<label class="sr" for="q">/, 'the search input needs a real label');
+  assert.match(HTML, /class="skip"/, 'a skip link is expected');
+  assert.match(HTML, /<main\b/);
+});
+
+test('accessibility basics: focus rings, reduced motion, language', () => {
+  assert.match(HTML, /:focus-visible\s*\{[^}]*outline:/, 'focus rings must be visible');
+  assert.match(HTML, /@media\s*\(\s*prefers-reduced-motion\s*:\s*reduce\s*\)/);
+  assert.match(HTML, /<html lang="en">/);
+  assert.match(HTML, /<meta name="viewport"/);
+});
+
+test('palette tokens are the ones defined in styles.css, not invented', async () => {
+  const css = await readFile(join(here, '..', 'styles.css'), 'utf8');
+  // Sampled from the production :root block of styles.css.
+  for (const token of ['--violet:#8B5CF6', '--lilac:#C4B5FD', '--bg:#08070D', '--panel:#12101C',
+    '--text:#F5F3FA', '--muted:#A7A2B5', '--line:#2B243C']) {
+    assert.ok(css.includes(token), `styles.css no longer defines ${token}; the catalogue palette has drifted`);
+    assert.ok(HTML.includes(token), `catalogue.html does not reuse ${token}`);
+  }
+});
+
+test('the page is self contained: inline style and script, no build step', () => {
+  assert.match(HTML, /<style>/);
+  assert.match(HTML, /<script>/);
+  assert.ok(!/<script[^>]+src=/i.test(HTML), 'external script tag present');
+  assert.ok(!/type="module"/.test(HTML), 'module scripts do not load from file:// in Electron');
+});

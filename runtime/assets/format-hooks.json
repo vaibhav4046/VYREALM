@@ -1,0 +1,229 @@
+{
+  "schemaVersion": 1,
+  "subject": "VYREALM, a filmmaking studio that runs entirely on your own laptop with no cloud, no credits and no limits",
+  "model": "qwen3:4b-instruct",
+  "generatedBy": "local-ollama",
+  "counts": {
+    "total": 36,
+    "fromModel": 30,
+    "templated": 6
+  },
+  "hooks": {
+    "cold-open-question": {
+      "line": "Can you make film on your laptop with no internet?",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "cold-question",
+      "formatLabel": "Cold open question"
+    },
+    "false-start-loop": {
+      "line": "This video failed. It didn’t. You just needed a laptop.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "false-start",
+      "formatLabel": "False start loop"
+    },
+    "transformation-reveal": {
+      "line": "Your laptop becomes a full filmmaking studio.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "transformation-tease",
+      "formatLabel": "Transformation reveal"
+    },
+    "before-after-split": {
+      "line": "Before: one laptop. After: full film. No cloud. No limits.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "before-after-flash",
+      "formatLabel": "Before/after split"
+    },
+    "numbered-listicle": {
+      "line": "Numbered listicle. Made offline on one laptop.",
+      "source": "template",
+      "hookPattern": "countdown-tease",
+      "formatLabel": "Numbered listicle"
+    },
+    "satisfying-loop": {
+      "line": "Laptop. Film. Done. No cloud. No limits.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "loop-seam",
+      "formatLabel": "Satisfying loop"
+    },
+    "pov-immersion": {
+      "line": "I'm sitting here. My laptop. My world.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "pov-frame",
+      "formatLabel": "POV immersion"
+    },
+    "micro-horror-turn": {
+      "line": "The lights are on. The room is dark.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "threat-reveal",
+      "formatLabel": "Micro-horror turn"
+    },
+    "story-narrative-30": {
+      "line": "The screen flickers. Then it shows nothing. Only the laptop. And the film begins.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "in-medias-res",
+      "formatLabel": "Story narrative 30s"
+    },
+    "text-story-scroll": {
+      "line": "Wind rises. A single frame. No clouds. No credits. Just you.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "quote-open",
+      "formatLabel": "Text story scroll"
+    },
+    "anime-character-intro": {
+      "line": "She stands still. The screen reads: VYREALM.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "character-intro",
+      "formatLabel": "Anime character intro"
+    },
+    "anime-action-beat": {
+      "line": "A sword slices through a mountain made of paper.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "impossible-image",
+      "formatLabel": "Anime action beat"
+    },
+    "anime-short-film": {
+      "line": "Your laptop. Your studio. Your masterpiece.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "scale-shift",
+      "formatLabel": "Anime short film"
+    },
+    "cinematic-trailer-30": {
+      "line": "A full feature film. Rendered. On. Your. Laptop.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "impossible-image",
+      "formatLabel": "Cinematic trailer 30s"
+    },
+    "cinematic-trailer-60": {
+      "line": "A film. No cloud. No credits. Just you.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "sound-first",
+      "formatLabel": "Cinematic trailer 60s"
+    },
+    "establishing-mood": {
+      "line": "Close up: dust on a lens.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "scale-shift",
+      "formatLabel": "Establishing mood piece"
+    },
+    "product-proof-15": {
+      "line": "Laptop starts. Film runs. No cloud. No credits. Full control.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "demo-proof",
+      "formatLabel": "Product proof 15s"
+    },
+    "product-hero-orbit": {
+      "line": "Product hero orbit. Made offline on one laptop.",
+      "source": "template",
+      "hookPattern": "spec-flyover",
+      "formatLabel": "Product hero orbit"
+    },
+    "ugc-testimonial": {
+      "line": "UGC testimonial. Made offline on one laptop.",
+      "source": "template",
+      "hookPattern": "direct-address",
+      "formatLabel": "UGC testimonial"
+    },
+    "unboxing-reveal": {
+      "line": "Laptop runs full film studio. No cloud. No credits. No limits.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "end-first",
+      "formatLabel": "Unboxing reveal"
+    },
+    "product-launch-film": {
+      "line": "If you stop now, you lose your freedom to create.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "stakes-line",
+      "formatLabel": "Product launch film"
+    },
+    "tech-spec-flyover": {
+      "line": "Tech spec flyover. Made offline on one laptop.",
+      "source": "template",
+      "hookPattern": "spec-flyover",
+      "formatLabel": "Tech spec flyover"
+    },
+    "ai-model-demo": {
+      "line": "See it run. No cloud. No credits. Just your laptop.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "demo-proof",
+      "formatLabel": "AI model demo"
+    },
+    "tech-review-longform": {
+      "line": "Tech review long-form. Made offline on one laptop.",
+      "source": "template",
+      "hookPattern": "number-claim",
+      "formatLabel": "Tech review long-form"
+    },
+    "explainer-diagram": {
+      "line": "People think filmmaking needs cloud, credits, and limits.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "myth-break",
+      "formatLabel": "Explainer with diagram"
+    },
+    "tutorial-15s": {
+      "line": "See this film. Made on your laptop. No cloud. No credits. Full control.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "end-first",
+      "formatLabel": "Tutorial in 15s"
+    },
+    "tutorial-longform": {
+      "line": "If you stop now, you lose the power to make films without internet.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "stakes-line",
+      "formatLabel": "Tutorial long-form"
+    },
+    "myth-vs-fact": {
+      "line": "Belief: Filmmaking needs cloud storage. Fact: VYREALM works entirely on your laptop.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "myth-break",
+      "formatLabel": "Myth versus fact"
+    },
+    "mistake-warning": {
+      "line": "You’re probably thinking you need a cloud to film.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "mistake-warning",
+      "formatLabel": "Mistake warning"
+    },
+    "music-video-loop": {
+      "line": "A beat drops. Then light. Then VYREALM.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "sound-first",
+      "formatLabel": "Music video loop"
+    },
+    "day-in-life": {
+      "line": "Hands on keyboard. Film in progress. No cloud. No credits. Just me.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "process-open",
+      "formatLabel": "Day in the life"
+    },
+    "behind-the-scenes": {
+      "line": "Hands on laptop. Film running. No cloud. No credits. Just you.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "process-open",
+      "formatLabel": "Behind the scenes"
+    },
+    "reaction-commentary": {
+      "line": "Laptop. No cloud. No credits. Just film.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "contrast-cut",
+      "formatLabel": "Reaction commentary"
+    },
+    "quote-card-motion": {
+      "line": "Filming starts now. No cloud. No credits. Just you.",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "quote-open",
+      "formatLabel": "Quote card in motion"
+    },
+    "documentary-chapter": {
+      "line": "Documentary chapter. Made offline on one laptop.",
+      "source": "template",
+      "hookPattern": "number-claim",
+      "formatLabel": "Documentary chapter"
+    },
+    "what-if-micro-doc": {
+      "line": "What if filmmaking worked without the internet?",
+      "source": "ollama:qwen3:4b-instruct",
+      "hookPattern": "cold-question",
+      "formatLabel": "What-if micro documentary"
+    }
+  }
+}

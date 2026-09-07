@@ -19,9 +19,19 @@ import { fileURLToPath } from 'node:url';
 
 import { expandVariants, lintPlan } from '../runtime/format-library.mjs';
 import { renderPlan } from '../runtime/format-render.mjs';
+import { readFile } from 'node:fs/promises';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const shotsDir = join(root, 'outputs/desktop');
+const HOOKS_PATH = join(root, 'runtime/assets/format-hooks.json');
+const MUSIC_BED = join(root, 'runtime/assets/music-bed.m4a');
+const NARRATION_DIR = join(root, 'runtime/assets/narration');
+
+/** Hook lines written by the local LLM. Absent file means no captions, not fake ones. */
+async function loadHooks() {
+  try { return JSON.parse(await readFile(HOOKS_PATH, 'utf8')).hooks ?? {}; }
+  catch { return {}; }
+}
 
 /**
  * Shot roles mapped onto real footage already produced by this project.
@@ -46,9 +56,11 @@ export const SHOT_LIBRARY = {
   // Locally generated: Wan2.2 TI2V-5B Q4, 1024x576, 121 frames, 1568s on a 3050 6GB.
   'anime-hero': { file: 'VYREALM_ANIME_HERO_5S.mp4', inPoint: 0, provenance: 'local-neural-source' },
   'anime-bg': { file: 'VYREALM_ANIME_HERO_5S.mp4', inPoint: 0, provenance: 'local-neural-source' },
-  'anime-action': { file: 'VYREALM_ANIME_HERO_5S.mp4', inPoint: 2, provenance: 'local-neural-source' }
-  // Deliberately absent, because no honest source exists yet:
-  //   talking-head - needs a real presenter or a qualified local avatar (MuseTalk)
+  'anime-action': { file: 'VYREALM_ANIME_HERO_5S.mp4', inPoint: 2, provenance: 'local-neural-source' },
+  // Locally generated presenter. Wan2.2, 121 frames. Note: hand detail shows
+  // the classic AI artifact in parts of the shot - exactly what the quality
+  // detectors are meant to catch and route to trim or re-roll.
+  'talking-head': { file: 'VYREALM_TALKING_HEAD_5S.mp4', inPoint: 0, provenance: 'local-neural-source' }
 };
 
 function parseArgs(argv) {
@@ -73,6 +85,21 @@ export function resolveShots(library = SHOT_LIBRARY, dir = shotsDir) {
   return { resolved, absent };
 }
 
+/**
+ * Supply only what the bed can actually use. A bed wanting narration we do not
+ * have renders silent rather than failing the whole video; the audio module is
+ * right to refuse a half-built mix, so the decision belongs here.
+ */
+function buildAudioSources(plan) {
+  const sources = {};
+  if (existsSync(MUSIC_BED)) sources.musicPath = MUSIC_BED;
+  const narration = join(NARRATION_DIR, `${plan.formatId}.wav`);
+  if (existsSync(narration)) { sources.narrationPath = narration; sources.ambiencePath = narration; }
+  if (plan.audio.narration && !sources.narrationPath) return null;
+  if (plan.audio.music && !sources.musicPath) return null;
+  return Object.keys(sources).length ? sources : null;
+}
+
 async function main() {
   const args = parseArgs(process.argv.slice(2));
   const outDir = resolve(root, args.out);
@@ -82,6 +109,10 @@ async function main() {
   const { resolved, absent } = resolveShots();
   if (absent.length) console.warn(`missing source files: ${absent.join(', ')}`);
   console.log(`shot roles available: ${Object.keys(resolved).join(', ')}\n`);
+
+  const hooks = await loadHooks();
+  const hasMusic = existsSync(MUSIC_BED);
+  console.log(`hooks loaded: ${Object.keys(hooks).length} | music bed: ${hasMusic ? 'yes' : 'no'}`);
 
   const assetIds = Object.fromEntries(Object.keys(resolved).map(role => [role, { assetId: role }]));
   const variants = expandVariants({
@@ -111,12 +142,18 @@ async function main() {
         shotLibrary: resolved,
         output: join(outDir, name),
         workDir: join(workRoot, String(index)),
-        allowExtension: args.extend
+        allowExtension: args.extend,
+        captionText: hooks[plan.formatId]?.line ?? null,
+        // Only supply audio when the bed can actually be satisfied. A bed that
+        // wants narration we do not have must render silent, not fail the whole
+        // video - the module is right to refuse a half-built mix.
+        audioSources: buildAudioSources(plan)
       });
       const drift = Math.abs(receipt.measured.seconds - receipt.requestedSeconds);
       receipt.durationDriftSeconds = Number(drift.toFixed(3));
       receipt.durationExact = drift < 0.1;
       receipt.lint = lintPlan(plan);
+      receipt.hookSource = hooks[plan.formatId]?.source ?? 'none';
       receipt.shotProvenance = [...new Set(plan.timeline
         .filter(b => b.shotRole !== 'black')
         .map(b => resolved[b.shotRole]?.provenance)

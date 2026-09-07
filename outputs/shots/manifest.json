@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "model": "ltxv-2b-0.9.8-distilled-q8_0",
+  "shots": {
+    "ocean-cliff": {
+      "file": "ocean-cliff.mp4",
+      "prompt": "Waves breaking against dark basalt cliffs under heavy grey cloud, spray catching low light, slow crane upward. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90002,
+      "generationSeconds": 517.6,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "forest-light": {
+      "file": "forest-light.mp4",
+      "prompt": "Shafts of morning light through dense pine forest, mist drifting between trunks, slow push forward. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90003,
+      "generationSeconds": 482.4,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    }
+  }
+}

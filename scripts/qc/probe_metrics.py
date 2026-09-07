@@ -150,6 +150,47 @@ def _slope(values: list[float], fps: float) -> float:
     return float(np.polyfit(t, np.asarray(values, dtype=np.float64), 1)[0])
 
 
+def _autocorr(values, lag: int) -> float:
+    a = np.asarray(values, dtype=np.float64)
+    if a.size <= lag + 2:
+        return 0.0
+    x, y = a[:-lag], a[lag:]
+    if x.std() < 1e-9 or y.std() < 1e-9:
+        return 0.0
+    return float(np.corrcoef(x, y)[0, 1])
+
+
+def _cadence(rgb_mae, flow_top5) -> dict:
+    """Detect period-2 stepped motion ("animating on twos").
+
+    A shot rendered at half its container frame rate leaves every second frame
+    nearly identical to its predecessor. That shows up as a strong negative
+    lag-1 and strong positive lag-2 autocorrelation in the frame-difference
+    series, plus a large even/odd split. No exact duplicates are needed, so the
+    duplicate-frame check misses it entirely.
+
+    Polarity is deliberately not baked in: for anime, animating on twos is
+    correct craft; for live-action it is a defect. The caller decides.
+    """
+
+    def split_ratio(values):
+        a = np.asarray(values, dtype=np.float64)
+        if a.size < 4:
+            return 1.0
+        lo, hi = a[0::2].mean(), a[1::2].mean()
+        return float(max(lo, hi) / max(min(lo, hi), 1e-9))
+
+    lag1 = _autocorr(rgb_mae, 1)
+    lag2 = _autocorr(rgb_mae, 2)
+    return {
+        "rgbMaeAutocorrLag1": lag1,
+        "rgbMaeAutocorrLag2": lag2,
+        "rgbMaeAlternationRatio": split_ratio(rgb_mae),
+        "flowAlternationRatio": split_ratio(flow_top5),
+        "steppedMotionSuspected": bool(lag1 < -0.40 and lag2 > 0.40),
+    }
+
+
 def _stats(values) -> dict:
     a = np.asarray(values, dtype=np.float64)
     if a.size == 0:
@@ -288,6 +329,12 @@ def analyse(frames, fps: float) -> dict:
     flow_accel = np.abs(np.diff(np.asarray(flow_mean), 2)) if len(flow_mean) >= 3 else np.array([])
 
     mean_sharp = float(np.mean(sharp)) if sharp else 0.0
+    med_sharp = float(np.median(sharp)) if sharp else 0.0
+    # Largest single-frame collapse in detail, as a ratio of the previous frame.
+    s_arr = np.asarray(sharp, dtype=np.float64)
+    drops = s_arr[:-1] / np.maximum(s_arr[1:], 1e-9)
+    max_drop = float(drops.max()) if drops.size else 1.0
+    drop_at = int(np.argmax(drops)) + 1 if drops.size else -1
 
     metrics = {
         "schemaVersion": 1,
@@ -336,6 +383,7 @@ def analyse(frames, fps: float) -> dict:
             "longestStallRun": longest_stall,
             "nearDuplicateThresholdMae": NEAR_DUPLICATE_MAE,
         },
+        "cadence": _cadence(rgb_mae, flow_top5),
         "colourDrift": {
             "slopePerSec": {
                 "b": _slope(mean_b, fps),
@@ -357,10 +405,19 @@ def analyse(frames, fps: float) -> dict:
         },
         "sharpness": {
             "laplacianVar": _stats(sharp),
+            "median": med_sharp,
             "slopePerSec": _slope(sharp, fps),
             # Relative trend is the comparable number across shots: absolute
             # Laplacian variance depends on content and resolution.
             "relativeSlopePctPerSec": 100.0 * _slope(sharp, fps) / mean_sharp if mean_sharp else 0.0,
+            # A linear trend is the wrong model for the failure that actually
+            # occurs: detail does not fade, it falls off a step in one or two
+            # frames while the frame difference stays unremarkable. These two
+            # catch that; the slope does not.
+            "maxSingleFrameDropRatio": max_drop,
+            "maxSingleFrameDropAtFrame": drop_at,
+            "minOverMedian": (min(sharp) / med_sharp) if med_sharp else 1.0,
+            "fracBelowHalfMedian": float(np.mean(np.asarray(sharp) < 0.5 * med_sharp)) if med_sharp else 0.0,
         },
         "artefacts": {
             "blockinessRatio": _stats(blocky),
@@ -461,10 +518,23 @@ def selfcheck() -> None:
         for i in range(n):
             yield cv2.GaussianBlur(base, (1 + 2 * i, 1 + 2 * i), 0)
 
+    def on_twos():
+        # Same pan, but each rendered frame is held for two container frames.
+        for i in range(n):
+            j = (i // 2) * 2
+            yield canvas[:, j * dx: j * dx + view].copy()
+
+    def sharp_cliff():
+        # Detail collapses at one frame while the frame difference stays small.
+        for i in range(n):
+            yield base.copy() if i < n // 2 else cv2.GaussianBlur(base, (9, 9), 0)
+
     fz = analyse(frozen(), 24.0)
     pn = analyse(panning(), 24.0)
     fl = analyse(flickering(), 24.0)
     sf = analyse(softening(), 24.0)
+    tw = analyse(on_twos(), 24.0)
+    cl = analyse(sharp_cliff(), 24.0)
 
     # A frozen clip is a perfect stall and not dynamic.
     assert fz["stall"]["exactDuplicatePairs"] == n - 1, fz["stall"]
@@ -505,6 +575,22 @@ def selfcheck() -> None:
 
     # Progressive blur must show up as a negative sharpness trend.
     assert sf["sharpness"]["relativeSlopePctPerSec"] < -20.0, sf["sharpness"]
+
+    # Stepped motion: held frames give period-2 structure. The smooth pan is the
+    # negative control and must NOT trip the same detector.
+    assert tw["cadence"]["steppedMotionSuspected"] is True, tw["cadence"]
+    assert tw["cadence"]["rgbMaeAutocorrLag1"] < -0.4, tw["cadence"]
+    assert tw["cadence"]["rgbMaeAutocorrLag2"] > 0.4, tw["cadence"]
+    assert pn["cadence"]["steppedMotionSuspected"] is False, pn["cadence"]
+    # ... and the duplicate-frame check alone would not have caught it, which is
+    # the entire reason the cadence metric exists.
+    assert tw["stall"]["longestStallRun"] < n // 2, tw["stall"]
+
+    # A one-frame detail collapse must be caught by the step detector even
+    # though the frame difference stays small and the linear slope is shallow.
+    assert cl["sharpness"]["maxSingleFrameDropRatio"] > 2.0, cl["sharpness"]
+    assert cl["sharpness"]["maxSingleFrameDropAtFrame"] == n // 2, cl["sharpness"]
+    assert cl["temporalFlicker"]["rgbMae"]["max"] < 25.0, cl["temporalFlicker"]
 
     print("selfcheck OK")
     print(f"  frozen    flicker={fz['temporalFlicker']['vbenchFlickerScore']:.6f} "

@@ -25,6 +25,7 @@ import { FORMATS, FORMAT_IDS, PLATFORM_SPECS, countVariants, validateAllFormats 
 import { validateAllPresets } from './runtime/format-presets.mjs';
 import { initializeFlagshipCatalogue, selectFlagship, listFlagships, removeFlagship } from './runtime/flagship-catalogue.mjs';
 import { applyGeneratedShot } from './runtime/apply-generated-shot.mjs';
+import { validateNarrationCues } from './runtime/narration-cues.mjs';
 
 // Desktop builds keep immutable application files separate from writable
 // per-user data. Development defaults remain rooted at the current project.
@@ -246,7 +247,8 @@ async function runJob(id){
    if(x.expectedRevision!==project.revision)return send(res,409,{error:'Project changed; save or refresh before starting audio'});
    const operation=path.endsWith('voiceover')?'voiceover':'transcribe',input={operation,projectId:project.id,revision:project.revision};
    if(operation==='voiceover'){if(typeof x.text!=='string'||!x.text.trim()||x.text.length>5000)return send(res,400,{error:'Narration requires 1–5000 characters'});input.text=x.text.trim();}
-   else {const asset=typeof x.assetId==='string'&&db.prepare('SELECT * FROM assets WHERE id=?').get(x.assetId);if(!asset||asset.project_id!==project.id||!/^audio\/|^video\//.test(json(Buffer.from(asset.document)).mime||''))return send(res,400,{error:'Select an audio or video asset from this project'});input.assetId=asset.id;input.inputPath=asset.path;}
+   if(operation==='voiceover'&&x.cues!=null){try{input.cues=validateNarrationCues({cues:x.cues,durationSeconds:x.durationSeconds,text:input.text});input.durationSeconds=x.durationSeconds;}catch(error){return send(res,400,{error:error.message});}}
+   if(operation==='transcribe'){const asset=typeof x.assetId==='string'&&db.prepare('SELECT * FROM assets WHERE id=?').get(x.assetId);if(!asset||asset.project_id!==project.id||!/^audio\/|^video\//.test(json(Buffer.from(asset.document)).mime||''))return send(res,400,{error:'Select an audio or video asset from this project'});input.assetId=asset.id;input.inputPath=asset.path;}
    const config=join(process.env.VYRELUM_RUNTIME_DIR||join(dataDir,'runtime'),'audio.json');
    if(!existsSync(config))return send(res,409,{error:'Local Piper/Whisper models are not installed. Import recorded narration or install the offline audio runtime.',code:'LOCAL_AUDIO_UNAVAILABLE'});
    const id=randomUUID(),t=now();db.prepare('INSERT INTO jobs (id,project_id,revision,type,status,progress,stage,input,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)').run(id,project.id,project.revision,operation,'queued',0,'queued for local audio',JSON.stringify(input),t,t);void runJob(id);return send(res,202,jdoc(db.prepare('SELECT * FROM jobs WHERE id=?').get(id)));

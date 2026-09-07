@@ -231,7 +231,11 @@ export function buildAudioFilter({ bed, inputs = [], durationSeconds } = {}) {
     chains.push(`${mixLabels.map(label => `[${label}]`).join('')}amix=inputs=${mixLabels.length}:duration=longest:normalize=0[mix]`);
   }
 
-  chains.push(`[${mixLabel}]loudnorm=I=${entry.targetLufs}:TP=${TRUE_PEAK_DBTP}:LRA=11,${fit}[aout]`);
+  // loudnorm resamples internally to 192kHz and emits at ITS rate, not the
+  // input's, so without an explicit aresample the graph silently outputs 96kHz
+  // and breaks Instagram's published 48kHz ceiling. The head aformat does not
+  // survive loudnorm; this must come after it.
+  chains.push(`[${mixLabel}]loudnorm=I=${entry.targetLufs}:TP=${TRUE_PEAK_DBTP}:LRA=11,aresample=${SAMPLE_RATE},${fit}[aout]`);
 
   return { filter: chains.join(';'), outLabel: 'aout', inputArgs: [] };
 }

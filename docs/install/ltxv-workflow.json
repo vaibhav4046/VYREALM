@@ -1,0 +1,108 @@
+{
+  "1": {
+    "class_type": "UnetLoaderGGUF",
+    "_meta": { "title": "Load LTXV 2B 0.9.8 distilled (Q8_0 GGUF)" },
+    "inputs": { "unet_name": "ltxv-2b-0.9.8-distilled-q8_0.gguf" }
+  },
+  "2": {
+    "class_type": "CLIPLoaderGGUF",
+    "_meta": { "title": "Load T5-XXL encoder (Q5_K_M GGUF)" },
+    "inputs": {
+      "clip_name": "t5-v1_1-xxl-encoder-Q5_K_M.gguf",
+      "type": "ltxv"
+    }
+  },
+  "3": {
+    "class_type": "VAELoader",
+    "_meta": { "title": "Load LTXV 0.9.8 VAE" },
+    "inputs": { "vae_name": "ltxv-0.9.8-2b-distilled-vae.safetensors" }
+  },
+  "4": {
+    "class_type": "CLIPTextEncode",
+    "_meta": { "title": "Positive prompt" },
+    "inputs": {
+      "text": "A slow cinematic dolly shot through a rain-soaked neon alley at night, puddles reflecting magenta and cyan signage, steam drifting from a vent, shallow depth of field, 35mm film grain",
+      "clip": ["2", 0]
+    }
+  },
+  "5": {
+    "class_type": "CLIPTextEncode",
+    "_meta": { "title": "Negative prompt (unused at cfg 1.0)" },
+    "inputs": {
+      "text": "worst quality, inconsistent motion, blurry, jittery, distorted, watermark, text",
+      "clip": ["2", 0]
+    }
+  },
+  "6": {
+    "class_type": "EmptyLTXVLatentVideo",
+    "_meta": { "title": "Empty LTXV latent 768x512x97" },
+    "inputs": { "width": 768, "height": 512, "length": 97, "batch_size": 1 }
+  },
+  "7": {
+    "class_type": "LTXVConditioning",
+    "_meta": { "title": "LTXV conditioning (frame rate)" },
+    "inputs": {
+      "positive": ["4", 0],
+      "negative": ["5", 0],
+      "frame_rate": 25.0
+    }
+  },
+  "8": {
+    "class_type": "ModelSamplingLTXV",
+    "_meta": { "title": "LTXV sigma shift" },
+    "inputs": {
+      "model": ["1", 0],
+      "max_shift": 2.05,
+      "base_shift": 0.95,
+      "latent": ["6", 0]
+    }
+  },
+  "9": {
+    "class_type": "LTXVScheduler",
+    "_meta": { "title": "LTXV scheduler - 8 steps (distilled)" },
+    "inputs": {
+      "steps": 8,
+      "max_shift": 2.05,
+      "base_shift": 0.95,
+      "stretch": true,
+      "terminal": 0.1,
+      "latent": ["6", 0]
+    }
+  },
+  "10": {
+    "class_type": "KSamplerSelect",
+    "_meta": { "title": "Sampler: euler" },
+    "inputs": { "sampler_name": "euler" }
+  },
+  "11": {
+    "class_type": "SamplerCustom",
+    "_meta": { "title": "Sample - cfg 1.0 (distilled, no CFG)" },
+    "inputs": {
+      "model": ["8", 0],
+      "add_noise": true,
+      "noise_seed": 42,
+      "cfg": 1.0,
+      "positive": ["7", 0],
+      "negative": ["7", 1],
+      "sampler": ["10", 0],
+      "sigmas": ["9", 0],
+      "latent_image": ["6", 0]
+    }
+  },
+  "12": {
+    "class_type": "VAEDecode",
+    "_meta": { "title": "Decode" },
+    "inputs": { "samples": ["11", 0], "vae": ["3", 0] }
+  },
+  "13": {
+    "class_type": "SaveWEBM",
+    "_meta": { "title": "Save WEBM" },
+    "inputs": {
+      "images": ["12", 0],
+      "filename_prefix": "ltxv-2b-098-distilled",
+      "codec": "vp9",
+      "fps": 25.0,
+      "crf": 32.0
+    }
+  }
+}

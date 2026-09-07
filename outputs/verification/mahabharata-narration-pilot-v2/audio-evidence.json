@@ -1,0 +1,77 @@
+{
+  "status": "review_required",
+  "validated": true,
+  "durationSeconds": 30.0,
+  "cues": [
+    {
+      "index": 0,
+      "start": 0,
+      "end": 5,
+      "text": "At Kurukshetra, Krishna halts the chariot.",
+      "speechDurationSeconds": 3.297233560090703,
+      "pcmHash": "cbd39c99b868e631a5481cca1a47cd8de894173ff99a890575124e960a263c75"
+    },
+    {
+      "index": 1,
+      "start": 5,
+      "end": 10,
+      "text": "Across the field stand his kin and teachers.",
+      "speechDurationSeconds": 3.076643990929705,
+      "pcmHash": "36da93617c413e7a6a4fa34cecc86e4293bb103368bb7da1329e2fd048ec2ad4"
+    },
+    {
+      "index": 2,
+      "start": 10,
+      "end": 15,
+      "text": "His breath catches. His bow slips.",
+      "speechDurationSeconds": 2.6006349206349206,
+      "pcmHash": "f4354b0a559e593df1f30c8cad4249aa4828f409e44a16e4eaf1329fc7943cc0"
+    },
+    {
+      "index": 3,
+      "start": 15,
+      "end": 20,
+      "text": "Krishna counsels action without attachment to reward.",
+      "speechDurationSeconds": 3.4946031746031747,
+      "pcmHash": "239508e972b743b533735c781322758cb51bc3916336b56052ea7afff71e7be0"
+    },
+    {
+      "index": 4,
+      "start": 20,
+      "end": 25,
+      "text": "The weight of kinship remains. Arjuna lifts his gaze, listening.",
+      "speechDurationSeconds": 3.877732426303855,
+      "pcmHash": "75f71fc37716b87065f6e40558aca8724cdea5e3863eed9495de7f8145368478"
+    },
+    {
+      "index": 5,
+      "start": 25,
+      "end": 30,
+      "text": "Between the armies, he must understand what duty demands.",
+      "speechDurationSeconds": 4.46984126984127,
+      "pcmHash": "05eeeff9daab85628b07d6fa347481e5e46d5c17b53e1b77a97861e98770cb45"
+    }
+  ],
+  "outputs": {
+    "audio": "narration.wav",
+    "quality": "audio-evidence.json"
+  },
+  "provenance": {
+    "generationStatus": "generated",
+    "mediaType": "audio",
+    "providerId": "piper-local-cpu",
+    "modelId": "en_US-ljspeech-high",
+    "prompt": "At Kurukshetra, Krishna halts the chariot. Across the field stand his kin and teachers. His breath catches. His bow slips. Krishna counsels action without attachment to reward. The weight of kinship remains. Arjuna lifts his gaze, listening. Between the armies, he must understand what duty demands.",
+    "modelHash": "5d4f08ba6a2a48c44592eed3ce56bf85e9de3dd4e20df90541ae68a8310c029a",
+    "outputHash": "0f163d8ebda373bd973f21b26f40441805484051976f39ec90062f8d7f4facbe",
+    "sampleRate": 22050,
+    "renderTimeMs": 44299,
+    "timingMethod": "shot-aligned-local-speech"
+  },
+  "diagnostics": [
+    {
+      "code": "VOICE_REVIEW_REQUIRED",
+      "message": "Local narration created. Review pronunciation and timing; no lip-sync is implied."
+    }
+  ]
+}

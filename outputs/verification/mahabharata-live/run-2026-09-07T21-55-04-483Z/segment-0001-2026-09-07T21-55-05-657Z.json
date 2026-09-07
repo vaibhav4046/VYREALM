@@ -1,0 +1,26 @@
+{
+  "index": 1,
+  "file": "segment-0001-2026-09-07T21-55-05-657Z.webm",
+  "startedAt": "2026-09-07T21:55:05.657Z",
+  "stoppedObservingAt": "2026-09-07T22:00:08.761Z",
+  "finalizedAt": "2026-09-07T22:00:32.837Z",
+  "realElapsedSeconds": 303.104,
+  "bytes": 23620529,
+  "sha256": "f3d04ef701e2a6fdfc649fde07bb3501b981328820a2e20587647a5fce67986f",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_type": "video",
+        "width": 1920,
+        "height": 1080,
+        "avg_frame_rate": "25/1"
+      }
+    ],
+    "format": {
+      "duration": "303.400000"
+    }
+  },
+  "timing": "unaltered real-time browser recording"
+}

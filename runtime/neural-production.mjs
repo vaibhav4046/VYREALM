@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { createComfyUIProvider } from './providers/comfyui.mjs';
 import { recordGeneratedProvenance, hashJson } from './generation-gate.mjs';
 import { verifyMedia } from './media-verifier.mjs';
+import { bindGeneratedDelivery } from './generation-delivery.mjs';
 
 const execFileAsync = promisify(execFile);
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -251,7 +252,8 @@ export async function produceNeuralSmoke({ output, prompt = SMOKE_PROMPT, seed =
     await run(ffmpeg, ['-y', '-i', source, '-vf', 'scale=1920:1080:flags=lanczos', '-c:v', 'libx264', '-crf', '18', '-profile:v', 'high', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', join(jobRoot, 'delivery-1080p.mp4')], encodeLog);
     const provenance = await recordGeneratedProvenance({ jobRoot, outputPath: source, providerId: provider.id, modelId: WAN_MODELS.diffusion, workflow: motionWorkflow, seed, prompt, durationSeconds, width, height, fps, vramPeakGb, renderTimeMs: Date.now() - started, providerEvidence: motion, ffmpeg, ffprobe });
     if (provenance.status !== 'generated') throw failure(provenance.code, provenance.message);
-    const receipt = { schemaVersion: 2, status: 'review_required', validated: true, sourceMethod: 'local-wan22-gguf', provenance: { ...provenance, generationStatus: 'generated', keyframe: { promptId: keyframe.promptId, outputHash: keyframe.ledger[0].sha256, sourceMethod: reference ? 'prior-local-generated-keyframe' : 'local-generated-keyframe', sourceJobId: keyframe.sourceJobId || null }, deliveryMethod: `1080p-lanczos-from-${width}x${height}`, deliveryResolution:{width:1920,height:1080}, fourKMethod: 'not-run', semanticQuality: 'unreviewed' }, verification, durationSeconds, outputs: { video: 'delivery-1080p.mp4', sourceVideo: 'generated-source.mp4', poster: 'contact-sheet.png', quality: 'verification.json' }, diagnostics: [{ code: 'VISUAL_REVIEW_REQUIRED', message: 'Actual local neural inference completed; cinematic quality, face continuity and action alignment still need visual review.' }] };
+    const deliveryProvenance = await bindGeneratedDelivery({ jobRoot, provenance, sourcePath: source, deliveryPath: join(jobRoot, 'delivery-1080p.mp4'), deliveryMethod: `1080p-lanczos-from-${width}x${height}`, deliveryResolution: { width: 1920, height: 1080 }, ffmpeg, ffprobe });
+    const receipt = { schemaVersion: 2, status: 'review_required', validated: true, sourceMethod: 'local-wan22-gguf', provenance: { ...deliveryProvenance, generationStatus: 'generated', keyframe: { promptId: keyframe.promptId, outputHash: keyframe.ledger[0].sha256, sourceMethod: reference ? 'prior-local-generated-keyframe' : 'local-generated-keyframe', sourceJobId: keyframe.sourceJobId || null }, fourKMethod: 'not-run', semanticQuality: 'unreviewed' }, verification, durationSeconds, outputs: { video: 'delivery-1080p.mp4', sourceVideo: 'generated-source.mp4', poster: 'contact-sheet.png', quality: 'verification.json' }, diagnostics: [{ code: 'VISUAL_REVIEW_REQUIRED', message: 'Actual local neural inference completed; cinematic quality, face continuity and action alignment still need visual review.' }] };
     await writeFile(join(jobRoot, 'verification.json'), JSON.stringify(receipt, null, 2));
     await writeFile(join(jobRoot, 'result.json'), JSON.stringify(receipt, null, 2));
     onProgress({ stage: 'Generated clip ready for visual review', progress: 1 });

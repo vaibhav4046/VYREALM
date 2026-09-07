@@ -1,0 +1,37 @@
+{
+  "cues": [
+    {
+      "end": 5,
+      "start": 0,
+      "text": "At Kurukshetra, Krishna halts the chariot."
+    },
+    {
+      "end": 10,
+      "start": 5,
+      "text": "Across the field stand his kin and teachers."
+    },
+    {
+      "end": 15,
+      "start": 10,
+      "text": "His breath catches. His bow slips."
+    },
+    {
+      "end": 20,
+      "start": 15,
+      "text": "Krishna counsels action without attachment to reward."
+    },
+    {
+      "end": 25,
+      "start": 20,
+      "text": "The weight of kinship remains. Arjuna lifts his gaze, listening."
+    },
+    {
+      "end": 30,
+      "start": 25,
+      "text": "Between the armies, he must understand what duty demands."
+    }
+  ],
+  "operation": "voiceover",
+  "durationSeconds": 30,
+  "text": "At Kurukshetra, Krishna halts the chariot. Across the field stand his kin and teachers. His breath catches. His bow slips. Krishna counsels action without attachment to reward. The weight of kinship remains. Arjuna lifts his gaze, listening. Between the armies, he must understand what duty demands."
+}

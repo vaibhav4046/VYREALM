@@ -1,4 +1,4 @@
-import argparse,hashlib,json,os,pathlib,time,wave
+import argparse,hashlib,io,json,math,os,pathlib,time,wave
 os.environ['HF_HUB_OFFLINE']='1';os.environ['TRANSFORMERS_OFFLINE']='1';os.environ['HF_HUB_DISABLE_TELEMETRY']='1'
 p=argparse.ArgumentParser();p.add_argument('--request',required=True);p.add_argument('--output',required=True);p.add_argument('--config',required=True);a=p.parse_args()
 request=json.loads(pathlib.Path(a.request).read_text(encoding='utf-8'));config=json.loads(pathlib.Path(a.config).read_text(encoding='utf-8'));output=pathlib.Path(a.output).resolve();output.mkdir(parents=True,exist_ok=True)
@@ -16,11 +16,35 @@ if operation=='voiceover':
     from piper import PiperVoice,SynthesisConfig
     voice=PiperVoice.load(config['voice'],use_cuda=False)
     target=output/'narration.wav'
-    with wave.open(str(target),'wb') as wav:voice.synthesize_wav(text,wav,SynthesisConfig(length_scale=1.05,noise_scale=0.5,noise_w_scale=0.7))
+    cues=request.get('cues')
+    cue_evidence=[]
+    synthesis=SynthesisConfig(length_scale=1.05,noise_scale=0.5,noise_w_scale=0.7)
+    if cues is None:
+        with wave.open(str(target),'wb') as wav:voice.synthesize_wav(text,wav,synthesis)
+    else:
+        total=request.get('durationSeconds')
+        if not isinstance(total,(int,float)) or not math.isfinite(total) or not 1<=total<=120 or not isinstance(cues,list) or not 1<=len(cues)<=24:raise RuntimeError('NARRATION_CUES_INVALID')
+        previous=0; master=None; params=None
+        for index,cue in enumerate(cues):
+            start,end,words=cue.get('start'),cue.get('end'),str(cue.get('text','')).strip()
+            if not isinstance(start,(int,float)) or not isinstance(end,(int,float)) or not math.isfinite(start) or not math.isfinite(end) or start<previous or end<=start or end>total or not words or len(words)>1000:raise RuntimeError('NARRATION_CUES_INVALID')
+            buffer=io.BytesIO()
+            with wave.open(buffer,'wb') as wav:voice.synthesize_wav(words,wav,synthesis)
+            with wave.open(io.BytesIO(buffer.getvalue()),'rb') as wav:
+                current=(wav.getnchannels(),wav.getsampwidth(),wav.getframerate()); count=wav.getnframes(); pcm=wav.readframes(count)
+            if params is None:
+                params=current; master=bytearray(round(total*params[2])*params[0]*params[1])
+            if current!=params:raise RuntimeError('NARRATION_FORMAT_CHANGED')
+            actual=count/params[2]
+            if count>round((end-start)*params[2]):raise RuntimeError(f'NARRATION_CUE_OVERFLOW: cue {index+1} needs {actual:.2f}s but its shot allows {end-start:.2f}s. Shorten its narration.')
+            offset=round(start*params[2])*params[0]*params[1]; master[offset:offset+len(pcm)]=pcm
+            cue_evidence.append({'index':index,'start':start,'end':end,'text':words,'speechDurationSeconds':actual,'pcmHash':hashlib.sha256(pcm).hexdigest()});previous=end
+        with wave.open(str(target),'wb') as wav:
+            wav.setnchannels(params[0]);wav.setsampwidth(params[1]);wav.setframerate(params[2]);wav.writeframes(master)
     with wave.open(str(target),'rb') as wav:
         duration=wav.getnframes()/wav.getframerate();sample_rate=wav.getframerate();frames=wav.getnframes()
     if duration<=0 or frames==0:raise RuntimeError('EMPTY_LOCAL_NARRATION')
-    result={'status':'review_required','validated':True,'durationSeconds':duration,'outputs':{'audio':'narration.wav','quality':'audio-evidence.json'},'provenance':{'generationStatus':'generated','mediaType':'audio','providerId':'piper-local-cpu','modelId':'en_US-ljspeech-high','prompt':text,'modelHash':digest(pathlib.Path(config['voice'])),'outputHash':digest(target),'sampleRate':sample_rate,'renderTimeMs':round((time.time()-started)*1000)},'diagnostics':[{'code':'VOICE_REVIEW_REQUIRED','message':'Local narration created. Review pronunciation and timing; no lip-sync is implied.'}]}
+    result={'status':'review_required','validated':True,'durationSeconds':duration,'cues':cue_evidence,'outputs':{'audio':'narration.wav','quality':'audio-evidence.json'},'provenance':{'generationStatus':'generated','mediaType':'audio','providerId':'piper-local-cpu','modelId':'en_US-ljspeech-high','prompt':text,'modelHash':digest(pathlib.Path(config['voice'])),'outputHash':digest(target),'sampleRate':sample_rate,'renderTimeMs':round((time.time()-started)*1000),'timingMethod':'shot-aligned-local-speech' if cues is not None else 'continuous-local-speech'},'diagnostics':[{'code':'VOICE_REVIEW_REQUIRED','message':'Local narration created. Review pronunciation and timing; no lip-sync is implied.'}]}
 else:
     if operation!='transcribe':raise RuntimeError('UNSUPPORTED_AUDIO_OPERATION')
     media=pathlib.Path(request['inputPath']).resolve()

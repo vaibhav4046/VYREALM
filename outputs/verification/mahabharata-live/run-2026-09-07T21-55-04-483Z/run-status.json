@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "state": "stopped",
+  "pid": 38996,
+  "startedAt": "2026-09-07T21:55:04.483Z",
+  "updatedAt": "2026-09-07T22:10:51.812Z",
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "firstJobId": "a707a1a2-66da-415d-9051-c8ff805cb915",
+  "origin": "http://127.0.0.1:4173",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "startedAfterFirstKeyframe": true,
+  "recordedSurface": "real local VYREALM browser UI only",
+  "audioCapture": "Playwright records browser pixels only; final film audio must be inspected separately",
+  "timing": "real elapsed browser video; no retiming or replacement frames; inter-segment gaps are recorded in UTC",
+  "maxSeconds": 10800,
+  "chunkSeconds": 300,
+  "currentSegment": null,
+  "completedSegments": [
+    {
+      "index": 1,
+      "file": "segment-0001-2026-09-07T21-55-05-657Z.webm",
+      "startedAt": "2026-09-07T21:55:05.657Z",
+      "stoppedObservingAt": "2026-09-07T22:00:08.761Z",
+      "finalizedAt": "2026-09-07T22:00:32.837Z",
+      "realElapsedSeconds": 303.104,
+      "bytes": 23620529,
+      "sha256": "f3d04ef701e2a6fdfc649fde07bb3501b981328820a2e20587647a5fce67986f",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "avg_frame_rate": "25/1"
+          }
+        ],
+        "format": {
+          "duration": "303.400000"
+        }
+      },
+      "timing": "unaltered real-time browser recording"
+    },
+    {
+      "index": 2,
+      "file": "segment-0002-2026-09-07T22-00-33-029Z.webm",
+      "startedAt": "2026-09-07T22:00:33.029Z",
+      "stoppedObservingAt": "2026-09-07T22:05:34.968Z",
+      "finalizedAt": "2026-09-07T22:05:50.222Z",
+      "realElapsedSeconds": 301.939,
+      "bytes": 22884019,
+      "sha256": "e54cf2624b2691a9f7dfab462173581bd4f88578061da2519891fa9b1e718a39",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "avg_frame_rate": "25/1"
+          }
+        ],
+        "format": {
+          "duration": "301.680000"
+        }
+      },
+      "timing": "unaltered real-time browser recording"
+    },
+    {
+      "index": 3,
+      "file": "segment-0003-2026-09-07T22-05-50-654Z.webm",
+      "startedAt": "2026-09-07T22:05:50.654Z",
+      "stoppedObservingAt": "2026-09-07T22:10:51.134Z",
+      "finalizedAt": "2026-09-07T22:10:51.790Z",
+      "realElapsedSeconds": 300.48,
+      "bytes": 239701,
+      "sha256": "6f1f8609156cb013a4e4c271107653b513a9dfec750d883584c8de24793cdeaa",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 1920,
+            "height": 1080,
+            "avg_frame_rate": "25/1"
+          }
+        ],
+        "format": {
+          "duration": "109.800000"
+        }
+      },
+      "timing": "unaltered real-time browser recording"
+    }
+  ],
+  "lastSnapshot": {
+    "file": "snapshot-2026-09-07T22-05-11-103Z.json",
+    "at": "2026-09-07T22:05:11.103Z",
+    "sha256": "d88b67fdc477857f5a891784ff36110754aa54cd1a4c61968809a2d049261a9e"
+  },
+  "currentView": "Create",
+  "controlPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-07T21-55-04-483Z\\capture-command.json",
+  "stopPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-07T21-55-04-483Z\\STOP",
+  "stopReason": "recorder-error:Error"
+}

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-09-07T21:55:24.795Z",
+  "source": "http://127.0.0.1:4173",
+  "project": {
+    "id": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+    "name": "Mahabharata · Between Two Armies",
+    "revision": 4,
+    "mode": "cinematic",
+    "settings": {
+      "width": 1920,
+      "fps": 24,
+      "height": 1080
+    },
+    "timelineClips": 0,
+    "latestOutput": {
+      "jobId": "a707a1a2-66da-415d-9051-c8ff805cb915",
+      "status": "blocked",
+      "provenance": {
+        "generationStatus": "blocked"
+      }
+    }
+  },
+  "jobs": [
+    {
+      "id": "a707a1a2-66da-415d-9051-c8ff805cb915",
+      "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+      "revision": 1,
+      "type": "generation-test",
+      "status": "running",
+      "progress": 0.25,
+      "stage": "motion: waiting for the local GPU; prior frames retained",
+      "error": null,
+      "attempts": 3,
+      "createdAt": "2026-09-07T21:38:54.107Z",
+      "updatedAt": "2026-09-07T21:55:22.120Z",
+      "outputStatus": "blocked",
+      "provenance": {
+        "generationStatus": "blocked"
+      }
+    }
+  ],
+  "runtime": {
+    "time": 1788818109141,
+    "at": "2026-09-07T21:55:08.720Z",
+    "registered": true,
+    "generation": {
+      "status": "ready",
+      "provider": "comfyui-local",
+      "modelId": "Wan2.2-TI2V-5B-Q4_K_M.gguf"
+    },
+    "interpolation": {
+      "status": "ready",
+      "device": "NVIDIA GeForce RTX 3050 6GB Laptop GPU"
+    }
+  }
+}

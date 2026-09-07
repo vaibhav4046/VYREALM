@@ -1,7 +1,11 @@
 {
   "schemaVersion": 1,
-  "revision": 3,
-  "continuityRevision": {"change":"Adopt the inspected original keyframe's short moustache and chin beard for Arjuna, replacing the initial clean-shaven art direction.","keyframeSha256":"957efafb8aa68c96a6efd2417fdc4137e0b0d481a000986a1aa485d58561e75b","reason":"Retain completed detailed character reference and explicitly lock its actual appearance. Motion remains unreviewed."},
+  "revision": 4,
+  "continuityRevision": {
+    "change": "Adopt the inspected original keyframe's short moustache and chin beard for Arjuna, replacing the initial clean-shaven art direction.",
+    "keyframeSha256": "957efafb8aa68c96a6efd2417fdc4137e0b0d481a000986a1aa485d58561e75b",
+    "reason": "Retain completed detailed character reference and explicitly lock its actual appearance. Motion remains unreviewed."
+  },
   "title": "BETWEEN TWO ARMIES",
   "subtitle": "An original Mahabharata teaser",
   "status": "planned",
@@ -13,7 +17,7 @@
   },
   "language": "en",
   "captionsRequested": false,
-  "narration": "At Kurukshetra, Arjuna asks Krishna to halt their chariot. Across the field stand his kin and teachers. His breath catches. His bow slips. Krishna counsels action without attachment to reward. The weight of kinship remains. Arjuna lifts his gaze, listening. Between the armies, he must understand what duty demands.",
+  "narration": "At Kurukshetra, Krishna halts the chariot. Across the field stand his kin and teachers. His breath catches. His bow slips. Krishna counsels action without attachment to reward. The weight of kinship remains. Arjuna lifts his gaze, listening. Between the armies, he must understand what duty demands.",
   "narrationType": "original-poetic-exposition-not-scripture-quotation",
   "planningProvenance": {
     "research": "primary-source-web-research-by-development-assistant",
@@ -100,7 +104,7 @@
       "shotType": "low-wide-detail",
       "keyframePrompt": "Photorealistic Indian epic film still. At dawn on the dusty Kurukshetra plain, foreground weathered wooden chariot wheel with worn brass rim and detailed rope binding. Midground a white horse shoulder and a saffron cloth banner, distant ranks of warriors softly visible through atmospheric dust. Strong foreground, midground and background separation. Warm side light catches wood grain, a little airborne dust, authentic material texture, 35mm cinema lens, grounded natural contrast. No text.",
       "motionPrompt": "Camera tracks slowly sideways past the stationary chariot wheel. Cloth stirs in a gentle breeze, a thin band of dust drifts across the ground, the white horse breathes. Preserve wheel geometry and distant figures, one uninterrupted shot.",
-      "narrationCue": "At Kurukshetra, Arjuna asks Krishna to halt their chariot.",
+      "narrationCue": "At Kurukshetra, Krishna halts the chariot.",
       "sound": [
         "dry-wind",
         "distant-conch-like-call",
@@ -273,5 +277,6 @@
       "unintelligible-narration",
       "copied-reference-media"
     ]
-  }
+  },
+  "timingRevision": "Piper measured opening narration at 5.28 seconds for a 5-second shot. Shortened only that cue; the failure was retained in the pilot log. Other cue timings still require synthesis validation."
 }

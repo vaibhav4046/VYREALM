@@ -142,7 +142,7 @@ export const TIERS = Object.freeze({
     compositeConcurrency: compositeSlots(2),
     neuralConcurrency: 1,
     estimatedSecondsPerShot: null,
-    estimateBasis: 'NOT_APPLICABLE: this tier runs no neural video model, so there is no per-shot diffusion cost to estimate. Composite cost is the measured FFmpeg figure. ' + COMPOSITE_SLOT_BASIS,
+    estimateBasis: 'NOT_APPLICABLE: this tier runs no neural video model, so there is no per-shot diffusion cost to estimate. Composite cost is the measured FFmpeg figure. The 0 GB / 4 GB band is the RENDER_ONLY band from hardware-profile.mjs; the 2-core minimum is POLICY. ' + COMPOSITE_SLOT_BASIS,
     notes: 'Floor tier. Editing, compositing, captions and audio mix from supplied or stock footage. No neural generation is offered below 4 GB VRAM: the smallest model on disk (ltxv-2b-0.9.8-distilled-q8_0.gguf) was only ever measured with its weights resident, and CPU-only diffusion was never timed here. The 1080x1920 at 30 fps canvas is the vertical format already defined in format-library.mjs, and is the geometry the 11 s composite was measured at.'
   }),
   entry: Object.freeze({

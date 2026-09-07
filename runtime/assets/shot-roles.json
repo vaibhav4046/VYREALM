@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": null,
+  "generatedClips": 4,
+  "rolesCovered": 7,
+  "sourceAssignments": 7,
+  "model": "ltxv-2b-0.9.8-distilled-q8_0",
+  "roles": {
+    "hero": {
+      "sources": [
+        {
+          "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\desktop\\VYREALM_RAINLINE_TRAILER_1080P.mp4",
+          "inPoint": 0,
+          "provenance": "local-neural-source",
+          "shot": "VYREALM_RAINLINE_TRAILER_1080P.mp4",
+          "note": "fallback: generation has not yet produced a clip for this role"
+        }
+      ]
+    },
+    "broll-a": {
+      "sources": [
+        {
+          "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\shots\\forest-light.mp4",
+          "inPoint": 0,
+          "durationSeconds": 3.88,
+          "provenance": "local-neural-source",
+          "model": "ltxv-2b-0.9.8-distilled-q8_0",
+          "generationSeconds": 482.4,
+          "shot": "forest-light"
+        },
+        {
+          "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\shots\\neon-alley.mp4",
+          "inPoint": 0,
+          "durationSeconds": 3.88,
+          "provenance": "local-neural-source",
+          "model": "ltxv-2b-0.9.8-distilled-q8_0",
+          "shot": "neon-alley"
+        }
+      ]
+    },
+    "broll-b": {
+      "sources": [
+        {
+          "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\shots\\ocean-cliff.mp4",
+          "inPoint": 0,
+          "durationSeconds": 3.88,
+          "provenance": "local-neural-source",
+          "model": "ltxv-2b-0.9.8-distilled-q8_0",
+          "generationSeconds": 517.6,
+          "shot": "ocean-cliff"
+        }
+      ]
+    },
+    "establish": {
+      "sources": [
+        {
+          "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\shots\\ocean-cliff.mp4",
+          "inPoint": 0,
+          "durationSeconds": 3.88,
+          "provenance": "local-neural-source",
+          "model": "ltxv-2b-0.9.8-distilled-q8_0",
+          "generationSeconds": 517.6,
+          "shot": "ocean-cliff"
+        },
+        {
+          "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\shots\\desert-monolith.mp4",
+          "inPoint": 0,
+          "durationSeconds": 3.88,
+          "provenance": "local-neural-source",
+          "model": "ltxv-2b-0.9.8-distilled-q8_0",
+          "shot": "desert-monolith"
+        }
+      ]
+    },
+    "pov": {
+      "sources": [
+        {
+          "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\shots\\forest-light.mp4",
+          "inPoint": 0,
+          "durationSeconds": 3.88,
+          "provenance": "local-neural-source",
+          "model": "ltxv-2b-0.9.8-distilled-q8_0",
+          "generationSeconds": 482.4,
+          "shot": "forest-light"
+        },
+        {
+          "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\shots\\neon-alley.mp4",
+          "inPoint": 0,
+          "durationSeconds": 3.88,
+          "provenance": "local-neural-source",
+          "model": "ltxv-2b-0.9.8-distilled-q8_0",
+          "shot": "neon-alley"
+        }
+      ]
+    },
+    "anime-hero": {
+      "sources": [
+        {
+          "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\desktop\\VYREALM_ANIME_HERO_5S.mp4",
+          "inPoint": 0,
+          "provenance": "local-neural-source",
+          "shot": "VYREALM_ANIME_HERO_5S.mp4",
+          "note": "fallback: generation has not yet produced a clip for this role"
+        }
+      ]
+    },
+    "talking-head": {
+      "sources": [
+        {
+          "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\desktop\\VYREALM_TALKING_HEAD_5S.mp4",
+          "inPoint": 0,
+          "provenance": "local-neural-source",
+          "shot": "VYREALM_TALKING_HEAD_5S.mp4",
+          "note": "fallback: generation has not yet produced a clip for this role"
+        }
+      ]
+    }
+  },
+  "note": "Roles map to locally generated clips. Roles with several sources let long formats cut between distinct shots rather than repeating one."
+}

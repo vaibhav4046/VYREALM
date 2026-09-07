@@ -9,6 +9,15 @@
 //   UNVERIFIED         vendor documentation this machine cannot confirm
 // No entry carries an unlabelled number. Timings come from the two benchmark
 // runs recorded in `MEASUREMENTS` and nowhere else.
+//
+// requirementBasis covers minVramGb/minRamGb the same way, over
+//   MEASURED_RUN | EXTRAPOLATED | UNVERIFIED
+// because those thresholds decide what gets offered and were previously the
+// only numbers here with no stated provenance.
+//
+// companionBytes is the measured weight of the files a provider cannot run
+// without (text encoder, VAE). sizeBytes alone under-counts the download, and
+// the disk guard has to reserve for the whole set, not just the headline file.
 import { classifyHardware, HARDWARE_PROFILES } from './hardware-profile.mjs';
 
 const GB = 1024 ** 3;
@@ -33,9 +42,10 @@ const ROUTE_BY_KIND = Object.freeze({
   interpolation: 'edit', upscale: 'edit'
 });
 
-// impactScore is an editorial weight (1-10), NOT a measurement. It exists only
-// to order recommendations by usefulness per byte and is labelled as such in
-// every reason string it produces.
+// impactScore is an editorial weight (1-10), NOT a measurement. It orders
+// recommendations by usefulness per byte and nothing else; it is never
+// presented as a reading, and impactPerGb derived from it is a sort key, not a
+// number to quote at anyone.
 const CATALOGUE = [
   {
     id: 'wan22-5b',
@@ -44,9 +54,16 @@ const CATALOGUE = [
     purpose: 'Higher-fidelity text/image-to-video. Slow on 6GB but the best-looking local video model installed.',
     sizeBytes: 3433116000,
     sizeBasis: 'MEASURED_ON_DISK',
+    // umt5-xxl-encoder-Q4_K_S.gguf 3,497,596,768 + wan2.2_vae.safetensors
+    // 1,409,400,960, both stat'd on this disk and both in neural-runtime.lock.json.
+    companionBytes: 4906997728,
+    companionBasis: 'MEASURED_ON_DISK',
     minVramGb: 6,
     minRamGb: 15,
-    minDiskGb: 9,
+    // 5.85 GiB whole-device peak recorded on a 6 GB card (MEASUREMENTS + the
+    // wholeDeviceVramPeakGiB in neural-runtime.lock.json). The RAM floor is the
+    // tier that run happened on, not an independently measured minimum.
+    requirementBasis: 'MEASURED_RUN',
     license: 'Apache-2.0',
     licenseBasis: 'RUNTIME_LOCK_FILE',
     sourceUrl: 'https://huggingface.co/QuantStack/Wan2.2-TI2V-5B-GGUF',
@@ -67,9 +84,15 @@ const CATALOGUE = [
     purpose: 'FAST draft-to-final video. The working loop: iterate here, escalate to Wan only when a shot is locked.',
     sizeBytes: 2173891072,
     sizeBasis: 'MEASURED_ON_DISK',
+    // t5-v1_1-xxl-encoder-Q5_K_M.gguf 3,386,856,640 +
+    // ltxv-0.9.8-2b-distilled-vae.safetensors 2,493,859,780, both stat'd here.
+    companionBytes: 5880716420,
+    companionBasis: 'MEASURED_ON_DISK',
     minVramGb: 6,
     minRamGb: 15,
-    minDiskGb: 6,
+    // 97 frames at 768x512 completed inside this 6 GB card (MEASUREMENTS).
+    // No per-run VRAM peak was captured, so the floor is the card it ran on.
+    requirementBasis: 'MEASURED_RUN',
     license: 'LTXV Open Weights License (Lightricks)',
     licenseBasis: 'UNVERIFIED',
     sourceUrl: 'https://huggingface.co/Lightricks/LTX-Video',
@@ -90,9 +113,15 @@ const CATALOGUE = [
     purpose: 'Local music generation for scored cuts, so a film does not need licensed stock music.',
     sizeBytes: 4787825604,
     sizeBasis: 'MEASURED_ON_DISK',
+    // qwen_1.7b_ace15.safetensors 3,708,523,360 + ace_1.5_vae.safetensors
+    // 337,431,732, both stat'd on this disk.
+    companionBytes: 4045955092,
+    companionBasis: 'MEASURED_ON_DISK',
     minVramGb: 6,
     minRamGb: 15,
-    minDiskGb: 9,
+    // Nothing has ever been generated with this model here. The floors are the
+    // tier it was installed on, which is a guess dressed as a requirement.
+    requirementBasis: 'UNVERIFIED',
     license: 'Apache-2.0',
     licenseBasis: 'UNVERIFIED',
     sourceUrl: 'https://huggingface.co/ACE-Step/ACE-Step-v1.5',
@@ -113,9 +142,14 @@ const CATALOGUE = [
     purpose: 'Offline narration. CPU-only, so it never competes with the GPU lease.',
     sizeBytes: 114204494,
     sizeBasis: 'MEASURED_ON_DISK',
+    // The measured directory total is the whole provider; nothing else loads.
+    companionBytes: 0,
+    companionBasis: 'MEASURED_ON_DISK',
     minVramGb: 0,
     minRamGb: 2,
-    minDiskGb: 1,
+    // minVramGb 0 is a fact about the runtime (piper-tts is CPU-only, it has no
+    // CUDA path). The 2 GB RAM floor is a guess; no Piper run was timed here.
+    requirementBasis: 'UNVERIFIED',
     license: 'GPL-3.0 (Piper runtime); LJ Speech training corpus is public domain',
     licenseBasis: 'ON_DISK_LICENSE',
     sourceUrl: 'https://huggingface.co/rhasspy/piper-voices',
@@ -136,9 +170,13 @@ const CATALOGUE = [
     purpose: 'Transcription for auto-captions and cut-point search. CPU-only.',
     sizeBytes: 78091917,
     sizeBasis: 'MEASURED_ON_DISK',
+    companionBytes: 0,
+    companionBasis: 'MEASURED_ON_DISK',
     minVramGb: 0,
     minRamGb: 2,
-    minDiskGb: 1,
+    // CPU-only by construction (faster-whisper on the CTranslate2 CPU backend).
+    // The RAM floor is unmeasured.
+    requirementBasis: 'UNVERIFIED',
     license: 'MIT',
     licenseBasis: 'RUNTIME_LOCK_FILE',
     sourceUrl: 'https://huggingface.co/Systran/faster-whisper-tiny.en',
@@ -159,9 +197,14 @@ const CATALOGUE = [
     purpose: 'Frame interpolation. Generate fewer frames, interpolate up to the delivery frame rate.',
     sizeBytes: 431540241,
     sizeBasis: 'RUNTIME_LOCK_FILE',
+    // The release ZIP is self-contained: exe, DLL and weights all ship in it.
+    companionBytes: 0,
+    companionBasis: 'RUNTIME_LOCK_FILE',
     minVramGb: 2,
     minRamGb: 4,
-    minDiskGb: 2,
+    // No RIFE run has been timed here and the lock file records no VRAM figure.
+    // Both floors are guesses.
+    requirementBasis: 'UNVERIFIED',
     license: 'MIT (RIFE code and model release); the Microsoft runtime DLL has separate terms',
     licenseBasis: 'RUNTIME_LOCK_FILE',
     sourceUrl: 'https://github.com/nihui/rife-ncnn-vulkan/releases/download/20221029/rife-ncnn-vulkan-20221029-windows.zip',
@@ -182,9 +225,13 @@ const CATALOGUE = [
     purpose: 'Upscale a finished cut instead of generating at a resolution this GPU cannot hold.',
     sizeBytes: 45474481,
     sizeBasis: 'MEASURED_ON_DISK',
+    companionBytes: 0,
+    companionBasis: 'MEASURED_ON_DISK',
     minVramGb: 2,
     minRamGb: 4,
-    minDiskGb: 1,
+    // enhancement.lock.json records qualification "not-yet-run"; both floors
+    // are guesses and stay that way until an upscale is timed here.
+    requirementBasis: 'UNVERIFIED',
     license: 'BSD-3-Clause',
     licenseBasis: 'ON_DISK_LICENSE',
     sourceUrl: 'https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesrgan-ncnn-vulkan-20220424-windows.zip',
@@ -208,11 +255,16 @@ const CATALOGUE = [
     // the quant actually published, so this is a planning figure, not a fact.
     sizeBytes: 14130291968,
     sizeBasis: 'EXTRAPOLATED',
+    // Same node graph as the 2B, so the same companions: the measured
+    // t5-v1_1-xxl encoder 3,386,856,640 plus the measured 2B VAE 2,493,859,780
+    // standing in for a 13B VAE whose real size is not known here.
+    companionBytes: 5880716420,
+    companionBasis: 'EXTRAPOLATED',
     // Weights alone exceed 6GB at Q8_0, so a 6GB card cannot hold this without
     // offload. 16 is the smallest card class that plausibly holds it; untested.
     minVramGb: 16,
     minRamGb: 31,
-    minDiskGb: 20,
+    requirementBasis: 'EXTRAPOLATED',
     license: 'LTXV Open Weights License (Lightricks)',
     licenseBasis: 'UNVERIFIED',
     sourceUrl: 'https://huggingface.co/Lightricks/LTX-Video',
@@ -233,9 +285,11 @@ const CATALOGUE = [
     purpose: 'Drive a face in an existing shot from a narration track, instead of regenerating the shot.',
     sizeBytes: null,
     sizeBasis: 'UNVERIFIED',
+    companionBytes: null,
+    companionBasis: 'UNVERIFIED',
     minVramGb: 6,
     minRamGb: 15,
-    minDiskGb: 10,
+    requirementBasis: 'UNVERIFIED',
     license: 'MIT (code); model weights carry additional upstream terms',
     licenseBasis: 'UNVERIFIED',
     sourceUrl: 'https://github.com/TMElyralab/MuseTalk',
@@ -256,9 +310,14 @@ const CATALOGUE = [
     purpose: 'Expressive narration with emotion control, where Piper is flat but reliable.',
     sizeBytes: null,
     sizeBasis: 'UNVERIFIED',
+    companionBytes: null,
+    companionBasis: 'UNVERIFIED',
+    // 4 is a vendor-shaped guess, not a reading. It decides whether this model
+    // is offered on a 4 GB card, so it is the most load-bearing unverified
+    // number in the file.
     minVramGb: 4,
     minRamGb: 15,
-    minDiskGb: 6,
+    requirementBasis: 'UNVERIFIED',
     license: 'MIT',
     licenseBasis: 'UNVERIFIED',
     sourceUrl: 'https://github.com/resemble-ai/chatterbox',
@@ -279,9 +338,11 @@ const CATALOGUE = [
     purpose: 'Short sound effects and foley, which ACE-Step (a music model) does not cover.',
     sizeBytes: null,
     sizeBasis: 'UNVERIFIED',
+    companionBytes: null,
+    companionBasis: 'UNVERIFIED',
     minVramGb: 6,
     minRamGb: 15,
-    minDiskGb: 8,
+    requirementBasis: 'UNVERIFIED',
     license: 'Stability AI Community License (non-commercial above a revenue threshold)',
     licenseBasis: 'UNVERIFIED',
     sourceUrl: 'https://huggingface.co/stabilityai/stable-audio-open-1.0',
@@ -308,17 +369,32 @@ export function getProvider(idOrEntry) {
   return found;
 }
 
-/** Impact per byte. Uninstallable-by-size entries sort last rather than divide by null. */
-function impactPerGb(provider) {
-  if (!Number.isFinite(provider.sizeBytes) || provider.sizeBytes <= 0) return 0;
-  return provider.impactScore / (provider.sizeBytes / GB);
+/**
+ * Everything that has to land on disk for this provider to run: the headline
+ * weight plus the text encoder and VAE it cannot load without. Null when either
+ * half is unpinned, which is what makes the provider unplannable.
+ */
+export function downloadBytesOf(provider) {
+  const entry = getProvider(provider);
+  if (!Number.isSafeInteger(entry.sizeBytes) || entry.sizeBytes <= 0) return null;
+  if (!Number.isSafeInteger(entry.companionBytes) || entry.companionBytes < 0) return null;
+  return entry.sizeBytes + entry.companionBytes;
 }
+
+/** Sort key only. Uninstallable-by-size entries sort last rather than divide by null. */
+function impactPerGb(provider) {
+  const bytes = downloadBytesOf(provider);
+  return bytes ? provider.impactScore / (bytes / GB) : 0;
+}
+
+// Hardware numbers arrive from detection, a UI or a test. A negative or
+// non-finite reading is not a machine with negative VRAM, it is a missing
+// reading, and hardware-profile.mjs already treats it that way.
+const nonNegative = value => { const n = Number(value); return Number.isFinite(n) && n > 0 ? n : 0; };
 
 function machineOf(hardware = {}) {
   const source = hardware.profile ? { vramGb: hardware.profile.vramGb, ramGb: hardware.profile.ramGb, gpu: hardware.profile.gpu } : hardware;
-  const vramGb = Number(source.vramGb) || 0;
-  const ramGb = Number(source.ramGb ?? hardware.totalRamGb) || 0;
-  return { vramGb, ramGb, gpu: source.gpu ?? null };
+  return { vramGb: nonNegative(source.vramGb), ramGb: nonNegative(source.ramGb ?? hardware.totalRamGb), gpu: source.gpu ?? null };
 }
 
 function reasonFor(provider, machine, installedIds) {
@@ -335,10 +411,14 @@ function reasonFor(provider, machine, installedIds) {
       parts.push(`${(theirs.secondsPerFrame / mine.secondsPerFrame).toFixed(1)}x fewer seconds per frame than your installed ${rival.label} (${theirs.secondsPerFrame} s/frame at ${theirs.resolution}) — measured at different resolutions, not a like-for-like benchmark.`);
     }
   }
-  if (provider.sizeBasis === 'EXTRAPOLATED') parts.push(`Download size ~${gb(provider.sizeBytes)} GB is EXTRAPOLATED, not measured.`);
-  else if (provider.sizeBytes) parts.push(`${gb(provider.sizeBytes)} GB download.`);
-  else parts.push('Download size is UNVERIFIED; it cannot be planned until a size is pinned.');
+  // Quote the whole download, weights plus the encoder and VAE they need, not
+  // the headline file: the difference is 5.5 GB for the LTXV entry.
+  const download = downloadBytesOf(provider);
+  if (download === null) parts.push('Download size is UNVERIFIED; it cannot be planned until a size is pinned.');
+  else if (provider.sizeBasis === 'EXTRAPOLATED' || provider.companionBasis === 'EXTRAPOLATED') parts.push(`Download size ~${gb(download)} GB is EXTRAPOLATED, not measured.`);
+  else parts.push(`${gb(download)} GB download${provider.companionBytes > 0 ? `, of which ${gb(provider.companionBytes)} GB is the text encoder and VAE it cannot run without` : ''}.`);
   parts.push(`Needs ${provider.minVramGb} GB VRAM, you have ${machine.vramGb}.`);
+  if (provider.requirementBasis !== 'MEASURED_RUN') parts.push(`That requirement is ${provider.requirementBasis}, not a measurement taken here.`);
   return parts.join(' ');
 }
 

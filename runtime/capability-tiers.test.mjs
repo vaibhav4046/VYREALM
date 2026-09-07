@@ -347,3 +347,117 @@ test('tierEvidence round-trips through JSON so it can be persisted', () => {
   const record = tierEvidence(REFERENCE, chosen, { now: 1_700_000_000_000 });
   assert.deepEqual(JSON.parse(JSON.stringify(record)), record, 'no undefined, no cycles, no class instances');
 });
+
+// --- adversarial pass: the numbers, and the guards they lean on ---------------
+
+test('MEASURED matches provider-catalogue, the repo declared source for these anchors', async () => {
+  // provider-catalogue.mjs calls MEASUREMENTS "the only wall-clock generation
+  // numbers this module is allowed to quote". If this module restates them, a
+  // divergence is a fabrication in one file or the other. Fails loudly rather
+  // than letting the two drift into disagreement.
+  const { MEASUREMENTS, PROVIDERS } = await import('./provider-catalogue.mjs');
+  const pairs = [[MEASURED.ltx, MEASUREMENTS['ltxv-2b-distilled']], [MEASURED.wan, MEASUREMENTS['wan22-5b']]];
+  for (const [mine, theirs] of pairs) {
+    assert.equal(mine.frames, theirs.frames, `${mine.model}: frame count`);
+    assert.equal(`${mine.width}x${mine.height}`, theirs.resolution, `${mine.model}: resolution`);
+    assert.equal(mine.seconds, theirs.totalSeconds, `${mine.model}: measured seconds`);
+    assert.equal(Number((mine.seconds / mine.frames).toFixed(1)), theirs.secondsPerFrame, `${mine.model}: s/frame`);
+    if (theirs.steps !== undefined) assert.equal(mine.steps, theirs.steps, `${mine.model}: steps`);
+    if (theirs.peakVramGiB !== null) assert.equal(mine.peakVramGib, theirs.peakVramGiB, `${mine.model}: peak VRAM`);
+  }
+  assert.equal(MEASURED.composite.seconds, MEASUREMENTS.composite.totalSeconds);
+  assert.ok(MEASUREMENTS.composite.description.includes(`${MEASURED.composite.cutSeconds}s at ${MEASURED.composite.width}x${MEASURED.composite.height}`), 'same composite job in both files');
+  // And every model a tier names must be a catalogue entry, not a filename
+  // someone remembered.
+  const installed = new Set(PROVIDERS.map(p => p.installedPath?.split('/').at(-1)).filter(Boolean));
+  for (const tier of ordered) if (tier.videoModel) assert.ok(installed.has(tier.videoModel), `${tier.id} names ${tier.videoModel}, absent from the catalogue`);
+});
+
+test('a tier below the catalogue floor for its model must say so', async () => {
+  // The entry tier promises LTX on 4 GB / 8 GB while provider-catalogue.mjs
+  // declares that same build at 6 GB / 15 GB. That disagreement is allowed to
+  // exist, because nobody has run a 4 GB card either way. It is NOT allowed to
+  // be silent: the tier's own basis has to name the catalogue's numbers.
+  const { PROVIDERS } = await import('./provider-catalogue.mjs');
+  const byFile = new Map(PROVIDERS.filter(p => p.installedPath).map(p => [p.installedPath.split('/').at(-1), p]));
+  let disclosures = 0;
+  for (const tier of ordered) {
+    const provider = tier.videoModel && byFile.get(tier.videoModel);
+    if (!provider) continue;
+    if (tier.minVramGb >= provider.minVramGb && tier.minRamGb >= provider.minRamGb) continue;
+    disclosures++;
+    assert.match(tier.estimateBasis, /provider-catalogue\.mjs/, `${tier.id} is under the catalogue floor and must cite it`);
+    assert.ok(tier.estimateBasis.includes(`minVramGb ${provider.minVramGb}`), `${tier.id} must state the declared VRAM floor`);
+    assert.ok(tier.estimateBasis.includes(`minRamGb ${provider.minRamGb}`), `${tier.id} must state the declared RAM floor`);
+    assert.match(tier.estimateBasis, /UNQUALIFIED/, `${tier.id} must not read as a promise`);
+  }
+  assert.equal(disclosures, 1, 'exactly the entry tier is below the catalogue floor today');
+  assert.equal(TIERS.entry.minVramGb, 4, 'if this changes, re-check the disclosure above');
+});
+
+test('the anchor-optimism percentages are computed, not typed', () => {
+  // 1568 s is the project compute anchor: not a measurement, and not the mean
+  // of the runs that were measured. Both percentages quoted have to fall out
+  // of the logged runs, so nobody can round the gap down by hand.
+  const runs = MEASURED.wan.loggedRuns;
+  assert.deepEqual([...runs], [1838.020, 1716.804, 1413.336], 'the three runs logged in quality-gate.mjs');
+  const mean = Number((runs.reduce((a, b) => a + b, 0) / runs.length).toFixed(2));
+  assert.equal(MEASURED.wan.loggedMeanSeconds, mean);
+  assert.equal(mean, 1656.05);
+  assert.ok(MEASURED.wan.seconds < mean, 'the anchor is optimistic against the runs, and must be stated as such');
+  const underMean = (100 * (mean - MEASURED.wan.seconds) / mean).toFixed(1);                   // 5.3
+  const overAnchor = (100 * (mean - MEASURED.wan.seconds) / MEASURED.wan.seconds).toFixed(1);  // 5.6
+  assert.equal(underMean, '5.3');
+  assert.equal(overAnchor, '5.6');
+  for (const tier of [TIERS.creator, TIERS.workstation]) {
+    assert.ok(tier.estimateBasis.includes(`${underMean}% under that mean`), `${tier.id}: states the gap against the right base`);
+    assert.ok(tier.estimateBasis.includes(`${overAnchor}% above the anchor`), `${tier.id}: states the reciprocal too`);
+    assert.ok(tier.estimateBasis.includes(String(mean)), `${tier.id}: shows the mean it compared against`);
+  }
+  // The earlier wording claimed 5.6% "under the observed mean", which is the
+  // wrong base for that ratio. It must not come back.
+  for (const tier of ordered) assert.ok(!/5\.6% under/.test(tier.estimateBasis), `${tier.id}: 5.6% is the gap over the anchor, not under the mean`);
+});
+
+test('the composite slot divisor is disclosed as UNVERIFIED wherever it is used', () => {
+  // compositeConcurrency divides every composite wall-clock number this module
+  // reports, and nobody measured how many cores one FFmpeg composite uses.
+  for (const tier of ordered) {
+    assert.match(tier.estimateBasis, /UNVERIFIED: slots are floor\(cores\/4\)/, `${tier.id} basis must own the divisor`);
+  }
+  assert.match(projectRuntime(TIERS.standard, { composites: 3 }).basis, /UNVERIFIED: slots are floor\(cores\/4\)/);
+  const evidence = tierEvidence(REFERENCE, selectTier(REFERENCE));
+  assert.ok(evidence.unmeasured.some(x => /floor\(cores\/4\)/.test(x)), 'evidence lists the divisor as unmeasured');
+  assert.ok(evidence.unmeasured.some(x => /POLICY/.test(x)), 'evidence says the ladder thresholds are policy, not measurements');
+});
+
+test('the ladder bands say which are borrowed from hardware-profile and which are policy', async () => {
+  const { HARDWARE_PROFILES } = await import('./hardware-profile.mjs');
+  // These three bands are not this module's inventions and must not drift.
+  assert.deepEqual([TIERS.minimal.minVramGb, TIERS.minimal.minRamGb], [HARDWARE_PROFILES.RENDER_ONLY.minVramGb, HARDWARE_PROFILES.RENDER_ONLY.minRamGb]);
+  assert.deepEqual([TIERS.standard.minVramGb, TIERS.standard.minRamGb], [HARDWARE_PROFILES.STANDARD_LOCAL.minVramGb, HARDWARE_PROFILES.STANDARD_LOCAL.minRamGb]);
+  assert.deepEqual([TIERS.creator.minVramGb, TIERS.creator.minRamGb], [HARDWARE_PROFILES.CREATOR_LOCAL.minVramGb, HARDWARE_PROFILES.CREATOR_LOCAL.minRamGb]);
+  // hardware-profile.mjs sets no core floors at all, so every core minimum on
+  // this ladder is ours and has to be labelled as such.
+  for (const profile of Object.values(HARDWARE_PROFILES)) assert.equal(profile.minCores, undefined, 'if core floors appear upstream, borrow them instead of inventing');
+  for (const tier of ordered) assert.match(tier.estimateBasis, /POLICY/, `${tier.id} must name its policy thresholds`);
+});
+
+test('the one-GPU claim is enforced by a real lease, not just declared', async () => {
+  // Every tier declares neuralConcurrency 1 and projectRuntime multiplies shots
+  // with no divisor. That is only honest if something actually stops a second
+  // diffusion job. Exercise the lease this module cites by name.
+  const { acquireGpuLease } = await import('./inference-harness.mjs');
+  const { mkdtempSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const root = mkdtempSync(join(tmpdir(), 'vyrelum-lease-'));
+  try {
+    const first = await acquireGpuLease('tier-test-first', { root });
+    await assert.rejects(() => acquireGpuLease('tier-test-second', { root }), /GPU_LEASE_BUSY/, 'a second concurrent lease must be refused');
+    await first();
+    const third = await acquireGpuLease('tier-test-third', { root });   // released, so it is free again
+    await third();
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});

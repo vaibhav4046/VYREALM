@@ -1,0 +1,234 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-07T21:01:47.492Z",
+  "scope": "Read-only inventory; no installer or packaged application executed",
+  "installer": {
+    "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\release\\VYREALM-1.0.5-win-x64.exe",
+    "bytes": 610955886,
+    "sha256": "16dec7576f17c33bdbeb3c841ee8ef6fee4a078c8c08aff58a116f73de020f27",
+    "authenticodeStatus": "NotSigned",
+    "signatureCheck": "Get-AuthenticodeSignature (Windows PowerShell)"
+  },
+  "sourceVersion": "1.0.5",
+  "packagedVersion": "1.0.5",
+  "versionMatch": true,
+  "selectedPackagedFiles": [
+    {
+      "path": "desktop/main.mjs",
+      "location": "asar",
+      "sourceSha256": "9ca6d2bc18e9a8f073fafcf89a18fe29185ba9ede9bd8beff9f4d535b13ccc67",
+      "packagedSha256": "9ca6d2bc18e9a8f073fafcf89a18fe29185ba9ede9bd8beff9f4d535b13ccc67",
+      "match": true
+    },
+    {
+      "path": "desktop/preload.cjs",
+      "location": "asar",
+      "sourceSha256": "5390f5ed7061b7413631769c0742c6fd35857914a5b7416fd7af9156b201f1c2",
+      "packagedSha256": "5390f5ed7061b7413631769c0742c6fd35857914a5b7416fd7af9156b201f1c2",
+      "match": true
+    },
+    {
+      "path": "server.js",
+      "location": "asar-unpacked",
+      "sourceSha256": "c3ec80ea2a4f11a93653ca79c8338b92c736a6b931ef8155101abaabcb3c461e",
+      "packagedSha256": "c3ec80ea2a4f11a93653ca79c8338b92c736a6b931ef8155101abaabcb3c461e",
+      "match": true
+    },
+    {
+      "path": "app.js",
+      "location": "asar-unpacked",
+      "sourceSha256": "46b6519366c20149d62440ac2045a2ca2f2180dc497c3c6580de9b28bef23b86",
+      "packagedSha256": "46b6519366c20149d62440ac2045a2ca2f2180dc497c3c6580de9b28bef23b86",
+      "match": true
+    },
+    {
+      "path": "index.html",
+      "location": "asar-unpacked",
+      "sourceSha256": "80f12511fee20d531e48e38619f7fe346b43978a2c94ddf1ff280ec5cadf0794",
+      "packagedSha256": "80f12511fee20d531e48e38619f7fe346b43978a2c94ddf1ff280ec5cadf0794",
+      "match": true
+    },
+    {
+      "path": "styles.css",
+      "location": "asar-unpacked",
+      "sourceSha256": "ca9e8596c2c137f31545bf528866c386f432379c8dece6fa078d7d9fd0fbe468",
+      "packagedSha256": "ca9e8596c2c137f31545bf528866c386f432379c8dece6fa078d7d9fd0fbe468",
+      "match": true
+    },
+    {
+      "path": "mcp-server.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "651d075182554280227a4e4aedced0dccbd9db07b719641aff54a2b13143def5",
+      "packagedSha256": "651d075182554280227a4e4aedced0dccbd9db07b719641aff54a2b13143def5",
+      "match": true
+    },
+    {
+      "path": "runtime/automation-tools.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "7b0f2e1e24a1000274d487151d463e5cf905b45b3c28182d5215d3df2745dedc",
+      "packagedSha256": "7b0f2e1e24a1000274d487151d463e5cf905b45b3c28182d5215d3df2745dedc",
+      "match": true
+    },
+    {
+      "path": "runtime/viral-formats.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "55790560766195f1cda6f4ba79467a40ea848d0b0440f2d0334303fc5d8707b4",
+      "packagedSha256": "55790560766195f1cda6f4ba79467a40ea848d0b0440f2d0334303fc5d8707b4",
+      "match": true
+    },
+    {
+      "path": "runtime/viral-variants.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "e4e1577be636422fbf2ccae484df364c93fd64ef3af4ba7797ec3f7c3bd4ac2b",
+      "packagedSha256": "e4e1577be636422fbf2ccae484df364c93fd64ef3af4ba7797ec3f7c3bd4ac2b",
+      "match": true
+    },
+    {
+      "path": "runtime/frame-interpolation.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "74404e9a1d81dbd9792afa6ed0482028fca13cda7ef7bed684a7300026181da0",
+      "packagedSha256": "74404e9a1d81dbd9792afa6ed0482028fca13cda7ef7bed684a7300026181da0",
+      "match": true
+    },
+    {
+      "path": "runtime/interpolation-setup.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "ae88b281e698bcb69c814f02f109bdc87e7844981354c02e2bf5a08988471672",
+      "packagedSha256": "ae88b281e698bcb69c814f02f109bdc87e7844981354c02e2bf5a08988471672",
+      "match": true
+    },
+    {
+      "path": "runtime/interpolation.lock.json",
+      "location": "asar-unpacked",
+      "sourceSha256": "0d4bd67901368326966a58f1dce18bf095ec9089593d5b3cc06734b5dd16b080",
+      "packagedSha256": "0d4bd67901368326966a58f1dce18bf095ec9089593d5b3cc06734b5dd16b080",
+      "match": true
+    },
+    {
+      "path": "runtime/neural-production.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "5a4470ce6167afc69a135e1bfde37e93a58b18ba3d0b1d6f0b3be35fbf4ffbd6",
+      "packagedSha256": "5a4470ce6167afc69a135e1bfde37e93a58b18ba3d0b1d6f0b3be35fbf4ffbd6",
+      "match": true
+    },
+    {
+      "path": "runtime/neural-enhancement.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "e8b7037e2246a7b6ebf24924275378d3ef6e8ac53f14d6c9f31b5e9c6d9ded8c",
+      "packagedSha256": "e8b7037e2246a7b6ebf24924275378d3ef6e8ac53f14d6c9f31b5e9c6d9ded8c",
+      "match": true
+    },
+    {
+      "path": "runtime/generation-evidence.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "603044910f58f12600e9e8d147e7124660ab9a8e43963d15dd349168bc95c2d9",
+      "packagedSha256": "603044910f58f12600e9e8d147e7124660ab9a8e43963d15dd349168bc95c2d9",
+      "match": true
+    },
+    {
+      "path": "runtime/providers/comfyui.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "15ebd6e24de00ae573379813f1cfa723ee68f04b48351a6474f6311a2ffe0f6d",
+      "packagedSha256": "15ebd6e24de00ae573379813f1cfa723ee68f04b48351a6474f6311a2ffe0f6d",
+      "match": true
+    },
+    {
+      "path": "runtime/providers/registry.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "08205b112147505b35525687ae3a460568a977595107c0f81de2e684935f8b45",
+      "packagedSha256": "08205b112147505b35525687ae3a460568a977595107c0f81de2e684935f8b45",
+      "match": true
+    },
+    {
+      "path": "runtime/notices/RIFE-NCNN-Vulkan-MIT.txt",
+      "location": "asar-unpacked",
+      "sourceSha256": "de18cbedb0c3b0d1eeb9ccac3988cdf69c21fa89039cd97dd8846cb68f661f81",
+      "packagedSha256": "de18cbedb0c3b0d1eeb9ccac3988cdf69c21fa89039cd97dd8846cb68f661f81",
+      "match": true
+    },
+    {
+      "path": "workers/timeline.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "8f0df3ed88613391cccb0a73a6b4490fc4168501f956a9f08cbbfe6842f546df",
+      "packagedSha256": "8f0df3ed88613391cccb0a73a6b4490fc4168501f956a9f08cbbfe6842f546df",
+      "match": true
+    },
+    {
+      "path": "workers/render.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "aa574c57655903cd4e2403426e420430e4a24e2ccfbbfdca13707fb86b2fc5a4",
+      "packagedSha256": "aa574c57655903cd4e2403426e420430e4a24e2ccfbbfdca13707fb86b2fc5a4",
+      "match": true
+    },
+    {
+      "path": "workers/interpolate.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "d4dc39a31711bcdb01e28e88fc98ddfbabee00b08f7b734e60695c5cf50913eb",
+      "packagedSha256": "d4dc39a31711bcdb01e28e88fc98ddfbabee00b08f7b734e60695c5cf50913eb",
+      "match": true
+    },
+    {
+      "path": "workers/runtime-setup.mjs",
+      "location": "asar-unpacked",
+      "sourceSha256": "94a23bc4e818f840a0725738feac951ecade98c044113ad685058fa52fc39711",
+      "packagedSha256": "94a23bc4e818f840a0725738feac951ecade98c044113ad685058fa52fc39711",
+      "match": true
+    },
+    {
+      "path": "scripts/Extract-InterpolationRuntime.ps1",
+      "location": "asar-unpacked",
+      "sourceSha256": "bdfb58c6f9d4628a20e3cb73afea03234f6e409c6b338892c23efcf4ccd0013b",
+      "packagedSha256": "bdfb58c6f9d4628a20e3cb73afea03234f6e409c6b338892c23efcf4ccd0013b",
+      "match": true
+    },
+    {
+      "path": "runtime/bootstrap/uv.exe",
+      "location": "asar-unpacked",
+      "sourceSha256": "5a7ec85884c2ccb1be560cb8fac3eb890df1adf49bfcc070a270ba70401bdd68",
+      "packagedSha256": "5a7ec85884c2ccb1be560cb8fac3eb890df1adf49bfcc070a270ba70401bdd68",
+      "match": true
+    },
+    {
+      "path": "workers/tools/ffmpeg.exe",
+      "location": "asar-unpacked",
+      "sourceSha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+      "packagedSha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+      "match": true
+    },
+    {
+      "path": "workers/tools/ffprobe.exe",
+      "location": "asar-unpacked",
+      "sourceSha256": "a6618e99bb58869ded3c6f37b53aa1a8d701c3591dbb7b5b317d47369c112be2",
+      "packagedSha256": "a6618e99bb58869ded3c6f37b53aa1a8d701c3591dbb7b5b317d47369c112be2",
+      "match": true
+    }
+  ],
+  "allSelectedFilesMatch": true,
+  "runtime": {
+    "nodeExecutableBundled": false,
+    "nodeStartup": "Electron process.execPath with ELECTRON_RUN_AS_NODE=1 when a separate Node runtime is absent",
+    "rifeBinaryBundled": false,
+    "rifeModelBundled": false,
+    "rifeInstallation": "Settings downloads the pinned upstream archive and verifies hashes; RIFE binary/model are not vendored",
+    "blenderExtraResourcePresent": true
+  },
+  "installation": {
+    "updatedPackageInstalled": false,
+    "updatedPackageLaunched": false,
+    "reason": "An earlier installer launch was rejected by automatic approval review: blocked by policy. This newer package was not launched as a workaround.",
+    "installedVersion": "1.0.0",
+    "osSigningProtectionsBypassed": false
+  },
+  "verification": {
+    "nodeTests": 92,
+    "playwrightGoldenJourney": "passed",
+    "playwrightDurationSeconds": 102,
+    "productionBuild": "passed",
+    "npmAuditVulnerabilities": 0
+  },
+  "limitations": [
+    "NSIS archive was not executed or installation-tested; inventory compares builder staging tree with source.",
+    "macOS packaging and execution untested.",
+    "No inference checkpoints are bundled; separately qualified local runtime setup is required."
+  ]
+}

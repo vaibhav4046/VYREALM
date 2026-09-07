@@ -21,6 +21,8 @@ import { acquireEngineOwnership } from './runtime/engine-ownership.mjs';
 import { SMOKE_PROMPT } from './runtime/neural-production.mjs';
 import { inspectInterpolationRuntime, validateInterpolationSource, renderInputIdentity } from './runtime/frame-interpolation.mjs';
 import { buildViralVariants } from './runtime/viral-variants.mjs';
+import { FORMATS, FORMAT_IDS, PLATFORM_SPECS, countVariants, validateAllFormats } from './runtime/format-library.mjs';
+import { validateAllPresets } from './runtime/format-presets.mjs';
 
 // Desktop builds keep immutable application files separate from writable
 // per-user data. Development defaults remain rooted at the current project.
@@ -32,6 +34,7 @@ db.exec(`PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS projects (id TEXT P
 for(const project of db.prepare('SELECT id,revision,document,created_at FROM projects').all()) db.prepare('INSERT OR IGNORE INTO project_revisions VALUES (?,?,?,?)').run(project.id,project.revision,project.document,project.created_at);
 const token=randomUUID(), children=new Map(), now=()=>new Date().toISOString(); let gpuLease=null;
 const providerRegistry=createProviderRegistry();
+const formatCatalogue={schemaVersion:1,validatedFormats:validateAllFormats().length,variantCount:countVariants(),presets:validateAllPresets(),platforms:Object.entries(PLATFORM_SPECS).map(([id,spec])=>({id,label:spec.label,canvas:spec.canvas,safeArea:spec.safeArea,safeAreaConfidence:spec.safeAreaConfidence})),formats:FORMAT_IDS.map(id=>{const format=FORMATS[id];return{id,label:format.label,niche:format.niche,platforms:format.platforms,seconds:format.seconds,hook:format.hook,captions:format.captions,audio:format.audio,grade:format.grade,pacing:format.pacing,beatCount:format.beats.length};})};
 const execFileAsync=promisify(execFile), cancelling=new Set();
 async function terminateProcessTree(child){
   if(!child?.pid)return;
@@ -214,7 +217,7 @@ async function runJob(id){
   });
 }async function api(req,res,path){
  if(path==='/api/session'&&req.method==='GET'){res.writeHead(200,{'content-type':'application/json','set-cookie':`vyrelum_token=${token}; HttpOnly; SameSite=Strict`});return res.end(JSON.stringify({token,mode:'local'}));}if(!auth(req,res))return;
- if(path==='/api/state'&&req.method==='GET'){const [capabilityState,hardware]=await Promise.all([inspectCapabilities({root}),detectHardware()]);return send(res,200,{projects:db.prepare('SELECT * FROM projects ORDER BY updated_at DESC').all().map(pdoc),assets:db.prepare('SELECT * FROM assets ORDER BY created_at DESC').all().map(adoc),jobs:db.prepare('SELECT * FROM jobs ORDER BY updated_at DESC').all().map(jdoc),capabilities:capabilityState.capabilities,hardware,capabilityCatalogue:{schemaVersion:capabilityState.schemaVersion,attribution:capabilityState.attribution,screenedReferences:capabilityState.screenedReferences}});}
+ if(path==='/api/state'&&req.method==='GET'){const [capabilityState,hardware]=await Promise.all([inspectCapabilities({root}),detectHardware()]);return send(res,200,{projects:db.prepare('SELECT * FROM projects ORDER BY updated_at DESC').all().map(pdoc),assets:db.prepare('SELECT * FROM assets ORDER BY created_at DESC').all().map(adoc),jobs:db.prepare('SELECT * FROM jobs ORDER BY updated_at DESC').all().map(jdoc),capabilities:capabilityState.capabilities,hardware,formatCatalogue,capabilityCatalogue:{schemaVersion:capabilityState.schemaVersion,attribution:capabilityState.attribution,screenedReferences:capabilityState.screenedReferences}});}
  if(path==='/api/hardware'&&req.method==='GET') return send(res,200,await detectHardware());
  if(path==='/api/runtime/status'&&req.method==='GET'){
    const runtimeDir=process.env.VYRELUM_RUNTIME_DIR||join(dataDir,'runtime');let config=null,enhancement=null;

@@ -57,7 +57,7 @@ npm audit
 
 The browser test is tests/local-engine-golden.spec.mjs. Set VYREALM_TEST_URL to an isolated local server, VYREALM_TEST_MEDIA to a licensed five-second clip, and optionally VYREALM_CHROMIUM to a compatible Chromium executable. Run `npx playwright test`. Evidence and screenshots are in outputs/verification.
 
-The latest source checks pass 56 Node tests plus standalone acceptance suites, the production build, the browser golden journey (90 seconds) and a small real RIFE CPU/retry test. The source app also recovered its session after an engine restart without clearing the selected project. Format-aware viral hooks and the bounded variation matrix are available through MCP (`generate_hooks`, `generate_variations`) and are stored with the selected project revision.
+The latest source checks pass 92 Node tests plus standalone acceptance suites, the production build, the browser golden journey (1.7 minutes) and a small real RIFE CPU/retry test. The source app also recovered its session after an engine restart without clearing the selected project. Format-aware viral hooks and the bounded variation matrix are available through MCP (`generate_hooks`, `generate_variations`) and are stored with the selected project revision.
 
 Technical validation and operator visual review are distinct. Imported, locally generated, edited and enhanced media keep distinct provenance. 4K canvas resizing is labelled separately from Real-ESRGAN enhancement.
 

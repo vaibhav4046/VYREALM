@@ -67,7 +67,7 @@
       "specs": [
         {
           "title": "offline local media, Piper, Whisper, edit, three exports, download and reopen",
-          "ok": false,
+          "ok": true,
           "tags": [],
           "tests": [
             {
@@ -80,58 +80,28 @@
                 {
                   "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 149523,
-                  "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"verified\"\u001b[39m\nReceived: \u001b[31mnull\u001b[39m\n\nCall Log:\n- Timeout 120000ms exceeded while waiting on the predicate",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"verified\"\u001b[39m\nReceived: \u001b[31mnull\u001b[39m\n\nCall Log:\n- Timeout 120000ms exceeded while waiting on the predicate\n    at C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\tests\\local-engine-golden.spec.mjs:41:3",
-                    "location": {
-                      "file": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\tests\\local-engine-golden.spec.mjs",
-                      "column": 3,
-                      "line": 41
-                    },
-                    "snippet": "  39 |   await page.locator('#exportCanvas').selectOption(canvas);await page.locator('#exportFraming').selectOption('cover');\n  40 |   const before=(await project()).latestOutput?.jobId;await page.locator('#renderBtn').click();\n> 41 |   await expect.poll(async()=>{const p=await project();return p.latestOutput?.jobId&&p.latestOutput.jobId!==before?p.latestOutput.status:null;},{timeout:120000}).toBe('verified');\n     |   ^\n  42 |   const p=await project(),job=await api(`/api/jobs/${p.latestOutput.jobId}`);\n  43 |   expect(job.status).toBe('succeeded');expect(job.output.verification.ok).toBe(true);expect(p.latestOutput.provenance.generationStatus).toBe('edited');\n  44 |   expect(job.output.audioLayers.length).toBe(2);expect(job.output.audioLayers[1].gain).toBe(0.4);"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\tests\\local-engine-golden.spec.mjs",
-                        "column": 3,
-                        "line": 41
-                      },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"verified\"\u001b[39m\nReceived: \u001b[31mnull\u001b[39m\n\nCall Log:\n- Timeout 120000ms exceeded while waiting on the predicate\n\n  39 |   await page.locator('#exportCanvas').selectOption(canvas);await page.locator('#exportFraming').selectOption('cover');\n  40 |   const before=(await project()).latestOutput?.jobId;await page.locator('#renderBtn').click();\n> 41 |   await expect.poll(async()=>{const p=await project();return p.latestOutput?.jobId&&p.latestOutput.jobId!==before?p.latestOutput.status:null;},{timeout:120000}).toBe('verified');\n     |   ^\n  42 |   const p=await project(),job=await api(`/api/jobs/${p.latestOutput.jobId}`);\n  43 |   expect(job.status).toBe('succeeded');expect(job.output.verification.ok).toBe(true);expect(p.latestOutput.provenance.generationStatus).toBe('edited');\n  44 |   expect(job.output.audioLayers.length).toBe(2);expect(job.output.audioLayers[1].gain).toBe(0.4);\n    at C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\tests\\local-engine-golden.spec.mjs:41:3"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 97421,
+                  "errors": [],
                   "stdout": [],
-                  "stderr": [],
-                  "retry": 0,
-                  "startTime": "2026-09-07T20:45:24.339Z",
-                  "annotations": [],
-                  "attachments": [
+                  "stderr": [
                     {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\test-results\\local-engine-golden-offlin-94f6f-exports-download-and-reopen\\test-failed-1.png"
+                      "buffer": ""
                     },
                     {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\test-results\\local-engine-golden-offlin-94f6f-exports-download-and-reopen\\error-context.md"
+                      "buffer": ""
                     },
                     {
-                      "name": "trace",
-                      "contentType": "application/zip",
-                      "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\test-results\\local-engine-golden-offlin-94f6f-exports-download-and-reopen\\trace.zip"
+                      "buffer": ""
                     }
                   ],
-                  "errorLocation": {
-                    "file": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\tests\\local-engine-golden.spec.mjs",
-                    "column": 3,
-                    "line": 41
-                  }
+                  "retry": 0,
+                  "startTime": "2026-09-07T20:50:01.684Z",
+                  "annotations": [],
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "59d2d1fe41b15d4e6787-b3aaf2b5f912a481d842",
@@ -144,11 +114,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-09-07T20:45:19.126Z",
-    "duration": 158804.025,
-    "expected": 0,
+    "startTime": "2026-09-07T20:49:57.212Z",
+    "duration": 103919.801,
+    "expected": 1,
     "skipped": 0,
-    "unexpected": 1,
+    "unexpected": 0,
     "flaky": 0
   }
 }

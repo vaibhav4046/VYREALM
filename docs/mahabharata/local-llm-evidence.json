@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 1,
+  "stage": "local-script-editorial-pass",
+  "provider": "ollama-loopback",
+  "endpoint": "http://127.0.0.1:11434",
+  "requestedModel": "qwen3:4b-instruct",
+  "startedAt": "2026-09-07T21:39:15.439Z",
+  "options": {
+    "num_gpu": 0,
+    "num_ctx": 4096,
+    "num_predict": 1800,
+    "temperature": 0.2,
+    "seed": 73519
+  },
+  "keepAlive": 0,
+  "researchMethod": "Production-team web research supplied as context; local model did not browse.",
+  "researchSha256": "690a2644f05d0b2980cb42ec4b363dfc019f05ca930cbb60eb91d13a7ff190d0",
+  "baselineScriptSha256": "70ddb9555ffc603acd4f71680a925db3c9e6bcccf21735cd9e6ecc5b8aebddfe",
+  "promptSha256": "ed6ac7afbff66452915d22f074607be4d61fb2e6b41b7343f7d3c787be74bc4b",
+  "request": {
+    "model": "qwen3:4b-instruct",
+    "system": "Generate editable production data only. Use provided facts; do not invent evidence, citations or completed work.",
+    "prompt": "You are VYREALM's LOCAL film script editor. Return JSON matching the schema. This is an original 30-second Mahabharata teaser titled BETWEEN TWO ARMIES. The following research facts were obtained by the production team from published scripture, NOT by you browsing the web. Ground your work only in these facts: Bhagavad Gita 1.21 has Arjuna ask Krishna to position the chariot between the armies at Kurukshetra. Gita 1.28-30 depicts Arjuna grieving on seeing his relatives and teachers; his body falters and Gandiva slips from his hand. Krishna is his charioteer and guide. Gita 2.47 teaches action without attachment to its fruit and does not endorse inaction. Gita 18.73 ends with Arjuna's restored resolve. The epic describes white horses, chariots, conches and army banners. Dawn lighting, specific faces and costumes are artistic interpretation, not archaeology. Sources: https://sacred-texts.com/hin/m06/m06025.htm https://www.gitasupersite.iitk.ac.in/srimad?choose=1&etadi=1&etgb=1&etpurohit=1&etsiva=1&etssa=1&field_chapter_value=1&field_nsutra_value=21&language=dv&show_mool=1 https://www.gitasupersite.iitk.ac.in/srimad?ecsiva=1&etpurohit=1&field_chapter_value=2&field_nsutra_value=47&language=dv&show_purohit=1 https://sacred-texts.com/hin/m06/m06042.htm\n\nImprove or retain this original narrator text at 48-58 words: At Kurukshetra, two armies face the dawn. Arjuna sees the men who raised him, waiting beyond his bow. His hand falters. Beside him, Krishna counsels action without attachment to reward. Before he can fight, a warrior must confront his deepest doubt. Duty. Compassion. Consequence. Between two armies, the struggle begins within.\n\nKeep these six shot identities, order and 5-second duration each: 01-the-field: low-wide-detail; Camera tracks slowly sideways past the stationary chariot wheel. Cloth stirs in a gentle breeze, a thin band of dust drifts across the ground, the white horse breathes. Preserve wheel geometry and distant figures, one uninterrupted shot.\n02-the-cost: close-portrait; Arjuna's breath catches softly. His eyes move a little toward the distant army and then lower. Two loose hair strands move in the wind. Camera makes a subtle slow push-in. Preserve the face, headband, clothing and anatomy; restrained human performance.\n03-the-hand: hand-and-bow-insert; His hand trembles almost imperceptibly and the bow lowers only a few centimetres. The fingers stay around the grip with correct anatomy. Cloth shifts once in the breeze. Camera holds nearly still with a slight natural drift, no bow firing or bending.\n04-the-guide: three-quarter-close-portrait; Krishna slowly turns his attentive gaze toward Arjuna and makes one small calm nod, breathing naturally. The yellow cloth and feather move gently in the breeze. Subtle controlled camera push. Lips remain at rest; this is offscreen narration, not lip-sync dialogue.\n05-the-listening: over-shoulder; Arjuna steadies his breathing and lifts his eyes toward Krishna. Only one visible face. A tiny lateral camera move reveals more of the chariot rail; keep both bodies stable and distant flags moving gently. No dialogue mouth motion.\n06-the-choice: profile-close-portrait; Arjuna raises his gaze slightly toward the field; his jaw relaxes and he takes one steady breath. The camera glides forward only a little. Hair and flags move in a soft wind; face and wardrobe remain unchanged. Hold the final composition, no arrow firing.\n\nConstraints: compassionate moral dilemma, clear natural English, no invented scripture quotation, no \"ancient destiny awakens\" cliches, no prophecy or invincible warrior sales language, no magic powers or battle charge. One subtle visible action per shot, only restrained camera motion. Keep the two characters' exact faces, wardrobes and dawn lighting. Offscreen narration only, no lip-sync claim. Do not promise any quality or describe any shot as already rendered. Return six concise shot actions/cameras/sound descriptions that the local video model can execute, and 2-4 accuracy notes. Title must remain BETWEEN TWO ARMIES. Do not include commands or file paths.",
+    "format": {
+      "type": "object",
+      "required": [
+        "title",
+        "narration",
+        "shots",
+        "accuracyNotes"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "narration": {
+          "type": "string"
+        },
+        "accuracyNotes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "shots": {
+          "type": "array",
+          "minItems": 6,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "action",
+              "camera",
+              "sound"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              },
+              "camera": {
+                "type": "string"
+              },
+              "sound": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "stream": false,
+    "think": false,
+    "keep_alive": 0,
+    "options": {
+      "num_gpu": 0,
+      "num_ctx": 4096,
+      "num_predict": 1800,
+      "temperature": 0.2,
+      "seed": 73519
+    }
+  },
+  "acceptanceState": "draft-rejected-preserve-researched-baseline",
+  "generatedVideo": false,
+  "modelDigest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+  "modelDetails": {
+    "parent_model": "",
+    "format": "gguf",
+    "family": "qwen3",
+    "families": [
+      "qwen3"
+    ],
+    "parameter_size": "4.0B",
+    "quantization_level": "Q4_K_M",
+    "context_length": 262144,
+    "embedding_length": 2560
+  },
+  "responseSha256": "06e2798a1b8c77de624be3baeed36ca104e03ffac2dcbc615826b7b22708b359",
+  "rawResponse": "{\"model\":\"qwen3:4b-instruct\",\"created_at\":\"2026-09-07T21:42:10.9389239Z\",\"response\":\"{\\n  \\\"title\\\": \\\"BETWEEN TWO ARMIES\\\",\\n  \\\"narration\\\": \\\"At Kuruksh\\\",\\n  \\\"accuracyNotes\\\": [\\n    \\\"Arjuna's physical reaction (hand trembling, breath catching) is grounded in Gita 1.28-30, where his body falters and Gandiva slips from his hand.\\\",\\n    \\\"Krishna's role as charioteer and guide is confirmed in Gita 1.21 and 2.47, with no endorsement of inaction or abandonment of duty.\\\",\\n    \\\"The scene occurs at dawn at Kurukshetra, as described in scripture, with white horses, chariots, and banners present, though lighting and costumes are artistic interpretations.\\\",\\n    \\\"The emotional core—duty, compassion, consequence—is derived from the Gita's exploration of inner conflict and moral responsibility, not external prophecy or divine intervention.\\\"\\n  ],\\n  \\\"shots\\\": [\\n    {\\n      \\\"id\\\": \\\"01-the-field\\\",\\n      \\\"action\\\": \\\"Camera tracks slowly sideways past a stationary chariot wheel. A thin band of dust drifts across the ground. The white horse breathes. Preserve wheel geometry and distant figures in one uninterrupted shot.\\\",\\n      \\\"camera\\\": \\\"slow sideways track\\\",\\n      \\\"sound\\\": \\\"gentle breeze, soft ambient dawn wind\\\"\\n    },\\n    {\\n      \\\"id\\\": \\\"02-the-cost\\\",\\n      \\\"action\\\": \\\"Close portrait: Arjuna's breath catches. Eyes shift toward distant army, then lower. Two loose hair strands move. Camera makes subtle push-in.\\\",\\n      \\\"camera\\\": \\\"subtle slow push-in\\\",\\n      \\\"sound\\\": \\\"soft inhalation, breeze\\\"\\n    },\\n    {\\n      \\\"id\\\": \\\"03-the-hand\\\",\\n      \\\"action\\\": \\\"Hand-and-bow insert: hand trembles almost imperceptibly. Bow lowers slightly. Fingers remain on grip. Cloth shifts once. Camera holds still with natural drift.\\\",\\n      \\\"camera\\\": \\\"nearly still with natural drift\\\",\\n      \\\"sound\\\": \\\"light breeze, faint breath\\\"\\n    },\\n    {\\n      \\\"id\\\": \\\"04-the-guide\\\",\\n      \\\"action\\\": \\\"Three-quarter portrait: Krishna turns gently, makes one small calm nod, breathes naturally. Yellow cloth and feather move in breeze. Subtle camera push.\\\",\\n      \\\"camera\\\": \\\"subtle controlled push\\\",\\n      \\\"sound\\\": \\\"soft breath, breeze\\\"\\n    },\\n    {\\n      \\\"id\\\": \\\"05-the-listening\\\",\\n      \\\"action\\\": \\\"Over-shoulder: Arjuna steadies breathing, lifts eyes to Krishna. Only one face visible. Camera moves slightly laterally to reveal chariot rail. Both bodies stable. Flags move gently.\\\",\\n      \\\"camera\\\": \\\"tiny lateral move\\\",\\n      \\\"sound\\\": \\\"steady breath, soft wind\\\"\\n    },\\n    {\\n      \\\"id\\\": \\\"06-the-choice\\\",\\n      \\\"action\\\": \\\"Profile close: Arjuna raises gaze slightly. Jaw relaxes. Takes one steady breath. Camera glides forward slightly. Hair and flags move in soft wind. Face and wardrobe unchanged.\\\",\\n      \\\"camera\\\": \\\"slight glide forward\\\",\\n      \\\"sound\\\": \\\"steady breath, gentle breeze\\\"\\n    }\\n  ]\\n}\",\"done\":true,\"done_reason\":\"stop\",\"context\":[151644,8948,198,31115,37409,5670,821,1172,13,5443,3897,13064,26,653,537,17023,5904,11,51846,476,8145,975,13,151645,198,151644,872,198,2610,525,647,56,24895,44,594,42501,4531,5316,6440,13,3411,4718,12579,279,10802,13,1096,374,458,4024,220,18,15,43863,16171,370,12982,459,69553,24849,56639,46258,30486,5369,13,576,2701,3412,13064,1033,12180,553,279,5670,2083,504,4652,72788,11,4183,553,498,31321,279,3482,13,25413,697,975,1172,304,1493,13064,25,30830,351,37055,479,6255,220,16,13,17,16,702,1644,73,8565,2548,79309,311,2309,279,1161,11098,1948,279,46883,518,31275,3101,927,295,956,13,479,6255,220,16,13,17,23,12,18,15,61891,1644,73,8565,90744,389,9120,806,28558,323,13336,26,806,2487,282,3145,388,323,38321,9924,67654,504,806,1424,13,79309,374,806,1161,72,1272,261,323,8474,13,479,6255,220,17,13,19,22,32892,1917,2041,19984,311,1181,13779,323,1558,537,18970,304,1311,13,479,6255,220,16,23,13,22,18,10335,448,1644,73,8565,594,27003,8830,13,576,24679,16555,4158,26830,11,1161,72,2412,11,390,8528,323,13390,58372,13,34507,17716,11,3151,12300,323,44088,525,31592,22845,11,537,38111,2449,13,47032,25,3703,1110,82,580,1151,9345,82,905,7530,258,3183,15,21,3183,15,21,15,17,20,23284,3703,1110,2136,1302,21226,454,388,632,8607,275,74,15399,1858,2687,6283,329,30,27052,28,16,5,295,2767,28,16,5,295,9511,28,16,5,295,79,2798,22492,28,16,5,1415,9924,28,16,5,295,52107,28,16,5,2566,4138,2873,3142,28,16,5,2566,34728,77881,3142,28,17,16,5,11528,25405,85,5,3445,717,1749,28,16,3703,1110,2136,1302,21226,454,388,632,8607,275,74,15399,1858,2687,6283,329,30,53717,9924,28,16,5,295,79,2798,22492,28,16,5,2566,4138,2873,3142,28,17,5,2566,34728,77881,3142,28,19,22,5,11528,25405,85,5,3445,620,2798,22492,28,16,3703,1110,82,580,1151,9345,82,905,7530,258,3183,15,21,3183,15,21,15,19,17,23284,271,1427,34463,476,14060,419,4024,64171,1467,518,220,19,23,12,20,23,4244,25,2411,31275,3101,927,295,956,11,1378,46883,3579,279,38393,13,1644,73,8565,15634,279,2953,879,9226,1435,11,8580,7797,806,15273,13,5301,1424,282,3145,388,13,18078,577,1435,11,79309,2294,82,2010,1917,2041,19984,311,11313,13,13235,566,646,4367,11,264,37390,1969,16877,806,50521,10492,13,35589,13,59580,290,13,1200,15512,13,27133,1378,46883,11,279,14651,12033,2878,382,19434,1493,4743,6552,39421,11,1973,323,220,20,43863,8090,1817,25,220,15,16,10603,19130,25,3347,24472,29572,26,14332,13918,13970,73729,3267,279,52635,1161,11098,13284,13,83635,357,16838,304,264,21700,45285,11,264,15430,7055,315,15797,33638,82,3941,279,4910,11,279,4158,15223,11486,288,13,81306,13284,17047,323,28727,12396,11,825,98150,6552,624,15,17,10603,40138,25,3265,41457,14350,26,1644,73,8565,594,11486,37834,56050,13,5301,6414,3271,264,2632,8841,279,28727,13390,323,1221,4722,13,9043,20174,6869,68764,3271,304,279,9956,13,14332,3643,264,26447,6301,4484,3419,13,81306,279,3579,11,1968,7053,11,17438,323,61590,26,76200,3738,5068,624,15,18,10603,24413,25,1424,9777,1455,363,74550,26,5301,1424,18162,38763,4558,16772,1484,6487,323,279,15273,72015,1172,264,2421,2889,85266,416,13,576,19225,4717,2163,279,24676,448,4396,61590,13,83635,28635,3055,304,279,45285,13,14332,9982,7009,2058,448,264,8112,5810,33638,11,902,15273,22830,476,57118,624,15,19,10603,91425,25,2326,57314,34462,41457,14350,26,79309,13970,10577,806,72798,35396,8841,1644,73,8565,323,3643,825,2613,19300,16004,11,25938,17712,13,576,13753,27292,323,49776,3271,29273,304,279,45285,13,3719,11239,14071,6249,4484,13,95263,7146,518,2732,26,419,374,1007,8174,85080,11,537,19050,65034,21276,624,15,20,10603,9029,6019,25,916,12,5445,261,26,1644,73,8565,16845,550,806,25938,323,53066,806,6414,8841,79309,13,8278,825,9434,3579,13,362,13673,44469,6249,3271,20992,803,315,279,1161,11098,13569,26,2506,2176,12866,15175,323,28727,8042,7218,29273,13,2308,21276,10780,11379,624,15,21,10603,62626,25,5526,34462,41457,14350,26,1644,73,8565,24886,806,35396,10078,8841,279,2070,26,806,16535,11967,288,323,566,4990,825,24020,11486,13,576,6249,2770,3341,4637,1172,264,2632,13,25697,323,8042,3271,304,264,8413,9956,26,3579,323,45746,7146,34857,13,22749,279,1590,18037,11,902,17921,22830,382,12925,25,59861,15659,54767,11,2797,5810,6364,11,902,35492,72788,54231,11,902,330,1129,1167,46076,1360,70737,1,62592,288,11,902,65784,476,1529,76872,37390,6625,4128,11,902,10963,13430,476,8049,6757,13,3776,26447,9434,1917,817,6552,11,1172,76200,6249,11379,13,13655,279,1378,5766,6,4734,12300,11,25657,299,9433,323,38393,17716,13,4114,8174,85080,1172,11,902,19050,65034,3717,13,3155,537,11222,894,4271,476,7512,894,6552,438,2669,22383,13,3411,4743,63594,6552,6168,2899,309,9247,2687,795,27787,429,279,2205,2766,1614,646,9026,11,323,220,17,12,19,13403,8388,13,10869,1969,7146,56639,46258,30486,5369,13,3155,537,2924,11293,476,1034,12716,13,151645,198,151644,77091,198,515,220,330,2102,788,330,33,1348,44348,46258,30486,5369,756,220,330,77,1118,367,788,330,1655,31275,3101,927,756,220,330,32729,21667,788,2278,262,330,6953,73,8565,594,6961,12720,320,10661,91988,11,11486,33068,8,374,44345,304,479,6255,220,16,13,17,23,12,18,15,11,1380,806,2487,282,3145,388,323,38321,9924,67654,504,806,1424,10346,262,330,81165,812,3376,594,3476,438,1161,72,1272,261,323,8474,374,10774,304,479,6255,220,16,13,17,16,323,220,17,13,19,22,11,448,902,41043,315,304,1311,476,90302,315,14189,10346,262,330,785,6109,13666,518,38393,518,31275,3101,927,295,956,11,438,7481,304,72788,11,448,4158,26830,11,1161,72,2412,11,323,58372,3042,11,3498,17716,323,44088,525,31592,57589,10346,262,330,785,14269,6200,2293,67,20237,11,29381,11,28674,54334,14257,504,279,479,6255,594,26403,315,9179,12055,323,15659,11752,11,537,9250,65784,476,29367,20949,10040,220,3211,220,330,27634,788,2278,262,341,414,330,307,788,330,15,16,10603,19130,756,414,330,1311,788,330,13445,13918,13970,73729,3267,264,52635,1161,11098,13284,13,362,15430,7055,315,15797,33638,82,3941,279,4910,13,576,4158,15223,11486,288,13,81306,13284,17047,323,28727,12396,304,825,98150,6552,10346,414,330,24910,788,330,35211,73729,3754,756,414,330,27532,788,330,15772,273,45285,11,8413,34188,38393,9956,698,262,1153,262,341,414,330,307,788,330,15,17,10603,40138,756,414,330,1311,788,330,7925,33033,25,1644,73,8565,594,11486,37834,13,41996,6407,8841,28727,13390,11,1221,4722,13,9043,20174,6869,68764,3271,13,14332,3643,26447,4484,3419,10346,414,330,24910,788,330,1966,11239,6301,4484,3419,756,414,330,27532,788,330,3510,76673,367,11,45285,698,262,1153,262,341,414,330,307,788,330,15,18,10603,24413,756,414,330,1311,788,330,2314,9777,1455,363,5656,25,1424,18162,38763,4558,16772,1484,6487,13,18436,72015,10078,13,434,14105,7146,389,24676,13,83635,28635,3055,13,14332,9982,2058,448,5810,33638,10346,414,330,24910,788,330,77,22140,2058,448,5810,33638,756,414,330,27532,788,330,4145,45285,11,37578,11486,698,262,1153,262,341,414,330,307,788,330,15,19,10603,91425,756,414,330,1311,788,330,19641,57314,33033,25,79309,10577,29273,11,3643,825,2613,19300,16004,11,11486,288,17712,13,25462,27292,323,49776,3271,304,45285,13,3719,11239,6249,4484,10346,414,330,24910,788,330,1966,11239,14071,4484,756,414,330,27532,788,330,3510,11486,11,45285,698,262,1153,262,341,414,330,307,788,330,15,20,10603,9029,6019,756,414,330,1311,788,330,1918,12,5445,261,25,1644,73,8565,16845,550,25938,11,53066,6414,311,79309,13,8278,825,3579,9434,13,14332,10797,10078,2937,745,311,16400,1161,11098,13569,13,11733,12866,15175,13,33205,3271,29273,10346,414,330,24910,788,330,46116,44469,3271,756,414,330,27532,788,330,71666,11486,11,8413,9956,698,262,1153,262,341,414,330,307,788,330,15,21,10603,62626,756,414,330,1311,788,330,8526,3265,25,1644,73,8565,24886,35396,10078,13,33194,11967,288,13,37607,825,24020,11486,13,14332,2770,3341,4637,10078,13,25697,323,8042,3271,304,8413,9956,13,18596,323,45746,34857,10346,414,330,24910,788,330,3226,491,85041,4637,756,414,330,27532,788,330,71666,11486,11,21700,45285,698,262,456,220,5133,92],\"total_duration\":175456168100,\"load_duration\":7617720800,\"prompt_eval_count\":1026,\"prompt_eval_duration\":60447988000,\"eval_count\":659,\"eval_duration\":107154393000}",
+  "responseModel": "qwen3:4b-instruct",
+  "evalCount": 659,
+  "promptEvalCount": 1026,
+  "totalDurationNs": 175456168100,
+  "doneReason": "stop",
+  "error": {
+    "message": "LOCAL_DRAFT_NARRATION_LENGTH_2",
+    "name": "Error"
+  },
+  "finishedAt": "2026-09-07T21:42:11.919Z",
+  "wallMs": 176480
+}

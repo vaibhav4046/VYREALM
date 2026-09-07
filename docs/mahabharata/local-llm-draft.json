@@ -1,0 +1,48 @@
+{
+  "title": "BETWEEN TWO ARMIES",
+  "narration": "At Kuruksh",
+  "accuracyNotes": [
+    "Arjuna's physical reaction (hand trembling, breath catching) is grounded in Gita 1.28-30, where his body falters and Gandiva slips from his hand.",
+    "Krishna's role as charioteer and guide is confirmed in Gita 1.21 and 2.47, with no endorsement of inaction or abandonment of duty.",
+    "The scene occurs at dawn at Kurukshetra, as described in scripture, with white horses, chariots, and banners present, though lighting and costumes are artistic interpretations.",
+    "The emotional core—duty, compassion, consequence—is derived from the Gita's exploration of inner conflict and moral responsibility, not external prophecy or divine intervention."
+  ],
+  "shots": [
+    {
+      "id": "01-the-field",
+      "action": "Camera tracks slowly sideways past a stationary chariot wheel. A thin band of dust drifts across the ground. The white horse breathes. Preserve wheel geometry and distant figures in one uninterrupted shot.",
+      "camera": "slow sideways track",
+      "sound": "gentle breeze, soft ambient dawn wind"
+    },
+    {
+      "id": "02-the-cost",
+      "action": "Close portrait: Arjuna's breath catches. Eyes shift toward distant army, then lower. Two loose hair strands move. Camera makes subtle push-in.",
+      "camera": "subtle slow push-in",
+      "sound": "soft inhalation, breeze"
+    },
+    {
+      "id": "03-the-hand",
+      "action": "Hand-and-bow insert: hand trembles almost imperceptibly. Bow lowers slightly. Fingers remain on grip. Cloth shifts once. Camera holds still with natural drift.",
+      "camera": "nearly still with natural drift",
+      "sound": "light breeze, faint breath"
+    },
+    {
+      "id": "04-the-guide",
+      "action": "Three-quarter portrait: Krishna turns gently, makes one small calm nod, breathes naturally. Yellow cloth and feather move in breeze. Subtle camera push.",
+      "camera": "subtle controlled push",
+      "sound": "soft breath, breeze"
+    },
+    {
+      "id": "05-the-listening",
+      "action": "Over-shoulder: Arjuna steadies breathing, lifts eyes to Krishna. Only one face visible. Camera moves slightly laterally to reveal chariot rail. Both bodies stable. Flags move gently.",
+      "camera": "tiny lateral move",
+      "sound": "steady breath, soft wind"
+    },
+    {
+      "id": "06-the-choice",
+      "action": "Profile close: Arjuna raises gaze slightly. Jaw relaxes. Takes one steady breath. Camera glides forward slightly. Hair and flags move in soft wind. Face and wardrobe unchanged.",
+      "camera": "slight glide forward",
+      "sound": "steady breath, gentle breeze"
+    }
+  ]
+}

@@ -42,18 +42,22 @@ export const SHOT_LIBRARY = {
   pov: { file: 'ODYSSEY_FILM_CINEMATIC_1080P.mp4', inPoint: 0, provenance: 'blender-3d' },
   loop: { file: 'ODYSSEY_FILM_CINEMATIC_1080P.mp4', inPoint: 2, provenance: 'blender-3d' },
   screen: { file: 'VYREALM_UI_PROJECT_OUTPUT_1080P.mp4', inPoint: 0, provenance: 'composited' },
-  diagram: { file: 'VYREALM_UI_PROJECT_OUTPUT_1080P.mp4', inPoint: 7, provenance: 'composited' }
+  diagram: { file: 'VYREALM_UI_PROJECT_OUTPUT_1080P.mp4', inPoint: 7, provenance: 'composited' },
+  // Locally generated: Wan2.2 TI2V-5B Q4, 1024x576, 121 frames, 1568s on a 3050 6GB.
+  'anime-hero': { file: 'VYREALM_ANIME_HERO_5S.mp4', inPoint: 0, provenance: 'local-neural-source' },
+  'anime-bg': { file: 'VYREALM_ANIME_HERO_5S.mp4', inPoint: 0, provenance: 'local-neural-source' },
+  'anime-action': { file: 'VYREALM_ANIME_HERO_5S.mp4', inPoint: 2, provenance: 'local-neural-source' }
   // Deliberately absent, because no honest source exists yet:
-  //   talking-head  - needs a real presenter or a qualified local avatar
-  //   anime-hero / anime-bg / anime-action - needs the anime generation to land
+  //   talking-head - needs a real presenter or a qualified local avatar (MuseTalk)
 };
 
 function parseArgs(argv) {
-  const args = { limit: Infinity, out: 'outputs/formats', retimes: false };
+  const args = { limit: Infinity, out: 'outputs/formats', retimes: false, extend: false };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--limit') args.limit = Number(argv[++i]);
     else if (argv[i] === '--out') args.out = argv[++i];
     else if (argv[i] === '--retimes') args.retimes = true;
+    else if (argv[i] === '--extend') args.extend = true;
   }
   return args;
 }
@@ -106,7 +110,8 @@ async function main() {
         plan,
         shotLibrary: resolved,
         output: join(outDir, name),
-        workDir: join(workRoot, String(index))
+        workDir: join(workRoot, String(index)),
+        allowExtension: args.extend
       });
       const drift = Math.abs(receipt.measured.seconds - receipt.requestedSeconds);
       receipt.durationDriftSeconds = Number(drift.toFixed(3));

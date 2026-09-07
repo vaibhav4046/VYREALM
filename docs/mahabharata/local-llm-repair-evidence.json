@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "stage": "local-narration-repair-pass",
+  "provider": "ollama-loopback",
+  "endpoint": "http://127.0.0.1:11434",
+  "requestedModel": "qwen3:4b-instruct",
+  "startedAt": "2026-09-07T21:44:06.155Z",
+  "options": {
+    "num_gpu": 0,
+    "num_ctx": 4096,
+    "num_predict": 768,
+    "temperature": 0.2,
+    "seed": 73620
+  },
+  "keepAlive": 0,
+  "researchMethod": "Production-team web research supplied as context; local model did not browse.",
+  "researchSha256": "690a2644f05d0b2980cb42ec4b363dfc019f05ca930cbb60eb91d13a7ff190d0",
+  "baselineScriptSha256": "1f975f5a6373c301ce596d2f993c51f12958de0a18fb16d7eae1401ab2b788f1",
+  "promptSha256": "444d294079f8297e49d9f7de48ebae362f5e4332e85fdb19f1e7784380f0416a",
+  "request": {
+    "model": "qwen3:4b-instruct",
+    "system": "Generate editable production data only. Use provided facts; do not invent evidence, citations or completed work.",
+    "prompt": "Write ONLY the original English narrator voiceover for a 30-second Mahabharata teaser. Produce a complete 45-65 word paragraph with a beginning, tension and an ending. Return it in the narration field, plus at most three brief accuracy notes.\nFacts supplied from Bhagavad Gita 1.21, 1.28-30, 2.47 and 18.73: Arjuna asks Krishna to stop their chariot between the armies at Kurukshetra. He sees his kin and teachers, grieves, and his bow slips. Krishna is his charioteer and counsels action without attachment to reward, not inaction. Arjuna eventually regains resolve.\nBe concrete and compassionate. Focus on kinship, the faltering bow and the moral choice. This is original narrator exposition, never a scripture quotation. Do not mention supernatural powers, guaranteed victory or destiny. Dawn is only an artistic lighting choice, not a fact established by these verses. No shot list. No screenplay directions. Do not end the paragraph prematurely. Count approximately 55 words.",
+    "format": {
+      "type": "object",
+      "required": [
+        "narration",
+        "accuracyNotes"
+      ],
+      "properties": {
+        "narration": {
+          "type": "string",
+          "minLength": 200,
+          "maxLength": 600
+        },
+        "accuracyNotes": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "stream": false,
+    "think": false,
+    "keep_alive": 0,
+    "options": {
+      "num_gpu": 0,
+      "num_ctx": 4096,
+      "num_predict": 768,
+      "temperature": 0.2,
+      "seed": 73620
+    }
+  },
+  "acceptanceState": "draft-rejected-preserve-researched-baseline",
+  "generatedVideo": false,
+  "modelDigest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+  "modelDetails": {
+    "parent_model": "",
+    "format": "gguf",
+    "family": "qwen3",
+    "families": [
+      "qwen3"
+    ],
+    "parameter_size": "4.0B",
+    "quantization_level": "Q4_K_M",
+    "context_length": 262144,
+    "embedding_length": 2560
+  },
+  "templateInspection": {
+    "templateSha256": "40c21f34cf67d8c760ef72f8ad3ae5afad514299d4b06e91dd9a8d705af7b541",
+    "templateLength": 4040,
+    "parameters": "top_p                          0.8\nrepeat_penalty                 1\nstop                           \"<|im_start|>\"\nstop                           \"<|im_end|>\"\ntemperature                    0.7\ntop_k                          20",
+    "architecture": "qwen3"
+  },
+  "responseSha256": "c89ed6b2cae48342dc83afee5eda746782729bbf42b66a595ccb6ff1baca43b4",
+  "rawResponse": "{\"model\":\"qwen3:4b-instruct\",\"created_at\":\"2026-09-07T21:44:44.0398145Z\",\"response\":\"{\\\"narration\\\": \\\"At Kurukshetra, Arjuna stops the chariot, his breath caught as he sees his brothers, teachers, and elders—familiar faces, now strangers in war. His bow slips from his hand, trembling. The weight of kinship presses down. Krishna speaks softly: act, not out of pride, but out of duty. Arjuna closes his eyes, then lifts the bow again—steady, not because he’s strong, but because he chooses to carry the burden of love, not fear.\\\", \\\"accuracyNotes\\\": [\\\"Arjuna sees kin and teachers in the Bhagavad Gita\\\", \\\"Krishna advises action without attachment to reward\\\", \\\"Arjuna regains resolve after initial hesitation\\\"] }\",\"done\":true,\"done_reason\":\"stop\",\"context\":[151644,8948,198,31115,37409,5670,821,1172,13,5443,3897,13064,26,653,537,17023,5904,11,51846,476,8145,975,13,151645,198,151644,872,198,7985,26687,279,4024,6364,64171,7743,1975,369,264,220,18,15,43863,16171,370,12982,459,69553,13,86888,264,4583,220,19,20,12,21,20,3409,14311,448,264,7167,11,23504,323,458,13391,13,3411,432,304,279,85080,2070,11,5519,518,1429,2326,9814,13403,8388,624,37,11359,17221,504,30830,351,37055,479,6255,220,16,13,17,16,11,220,16,13,17,23,12,18,15,11,220,17,13,19,22,323,220,16,23,13,22,18,25,1644,73,8565,17064,79309,311,2936,862,1161,11098,1948,279,46883,518,31275,3101,927,295,956,13,1260,15634,806,23938,323,13336,11,342,7231,2342,11,323,806,15273,67654,13,79309,374,806,1161,72,1272,261,323,2294,82,2010,1917,2041,19984,311,11313,11,537,304,1311,13,1644,73,8565,9583,1217,1735,8830,624,3430,14175,323,59861,13,25806,389,23938,5270,11,279,25484,59385,15273,323,279,15659,5754,13,1096,374,4024,64171,90418,11,2581,264,72788,54231,13,3155,537,6286,48958,13430,11,19323,12560,476,46076,13,34507,374,1172,458,31592,17716,5754,11,537,264,2097,9555,553,1493,49299,13,2308,6552,1140,13,2308,84775,17961,13,3155,537,835,279,14311,87919,13,4504,13187,220,20,20,4244,13,151645,198,151644,77091,198,4913,77,1118,367,788,330,1655,31275,3101,927,295,956,11,1644,73,8565,17933,279,1161,11098,11,806,11486,10568,438,566,15634,806,20208,11,13336,11,323,60676,2293,69,40405,12300,11,1431,39621,304,4116,13,5301,15273,67654,504,806,1424,11,91988,13,576,4680,315,23938,5270,52963,1495,13,79309,21191,56050,25,1160,11,537,700,315,21770,11,714,700,315,14189,13,1644,73,8565,33250,806,6414,11,1221,53066,279,15273,1549,2293,71666,11,537,1576,566,748,3746,11,714,1576,566,39911,311,6777,279,22305,315,2948,11,537,8679,10465,330,32729,21667,788,4383,6953,73,8565,15634,23938,323,13336,304,279,30830,351,37055,479,6255,497,330,81165,812,3376,68974,1917,2041,19984,311,11313,497,330,6953,73,8565,1217,1735,8830,1283,2856,64337,1341,335],\"total_duration\":37747074900,\"load_duration\":8739457100,\"prompt_eval_count\":269,\"prompt_eval_duration\":8522745999,\"eval_count\":157,\"eval_duration\":20385575000}",
+  "responseModel": "qwen3:4b-instruct",
+  "evalCount": 157,
+  "promptEvalCount": 269,
+  "totalDurationNs": 37747074900,
+  "doneReason": "stop",
+  "draftFile": "local-llm-repair-draft.json",
+  "error": {
+    "message": "LOCAL_DRAFT_NARRATION_LENGTH_72",
+    "name": "Error"
+  },
+  "finishedAt": "2026-09-07T21:44:44.055Z",
+  "wallMs": 37900
+}

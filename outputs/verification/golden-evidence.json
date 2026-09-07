@@ -1,21 +1,21 @@
 {
-  "projectId": "25dc050e-8bea-48dc-8c18-8f9a28e431d3",
+  "projectId": "949de57f-dcf8-41ab-8794-e3aeb2e89360",
   "artifacts": [
     {
       "canvas": "1920x1080",
-      "jobId": "eec35cd7-a220-4b61-a44d-1e6998d61e55",
+      "jobId": "566d23a7-9aa0-4c3d-b79e-b884c43cccd3",
       "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\golden-1920x1080.mp4",
       "sourceMethod": "imported media, local Piper narration, local Whisper captions, local FFmpeg edit"
     },
     {
       "canvas": "1080x1920",
-      "jobId": "54677486-1106-4fa0-86b5-3f97baf7415c",
+      "jobId": "51792411-debe-4176-839e-07e2d749d829",
       "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\golden-1080x1920.mp4",
       "sourceMethod": "imported media, local Piper narration, local Whisper captions, local FFmpeg edit"
     },
     {
       "canvas": "1080x1080",
-      "jobId": "96182195-a22e-457a-b837-999aeeb7be10",
+      "jobId": "c4a63dd4-caef-4035-957e-eb7ea3bd9490",
       "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\golden-1080x1080.mp4",
       "sourceMethod": "imported media, local Piper narration, local Whisper captions, local FFmpeg edit"
     }

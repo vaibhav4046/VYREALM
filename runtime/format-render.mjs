@@ -17,6 +17,15 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { CAMERA_MOVES, GRADES } from './format-library.mjs';
+import { planSourceExtension, buildExtensionFilter, extensionProvenance } from './format-sourcing.mjs';
+import { buildCueList, buildCaptionFilter, captionEvidence } from './format-captions.mjs';
+
+/**
+ * FFmpeg on this machine has no fontconfig default ("Cannot load default config
+ * file"), so drawtext must be handed an explicit font. Segoe UI Bold ships with
+ * Windows and reads well at caption weight.
+ */
+export const DEFAULT_CAPTION_FONT = process.env.VYRELUM_CAPTION_FONT || 'C:/Windows/Fonts/segoeuib.ttf';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 export const DEFAULT_FFMPEG = process.env.VYRELUM_FFMPEG || join(root, 'workers/tools/ffmpeg.exe');
@@ -38,7 +47,7 @@ function run(bin, args) {
  * Build the filter chain for one beat: cover-fit to canvas, apply the camera
  * move as a zoompan, then the grade. Returns a single -vf string.
  */
-export function beatFilter({ move, grade, width, height, fps, durationSeconds }) {
+export function beatFilter({ move, grade, width, height, fps, durationSeconds, extensionFilter = null }) {
   const camera = CAMERA_MOVES[move];
   if (!camera) throw new RangeError(`unknown camera move ${move}`);
   const look = GRADES[grade];
@@ -53,11 +62,15 @@ export function beatFilter({ move, grade, width, height, fps, durationSeconds })
   // Resample to the target rate BEFORE zoompan. zoompan with d=1 emits one
   // output frame per input frame; its own fps option only labels the output
   // stream. Without this a 24fps source yields 0.8x the requested duration.
-  const chain = [
-    `fps=${fps}`,
+  // Order matters. Frame-rate conversion first so the source runs at the target
+  // rate; then any source extension, because loop counts FRAMES and would
+  // repeat the wrong span at the source's native rate; then framing.
+  const chain = [`fps=${fps}`];
+  if (extensionFilter) chain.push(extensionFilter);
+  chain.push(
     `scale=${sw}:${sh}:force_original_aspect_ratio=increase`,
     `crop=${sw}:${sh}`
-  ];
+  );
 
   // Drive zoom from the output frame index rather than accumulating, so a
   // pull-out actually starts wide and closes. zoompan seeds `zoom` at 1.0,
@@ -149,6 +162,55 @@ export async function assertSufficientFootage(plan, shotLibrary, ffprobe = DEFAU
 }
 
 /**
+ * Decide, per beat, how to cover the requested duration from the footage that
+ * actually exists.
+ *
+ * With allowExtension=false this is just the strict check above. With it on, a
+ * short source is covered by a declared editing technique (slow, ping-pong,
+ * loop) and the synthetic seconds are recorded, so the output still states
+ * plainly which of its duration is original footage. A gap no strategy can
+ * cover honestly still refuses.
+ */
+export async function planBeatSources(plan, shotLibrary, { ffprobe = DEFAULT_FFPROBE, allowExtension = false, maxSlowFactor = 2 } = {}) {
+  const cache = new Map();
+  const beats = [];
+  const refusals = [];
+  for (const beat of plan.timeline) {
+    if (beat.shotRole === 'black') { beats.push({ beat, extension: null, availableSeconds: null }); continue; }
+    const shot = shotLibrary[beat.shotRole];
+    if (!cache.has(shot.path)) cache.set(shot.path, await probeDurationSeconds(shot.path, ffprobe));
+    const available = cache.get(shot.path) - (shot.inPoint ?? 0);
+
+    if (available + 1e-3 >= beat.durationSeconds) {
+      beats.push({ beat, extension: null, availableSeconds: available });
+      continue;
+    }
+    if (!allowExtension) {
+      refusals.push(`${beat.shotRole} beat "${beat.role}" needs ${beat.durationSeconds}s but only ${available.toFixed(2)}s remains`);
+      continue;
+    }
+    const extension = planSourceExtension({
+      availableSeconds: available,
+      neededSeconds: beat.durationSeconds,
+      maxSlowFactor,
+      fps: plan.canvas.fps
+    });
+    if (!extension.honest || extension.strategy === 'refuse') {
+      refusals.push(`${beat.shotRole} beat "${beat.role}" needs ${beat.durationSeconds}s from ${available.toFixed(2)}s and no honest strategy covers it (${extension.reason ?? 'refused'})`);
+      continue;
+    }
+    beats.push({ beat, extension, availableSeconds: available });
+  }
+  if (refusals.length) {
+    const error = new Error(`INSUFFICIENT_FOOTAGE: ${refusals.join('; ')}`);
+    error.code = 'INSUFFICIENT_FOOTAGE';
+    error.shortfalls = refusals;
+    throw error;
+  }
+  return beats;
+}
+
+/**
  * Render one plan. Returns measured facts about what was actually written,
  * read back off the file rather than assumed from the request.
  */
@@ -159,10 +221,14 @@ export async function renderPlan({
   workDir,
   ffmpeg = DEFAULT_FFMPEG,
   ffprobe = DEFAULT_FFPROBE,
-  onProgress = () => {}
+  onProgress = () => {},
+  allowExtension = false,
+  maxSlowFactor = 2,
+  captionText = null,
+  captionFont = DEFAULT_CAPTION_FONT
 }) {
   assertRenderable(plan, shotLibrary);
-  await assertSufficientFootage(plan, shotLibrary, ffprobe);
+  const sourcePlan = await planBeatSources(plan, shotLibrary, { ffprobe, allowExtension, maxSlowFactor });
   const { width, height, fps } = plan.canvas;
   await mkdir(workDir, { recursive: true });
   await mkdir(dirname(output), { recursive: true });
@@ -170,36 +236,68 @@ export async function renderPlan({
   const started = Date.now();
   const segments = [];
 
-  for (const [index, beat] of plan.timeline.entries()) {
+  const extensions = [];
+  for (const [index, entry] of sourcePlan.entries()) {
+    const { beat, extension, availableSeconds } = entry;
     const segment = join(workDir, `beat-${String(index).padStart(3, '0')}.mp4`);
-    const filter = beatFilter({
-      move: beat.motion,
-      grade: plan.grade.id,
-      width, height, fps,
-      durationSeconds: beat.durationSeconds
-    });
 
     const args = ['-y', '-hide_banner', '-loglevel', 'error'];
     if (beat.shotRole === 'black') {
       args.push('-f', 'lavfi', '-i', `color=c=black:s=${width}x${height}:r=${fps}:d=${beat.durationSeconds}`);
-      args.push('-vf', `setsar=1,format=yuv420p`);
+      args.push('-vf', 'setsar=1,format=yuv420p');
     } else {
       const shot = shotLibrary[beat.shotRole];
-      args.push('-ss', String(shot.inPoint ?? 0), '-t', String(beat.durationSeconds), '-i', shot.path);
-      args.push('-vf', filter);
+      const extensionFilter = extension && extension.strategy !== 'none'
+        ? buildExtensionFilter({ ...extension, availableSeconds, neededSeconds: beat.durationSeconds, fps })
+        : null;
+      // When extending, read ALL remaining footage; the extension filter is
+      // what produces the beat's full duration from it.
+      const readSeconds = extensionFilter ? availableSeconds : beat.durationSeconds;
+      args.push('-ss', String(shot.inPoint ?? 0), '-t', String(readSeconds), '-i', shot.path);
+      args.push('-vf', beatFilter({
+        move: beat.motion,
+        grade: plan.grade.id,
+        width, height, fps,
+        durationSeconds: beat.durationSeconds,
+        extensionFilter
+      }));
+      if (extensionFilter) {
+        extensions.push({ beatIndex: index, role: beat.role, shotRole: beat.shotRole, ...extensionProvenance({ ...extension, availableSeconds, neededSeconds: beat.durationSeconds }) });
+      }
     }
     args.push('-an', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18', '-pix_fmt', 'yuv420p',
       '-r', String(fps), '-t', String(beat.durationSeconds), segment);
 
     await run(ffmpeg, args);
     segments.push(segment);
-    onProgress({ stage: 'beat', index, total: plan.timeline.length, role: beat.role });
+    onProgress({ stage: 'beat', index, total: sourcePlan.length, role: beat.role });
   }
 
   const listPath = join(workDir, 'concat.txt');
   await writeFile(listPath, segments.map(s => `file '${s.replace(/\\/g, '/')}'`).join('\n'), 'utf8');
+
+  // Captions are timed across the whole cut, not per beat, so they are burned
+  // after the concat rather than into each segment.
+  let captions = null;
+  const wantsCaptions = captionText && plan.captionStyle?.id && plan.captionStyle.id !== 'none';
+  const concatTarget = wantsCaptions ? join(workDir, 'concat.mp4') : output;
   await run(ffmpeg, ['-y', '-hide_banner', '-loglevel', 'error', '-f', 'concat', '-safe', '0',
-    '-i', listPath, '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18', '-pix_fmt', 'yuv420p', output]);
+    '-i', listPath, '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18', '-pix_fmt', 'yuv420p', concatTarget]);
+
+  if (wantsCaptions) {
+    const cues = buildCueList({ text: captionText, durationSeconds: plan.durationSeconds, style: plan.captionStyle.id });
+    const filter = buildCaptionFilter({
+      cues,
+      style: plan.captionStyle.id,
+      canvas: plan.canvas,
+      safeArea: plan.safeArea,
+      fontFile: captionFont
+    });
+    await run(ffmpeg, ['-y', '-hide_banner', '-loglevel', 'error', '-i', concatTarget,
+      '-vf', filter, '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18', '-pix_fmt', 'yuv420p',
+      '-r', String(fps), output]);
+    captions = captionEvidence({ cues, style: plan.captionStyle.id });
+  }
 
   const probe = await run(ffprobe, ['-v', 'error', '-select_streams', 'v:0',
     '-show_entries', 'stream=width,height,r_frame_rate,nb_read_packets',
@@ -228,6 +326,11 @@ export async function renderPlan({
     renderMs: Date.now() - started,
     sourceMethod: 'composited-from-existing-footage',
     generationStatus: 'composited',
-    note: 'No pixels were generated by this module. Every frame derives from the supplied source shots.'
+    extensions,
+    captions,
+    syntheticSeconds: Number(extensions.reduce((n, e) => n + (e.syntheticSeconds || 0), 0).toFixed(3)),
+    note: extensions.length
+      ? 'No pixels were generated by this module. Some beats were time-extended from shorter sources; see extensions[] for which beats and how much of their duration is time-manipulated rather than original footage.'
+      : 'No pixels were generated by this module. Every frame derives from the supplied source shots at their original timing.'
   };
 }

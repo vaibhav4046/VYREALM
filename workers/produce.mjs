@@ -55,7 +55,7 @@ if(request.mode!=='abstract'){
   const blocked={status:'blocked',code:'BLOCKED_NEURAL_GENERATION',provenance:{generationStatus:'blocked'},diagnostics:[{code:'BLOCKED_NEURAL_GENERATION',message:'Cinematic requests require a verified local model job or explicit user media. Primitive scene generation is available only in an explicitly selected abstract template.'}]};
   await writeFile(join(output,'result.json'),JSON.stringify(blocked,null,2));process.exit(0);
 }
-const plan=await createProduction({brief:request.brief,projectId:request.projectId,revision:request.revision,durationSeconds:request.durationSeconds||12,fps:request.fps||24,capabilities:request.capabilities||{}});
+const plan=await createProduction({brief:request.brief,projectId:request.projectId,revision:request.revision,durationSeconds:request.durationSeconds||12,fps:request.fps||24,capabilities:request.capabilities||{},mode:'abstract',captions:request.captions===true});
 if(plan.status==='blocked') { await writeFile(join(output,'result.json'),JSON.stringify(plan,null,2)); console.log(JSON.stringify(plan)); process.exit(0); }
 const sceneDir=join(output,'scene'), timelineDir=join(output,'timeline'); await mkdir(sceneDir,{recursive:true}); await mkdir(timelineDir,{recursive:true});
 const requestedWidth=Number(request.width)||Number(plan.scene.render?.width)||640;

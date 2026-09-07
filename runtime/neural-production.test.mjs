@@ -52,3 +52,45 @@ test('busy external provider queue is not given a competing job',async()=>{
   let posted=false;const provider={baseUrl:'http://127.0.0.1:8188',fetch:async()=>Response.json({queue_running:[[0,'other']]}),generate_video:async()=>{posted=true}};
   await assert.rejects(executeWanStage({provider,jobRoot:await mkdtemp(join(tmpdir(),'vyrealm-busy-')),stage:'keyframe',workflow:wanWorkflow({frames:1,prefix:'vyrealm/owned/keyframe'}),frames:1}),e=>e.code==='PROVIDER_BUSY');assert.equal(posted,false);
 });
+
+test('temporary history timeouts reconnect to the same inference without duplicate submission',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'vyrealm-poll-')),workflow=wanWorkflow({frames:1,prefix:'vyrealm/test/keyframe'});
+ const bytes=Buffer.alloc(256);Buffer.from([137,80,78,71,13,10,26,10]).copy(bytes);
+ let posts=0,polls=0;
+ const history={prompt:[0,'owned',workflow],status:{completed:true,status_str:'success'},outputs:{'10':{images:[{filename:'keyframe_00001_.png',subfolder:'vyrealm/test',type:'output'}]}}};
+ const provider={baseUrl:'http://127.0.0.1:8188',generate_video:async()=>{posts++;return{promptId:'owned'}},fetch:async url=>{
+  if(url.includes('/queue'))return Response.json({});
+  if(url.includes('/history/')){polls++;if(polls===1)throw new DOMException('model loading','TimeoutError');if(polls===2)return new Response('',{status:503});return Response.json({owned:history});}
+  return new Response(bytes);
+ }};
+ const result=await executeWanStage({provider,jobRoot:root,stage:'keyframe',workflow,frames:1,pollIntervalMs:0});
+ assert.equal(posts,1);assert.equal(polls,3);assert.equal(result.promptId,'owned');
+ const events=(await readFile(result.logPath,'utf8')).trim().split('\n').map(JSON.parse);
+ assert.equal(events.filter(e=>e.event==='poll-retry').length,2);
+ assert.ok(events.every(e=>e.promptId==='owned'));
+});
+
+test('persistent status failure is bounded and retains original submission for explicit recovery',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'vyrealm-poll-fail-')),workflow=wanWorkflow({frames:1,prefix:'vyrealm/test/keyframe'});
+ let posts=0,polls=0;
+ const provider={baseUrl:'http://127.0.0.1:8188',generate_video:async()=>{posts++;return{promptId:'retained'}},fetch:async url=>{
+  if(url.includes('/queue'))return Response.json({});polls++;throw new DOMException('busy','TimeoutError');
+ }};
+ await assert.rejects(executeWanStage({provider,jobRoot:root,stage:'keyframe',workflow,frames:1,pollIntervalMs:0}),e=>e.code==='PROVIDER_POLL_UNAVAILABLE');
+ assert.equal(posts,1);assert.equal(polls,6);
+ const log=await readFile(join(root,'keyframe','provider.jsonl'),'utf8');assert.match(log,/"event":"submitted","promptId":"retained"/);
+});
+
+test('waiting at a GPU boundary neither interrupts nor submits behind another provider job',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'vyrealm-idle-')),workflow=wanWorkflow({frames:1,prefix:'vyrealm/test/keyframe'});
+ const bytes=Buffer.alloc(256);Buffer.from([137,80,78,71,13,10,26,10]).copy(bytes);
+ let queues=0,posts=0;const updates=[];
+ const history={prompt:[0,'owned',workflow],status:{completed:true,status_str:'success'},outputs:{'10':{images:[{filename:'keyframe_00001_.png',subfolder:'vyrealm/test',type:'output'}]}}};
+ const provider={baseUrl:'http://127.0.0.1:8188',generate_video:async()=>{assert.equal(queues,2);posts++;return{promptId:'owned'}},fetch:async url=>{
+  if(url.includes('/queue'))return Response.json(++queues===1?{queue_running:[[0,'external']]}:{});
+  if(url.includes('/history/'))return Response.json({owned:history});
+  assert.ok(url.includes('/view?'),'must never call external interrupt');return new Response(bytes);
+ }};
+ await executeWanStage({provider,jobRoot:root,stage:'keyframe',workflow,frames:1,pollIntervalMs:0,waitForIdle:true,onProgress:p=>updates.push(p)});
+ assert.equal(posts,1);assert.equal(queues,2);assert.ok(updates.some(p=>p.stage.includes('waiting for the local GPU')));
+});

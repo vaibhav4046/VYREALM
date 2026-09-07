@@ -103,7 +103,7 @@ async function recoverCompletedStage({ stageRoot, workflow, frames, submission, 
 
 // Only descriptors returned by this exact provider prompt are downloaded.
 // A user-supplied file or unrelated ComfyUI history is never accepted here.
-export async function executeWanStage({ provider, jobRoot, stage, workflow, frames, onProgress = () => {}, timeoutMs = 7200000 }) {
+export async function executeWanStage({ provider, jobRoot, stage, workflow, frames, onProgress = () => {}, timeoutMs = 7200000, pollIntervalMs = 3000, waitForIdle = false }) {
   if (!['keyframe', 'motion'].includes(stage)) throw failure('INVALID_STAGE', 'Unknown generation stage');
   const stageRoot = join(jobRoot, stage);
   await mkdir(join(stageRoot, 'frames'), { recursive: true });
@@ -117,32 +117,63 @@ export async function executeWanStage({ provider, jobRoot, stage, workflow, fram
   const recovered=await recoverCompletedStage({stageRoot,workflow,frames,submission,events});
   if(recovered){onProgress({stage:`${stage}: verified retained frames`});return recovered;}
   if(!submission){
-    const queueResponse=await provider.fetch(`${provider.baseUrl}/queue`,{signal:AbortSignal.timeout(10000),redirect:'error'});
-    if(!queueResponse.ok)throw failure('PROVIDER_QUEUE_UNAVAILABLE','Cannot confirm the local GPU queue is idle');
-    const queue=await queueResponse.json();
-    if(queue.queue_running?.length||queue.queue_pending?.length)throw failure('PROVIDER_BUSY','Another ComfyUI job is active. VYREALM did not enqueue a competing GPU job.');
+    const idleDeadline=Date.now()+timeoutMs;
+    while(true){
+      let queue;
+      try{
+        const queueResponse=await provider.fetch(`${provider.baseUrl}/queue`,{signal:AbortSignal.timeout(30000),redirect:'error'});
+        if(!queueResponse.ok)throw failure('PROVIDER_QUEUE_UNAVAILABLE','Cannot confirm the local GPU queue is idle');
+        queue=await queueResponse.json();
+      }catch(error){
+        if(!waitForIdle||!(['TimeoutError','AbortError'].includes(error.name)||error instanceof TypeError))throw error;
+        queue={queue_running:[['unknown']]};
+      }
+      if(!queue.queue_running?.length&&!queue.queue_pending?.length)break;
+      if(!waitForIdle)throw failure('PROVIDER_BUSY','Another ComfyUI job is active. VYREALM did not enqueue a competing GPU job.');
+      if(Date.now()>=idleDeadline)throw failure('PROVIDER_BUSY_TIMEOUT','The local GPU remained busy. Retained stages can be resumed; no competing job was submitted.');
+      onProgress({stage:`${stage}: waiting for the local GPU; prior frames retained`});
+      await new Promise(r=>setTimeout(r,pollIntervalMs));
+    }
   }
   const submit=submission||await provider.generate_video({ workflow, requiredNodes: Object.values(workflow).map(n => n.class_type), requiredModels: Object.values(WAN_MODELS), frames, width: workflow['7'].inputs.width, height: workflow['7'].inputs.height, allowResourceWarnings: true });
   if(!submission)await appendFile(logPath, JSON.stringify({ event: 'submitted', promptId: submit.promptId, workflowHash: hashJson(workflow), timestamp: new Date().toISOString() }) + '\n');
   const deadline = Date.now() + timeoutMs;
+  // Model loading can temporarily starve the local HTTP server. A missed
+  // heartbeat does not mean the owned inference failed; never resubmit it.
+  const pollJson = async (url, code) => {
+    for (let attempt = 0; attempt < 6 && Date.now() < deadline; attempt++) {
+      try {
+        const response = await provider.fetch(url, { signal: AbortSignal.timeout(Math.max(1, Math.min(30000, deadline - Date.now()))), redirect: 'error' });
+        if (!response.ok) {
+          if ([408,429,500,502,503,504].includes(response.status)) throw Object.assign(new Error(`HTTP ${response.status}`), { transientPoll: true });
+          throw failure(code, `ComfyUI state request failed with HTTP ${response.status}`);
+        }
+        return await response.json();
+      } catch (error) {
+        const transient = error.transientPoll || ['TimeoutError','AbortError'].includes(error.name) || error instanceof TypeError;
+        if (!transient) throw error;
+        await appendFile(logPath, JSON.stringify({event:'poll-retry',promptId:submit.promptId,attempt:attempt+1,reason:error.message,timestamp:new Date().toISOString()})+'\n');
+        onProgress({stage:`${stage}: provider busy; retaining owned generation`,retry:attempt+1});
+        if (attempt === 5) throw failure('PROVIDER_POLL_UNAVAILABLE', 'The owned provider job is retained, but its status could not be read after six attempts. Retry this job to reconnect without duplicate inference.');
+        await new Promise(r=>setTimeout(r,Math.min(pollIntervalMs,Math.max(0,deadline-Date.now()))));
+      }
+    }
+    throw failure('NEURAL_TIMEOUT', 'Local generation exceeded the bounded job time while awaiting provider status');
+  };
   let history;
   while (Date.now() < deadline) {
-    const response = await provider.fetch(`${provider.baseUrl}/history/${encodeURIComponent(submit.promptId)}`, { signal: AbortSignal.timeout(10000), redirect: 'error' });
-    if (!response.ok) throw failure('PROVIDER_HISTORY_FAILED', 'ComfyUI history could not be read');
-    history = (await response.json())[submit.promptId];
+    history = (await pollJson(`${provider.baseUrl}/history/${encodeURIComponent(submit.promptId)}`, 'PROVIDER_HISTORY_FAILED'))[submit.promptId];
     if (history?.status?.status_str === 'error') {
       await writeFile(join(stageRoot, 'history.json'), JSON.stringify(history, null, 2));
       throw failure('PROVIDER_EXECUTION_FAILED', JSON.stringify(history.status.messages).slice(-4000));
     }
     if (history?.status?.completed) break;
     if (!history && submission) {
-      const queueResponse = await provider.fetch(`${provider.baseUrl}/queue`, { signal: AbortSignal.timeout(10000), redirect: 'error' });
-      if (!queueResponse.ok) throw failure('PROVIDER_QUEUE_UNAVAILABLE', 'Cannot locate the original provider prompt');
-      const queue = await queueResponse.json();
+      const queue = await pollJson(`${provider.baseUrl}/queue`, 'PROVIDER_QUEUE_UNAVAILABLE');
       if (![...(queue.queue_running || []), ...(queue.queue_pending || [])].some(entry => entry[1] === submit.promptId)) throw failure('PROVIDER_HISTORY_LOST', 'The provider restarted before this stage was retained. Earlier completed stages remain saved. Create a new shot to retry generation.');
     }
     onProgress({ stage: `${stage}: sampling locally`, elapsedSeconds: Math.round((timeoutMs - (deadline - Date.now())) / 1000) });
-    await new Promise(r => setTimeout(r, 3000));
+    await new Promise(r => setTimeout(r, pollIntervalMs));
   }
   if (!history?.status?.completed) { await provider.cancel(submit.promptId); throw failure('NEURAL_TIMEOUT', 'Local generation exceeded the bounded job time'); }
   await writeFile(join(stageRoot, 'history.json'), JSON.stringify(history, null, 2));
@@ -203,11 +234,11 @@ export async function produceNeuralSmoke({ output, prompt = SMOKE_PROMPT, seed =
       const bytes=await readFile(reference.path);if(sha(bytes)!==reference.sha256||!bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10])))throw failure('REFERENCE_INTEGRITY_FAILED','The locked keyframe no longer matches its generation evidence');
       await writeFile(join(jobRoot,'reference.png'),bytes);await writeFile(join(jobRoot,'reference.json'),JSON.stringify({sourceJobId:reference.sourceJobId,sha256:reference.sha256,sourceMethod:'prior-local-generated-keyframe'},null,2));
       keyframe={stageRoot:jobRoot,promptId:reference.promptId,ledger:[{path:'reference.png',sha256:reference.sha256}],sourceJobId:reference.sourceJobId};
-    }else keyframe = await executeWanStage({ provider, jobRoot, stage: 'keyframe', workflow: wanWorkflow({ prompt, seed, frames: 1, steps, width, height, prefix: `${namespace}/keyframe` }), frames: 1, onProgress });
+    }else keyframe = await executeWanStage({ provider, jobRoot, stage: 'keyframe', workflow: wanWorkflow({ prompt, seed, frames: 1, steps, width, height, prefix: `${namespace}/keyframe` }), frames: 1, onProgress, waitForIdle:true });
     onProgress({ stage: 'Animating generated keyframe', progress: 0.25 });
     const imageName = await ensureWanInput({ provider, jobRoot, path: join(keyframe.stageRoot, keyframe.ledger[0].path), expectedHash: keyframe.ledger[0].sha256 });
     const motionWorkflow = wanWorkflow({ prompt, seed, frames, steps, width, height, imageName, prefix: `${namespace}/motion` });
-    const motion = await executeWanStage({ provider, jobRoot, stage: 'motion', workflow: motionWorkflow, frames, onProgress });
+    const motion = await executeWanStage({ provider, jobRoot, stage: 'motion', workflow: motionWorkflow, frames, onProgress, waitForIdle:true });
     onProgress({ stage: 'Encoding and checking generated frames', progress: 0.85 });
     const durationSeconds = (frames - 1) / fps;
     const source = join(jobRoot, 'generated-source.mp4');

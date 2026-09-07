@@ -7,7 +7,7 @@ try {
  const request=JSON.parse(await readFile(resolve(value('--input')),'utf8'));
  const {wave,evidence}=synthesizeSoundDesign(request);
  await writeFile(join(out,'sound-design.wav'),wave);
- const provenance={generationStatus:'generated',sourceMethod:evidence.sourceMethod,providerId:'local-dsp',modelId:null,outputHash:createHash('sha256').update(wave).digest('hex'),neuralModelInvoked:false};
+ const provenance={generationStatus:'generated',sourceMethod:evidence.sourceMethod,providerId:'local-dsp',modelId:null,preset:evidence.preset,seed:evidence.seed,workflowHash:createHash('sha256').update(JSON.stringify(evidence)).digest('hex'),outputHash:createHash('sha256').update(wave).digest('hex'),neuralModelInvoked:false};
  const result={status:'review_required',validated:true,provenance,evidence,outputs:{audio:'sound-design.wav',quality:'sound-design.json'}};
  await writeFile(join(out,'sound-design.json'),JSON.stringify(result,null,2));await writeFile(join(out,'result.json'),JSON.stringify(result,null,2));
 } catch(error) { await writeFile(join(out,'result.json'),JSON.stringify({status:'blocked',validated:false,diagnostics:[{code:'SOUND_DESIGN_FAILED',message:error.message}]})); }

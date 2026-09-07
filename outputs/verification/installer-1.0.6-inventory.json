@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-07T21:30:07.8787359Z",
+  "scope": "Immutable snapshot package inventory; installer and packaged executable were not launched",
+  "installer": {
+    "path": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\release\\VYREALM-1.0.6-win-x64.exe",
+    "bytes": 610998159,
+    "sha256": "c0ae9574dfbf9e07a34f8c0938442085ebb951d0e3db52734a3ab2400062da77",
+    "authenticodeStatus": "NotSigned"
+  },
+  "packagedApplication": {
+    "name": "vyrelum",
+    "version": "1.0.6",
+    "main": "desktop/main.mjs",
+    "snapshotPathManifestSha256": "8c9c153915072b9d543c49760917e00387727cfa6ad7eddd68141a94a6035a23",
+    "snapshotFileCountBeforeBuilderDependencies": 5892,
+    "criticalFileCount": 21,
+    "allSnapshotFilesMatchPackage": true,
+    "allCurrentFilesMatchSnapshot": true
+  },
+  "criticalFiles": {
+    "server.js": "ffcefe08e55ee105f8741bc5791ae211e6aba7c7bc370feeb6789e9aafef0638",
+    "app.js": "145c410fab8f9aa4c579100f21dc14469f7d27695a5f53a94e59ffb08ab2f956",
+    "styles.css": "1bdeb6334be5015c8bad6653a0fe0d0eb2386400d7ef50eb28672455922f8468",
+    "mcp-server.mjs": "651d075182554280227a4e4aedced0dccbd9db07b719641aff54a2b13143def5",
+    "runtime/automation-tools.mjs": "7b0f2e1e24a1000274d487151d463e5cf905b45b3c28182d5215d3df2745dedc",
+    "runtime/viral-variants.mjs": "e4e1577be636422fbf2ccae484df364c93fd64ef3af4ba7797ec3f7c3bd4ac2b",
+    "runtime/format-library.mjs": "ba0abe878d21365db4f6232d6ce17212e554d9557723701f78a6ddc00157121b",
+    "runtime/format-render.mjs": "d1f978e7843068f8d7ca013f8d52b63a25b255bb2e184b630137826bfa6f74ca",
+    "runtime/format-audio.mjs": "95281a2d647ec597c4c766e491d145ab6fa026c80c3565a7731eeaf76255bad2",
+    "runtime/format-captions.mjs": "08acd6d6ab25eea2eca0242807d24b7be9e6958ed34cf591f4b37943a1107ca8",
+    "runtime/format-presets.mjs": "aaf9f83a2d34e17258ab271ca66a1e7ecbf42db1c36e673e16be45d3af42ff65",
+    "runtime/format-sourcing.mjs": "f3c4a441afe253f9ff5a7c3b9199e5dd09374db532b03bfd375838517f5f021f",
+    "runtime/frame-interpolation.mjs": "74404e9a1d81dbd9792afa6ed0482028fca13cda7ef7bed684a7300026181da0",
+    "runtime/generation-evidence.mjs": "603044910f58f12600e9e8d147e7124660ab9a8e43963d15dd349168bc95c2d9",
+    "runtime/neural-production.mjs": "5a4470ce6167afc69a135e1bfde37e93a58b18ba3d0b1d6f0b3be35fbf4ffbd6",
+    "runtime/neural-enhancement.mjs": "e8b7037e2246a7b6ebf24924275378d3ef6e8ac53f14d6c9f31b5e9c6d9ded8c",
+    "runtime/providers/comfyui.mjs": "15ebd6e24de00ae573379813f1cfa723ee68f04b48351a6474f6311a2ffe0f6d",
+    "workers/timeline.mjs": "8f0df3ed88613391cccb0a73a6b4490fc4168501f956a9f08cbbfe6842f546df",
+    "workers/render.mjs": "aa574c57655903cd4e2403426e420430e4a24e2ccfbbfdca13707fb86b2fc5a4",
+    "workers/tools/ffmpeg.exe": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+    "workers/tools/ffprobe.exe": "a6618e99bb58869ded3c6f37b53aa1a8d701c3591dbb7b5b317d47369c112be2"
+  },
+  "verification": {
+    "nodeTests": 192,
+    "productionBuild": "passed",
+    "playwrightGolden": "1 passed in 57.6s",
+    "playwrightExternalBrowserRequests": [],
+    "playwrightPageErrors": [],
+    "npmAudit": "0 vulnerabilities"
+  },
+  "installation": {
+    "updatedPackageInstalled": false,
+    "updatedPackageLaunched": false,
+    "installedVersion": "1.0.0",
+    "osSigningProtectionsBypassed": false,
+    "reason": "An earlier installer launch in this session was rejected by automatic approval review as blocked by policy. This package was not launched as a workaround."
+  }
+}

@@ -18,6 +18,16 @@ const tests = [
   'runtime/raw-footage-edit.test.mjs',
   'runtime/timeline-editor.test.mjs',
   'runtime/creator-pack.test.mjs',
+  'runtime/asset-library.test.mjs',
+  'runtime/caption-pages.test.mjs',
+  'runtime/workspace-quality-ui.test.mjs',
+  'runtime/ui-polling.test.mjs',
+  'runtime/mcp-connection.test.mjs',
+  'runtime/automation-tools-stdio.test.mjs',
+  'runtime/creator-templates.test.mjs',
+  'runtime/local-automations.test.mjs',
+  'runtime/local-automations-ui.test.mjs',
+  'runtime/local-automations-http.test.mjs',
   'scripts/audit-public-source.test.mjs'
 ];
 const result = spawnSync(process.execPath, ['--test', '--test-concurrency=1', ...tests], {

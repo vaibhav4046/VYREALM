@@ -1,6 +1,6 @@
 import { createCinematicStudio, jobProgressPercent } from './cinematic-studio.js';
 const escape = value => String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const views={storyboard:'Storyboard',assets:'Assets',audio:'Timeline',timeline:'Timeline',jobs:'Jobs',export:'Export',automations:'Automations'};
+const views={storyboard:'Storyboard',assets:'Assets',audio:'Audio',timeline:'Timeline',jobs:'Jobs',export:'Export',automations:'Automations'};
 const labels={plan:'Production plan',characters:'Characters',storyboard:'Storyboard',assets:'Assets',audio:'Audio & captions',timeline:'Timeline',jobs:'Jobs',export:'Export',automations:'Automations',research:'Research notes'};
 export function studioProjectShots(project){return project?.creatorWorkflow?.shots||project?.productionPlan?.shots||project?.shots||project?.director?.scenes?.flatMap(s=>s.shots)||[];}
 export function studioProjectCharacters(project){
@@ -78,5 +78,5 @@ export function createStudioChat({store,api,render,refresh,saveProject,uploadAss
     query('#chatMediaInput')?.addEventListener('change',async event=>{if(!event.target.files?.length)return;try{if(!project()){const name=event.target.files[0].name.replace(/\.[^.]+$/,'');store.project=await api('/projects',{method:'POST',body:JSON.stringify({name:name.slice(0,80)||'My footage',brief:'Edit my uploaded footage',mode:'creator',settings:{width:1080,height:1920,fps:24}})});localStorage.setItem('vyrelum:selectedProject',project().id);}await uploadAsset(event);await ensureSaved();await refresh();render();}catch(error){showError(error);}});
   }
   function update(){if(!query('.studio-chat-shell'))return;if(key()!==loadedProject)void load();production.update();if(tab==='jobs')paintContext();}
-  return {html,bind,update};
+  return {html,bind,update,openContext(next){if(['project','characters','shots','assets','jobs','research','plan'].includes(next))tab=next;}};
 }

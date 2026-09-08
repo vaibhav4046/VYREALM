@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 // nor uploads anything; the publication owner must audit secrets and licences.
 const root=fileURLToPath(new URL('..',import.meta.url));
 const destination=join(root,'work',`public-source-${new Date().toISOString().replaceAll(/[:.]/g,'-')}`);
-const names=new Set(['.gitignore','.env.example','README.md','package.json','package-lock.json','electron-builder.yml','playwright.config.mjs','index.html','styles.css','app.js','studio-chat.js','youtube-settings.js','server.js','engine.js','engine.test.mjs','cli.mjs','mcp-server.mjs','capabilities/manifest.json','runtime/manifest.json','workers/default-scene.json','docs/HACKATHON_VERIFICATION.md','docs/PUBLICATION_CHECKLIST.md']);
+const names=new Set(['.gitignore','.env.example','README.md','package.json','package-lock.json','electron-builder.yml','playwright.config.mjs','index.html','styles.css','asset-library.css', 'creator-templates.css', 'local-automations.css', 'desktop/resources/icon.svg', 'desktop/resources/icon.ico', 'desktop/resources/icon.png','app.js','studio-chat.js','youtube-settings.js','server.js','engine.js','engine.test.mjs','cli.mjs','mcp-server.mjs','capabilities/manifest.json','runtime/manifest.json','workers/default-scene.json','docs/EMBERFORGE_TROUBLESHOOTING.md','docs/VYREALM_ARCHITECTURE.md','docs/HACKATHON_VERIFICATION.md','docs/PUBLICATION_CHECKLIST.md']);
 const extensions=new Set(['.js','.mjs','.cjs','.ts','.py','.ps1','.css','.html']);
 const excluded=new Set(['node_modules','tools','node','assets','models','__pycache__','.venv','venv']);
 async function scan(directory) {

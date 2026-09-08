@@ -1,5 +1,5 @@
 {
-  "createdAt": "2026-09-08T03:10:26.082Z",
+  "createdAt": "2026-09-08T04:25:55.017Z",
   "status": "SOURCE_SNAPSHOT_REQUIRES_PUBLICATION_AUDIT",
   "excludes": [
     "user projects",
@@ -18,24 +18,29 @@
       "sha256": "2ce92f2259d8bc5e0d8c86b69a978b8611865b6973ab45ee9b541009663df993"
     },
     {
+      "file": ".gitattributes",
+      "bytes": 72,
+      "sha256": "27d6631f97f67e10f7034f2c53e9847a09fb3154325714fc2de1627b095984e4"
+    },
+    {
       "file": ".gitignore",
       "bytes": 816,
       "sha256": "040f79973748178a13a9c1901282d548e688feed8cda28d858e3e76dcf4a8b77"
     },
     {
-      "file": "LICENSE",
-      "bytes": 1077,
-      "sha256": "7f557741b56126071291548c43a130d83ab77256a3c78ceb42ac4651ac44f377"
-    },
-    {
-      "file": "README.md",
-      "bytes": 12213,
-      "sha256": "3b45d234aef43c1252648db55058c8c6cd8aebd1eb340c8c5a5421828f029a52"
-    },
-    {
       "file": "app.js",
-      "bytes": 125669,
-      "sha256": "fffefee2bd31e8a0b3852c84b436b6f8c01951adf6ffeee781d9843372f8e666"
+      "bytes": 128573,
+      "sha256": "211df3c0c12cf33cfde8f76775f8536d0f5c9fd761dccd0d4e70c2e8e854e305"
+    },
+    {
+      "file": "asset-library.css",
+      "bytes": 5764,
+      "sha256": "be5df98f6903587b33454dda1a44f2bc763df199c856e21a0516180ea8592931"
+    },
+    {
+      "file": "asset-library.js",
+      "bytes": 11705,
+      "sha256": "64906627e7200c125e4c8ca5b8917dab8d2fddd0dc196c95f9a30989b78feefd"
     },
     {
       "file": "capabilities/manifest.json",
@@ -54,13 +59,23 @@
     },
     {
       "file": "cinematic-studio.js",
-      "bytes": 8606,
-      "sha256": "f61918b115824b5f6e979d43b159af8e007e4218412f66161ec7657e77018ddc"
+      "bytes": 14489,
+      "sha256": "9299c4304e22ae0c5c0ed638875110aabf62b9d05f4547bed647b9f921c6ae7e"
     },
     {
       "file": "cli.mjs",
       "bytes": 820,
       "sha256": "cf1fd4aa716a8715e9e0ece2668386a73c8f22a3e2b0b88ebf6926497ffd2926"
+    },
+    {
+      "file": "creator-templates.css",
+      "bytes": 5325,
+      "sha256": "88f7bbb9dac4fff21bcb31a98e24b76cf17f3857cc6f38bf9b29f7e662d67b8a"
+    },
+    {
+      "file": "creator-templates.js",
+      "bytes": 18616,
+      "sha256": "0d2f89dc5e71e629ff6ce3d29ecf8a689e2a8447a9ab712abeaacfb5b6a23ab7"
     },
     {
       "file": "desktop/main.mjs",
@@ -83,6 +98,21 @@
       "sha256": "2376f0ca69b438195e513de36402ceb21c97f26f84b0eff121d954f711695b77"
     },
     {
+      "file": "desktop/resources/icon.ico",
+      "bytes": 39749,
+      "sha256": "4b61a86b2b6384d9f2b353ecd51648e80c512269120e09d54fcb3ede0bd7efd1"
+    },
+    {
+      "file": "desktop/resources/icon.png",
+      "bytes": 19562,
+      "sha256": "a1dc1ec14d6f1becea268b67b5064a5739a571ecfb48f820e635fc310ae07c21"
+    },
+    {
+      "file": "desktop/resources/icon.svg",
+      "bytes": 672,
+      "sha256": "815c1523cb03da64076a07f33d87196f11eeaa1b6a32c7b7057fb061255c1004"
+    },
+    {
       "file": "desktop/runtime-paths.mjs",
       "bytes": 288,
       "sha256": "c572ef7fd7da889a08c398ca9b3c1ca4ddefdffb228dfe970f04e2b2b51e53b7"
@@ -91,6 +121,11 @@
       "file": "desktop/runtime-paths.test.mjs",
       "bytes": 802,
       "sha256": "7d2660c3b76768426c79c4e808f76669fc19df8bdedda83bcfa09128dae4fc19"
+    },
+    {
+      "file": "docs/EMBERFORGE_TROUBLESHOOTING.md",
+      "bytes": 6717,
+      "sha256": "99032ce76ba14c77312d9a4589b854baac1491a09e76d29b92b53b28523b7324"
     },
     {
       "file": "docs/HACKATHON_VERIFICATION.md",
@@ -103,9 +138,14 @@
       "sha256": "dc6fb3fe723bc2daa8d660d65ab0defe1cdd15c3e7a47bfe58fcc6870ff140a9"
     },
     {
+      "file": "docs/VYREALM_ARCHITECTURE.md",
+      "bytes": 4788,
+      "sha256": "d909bab87fd709a3941536e9154a9ac64a43405401ed39244b673fbdd3a28bd1"
+    },
+    {
       "file": "electron-builder.yml",
-      "bytes": 1693,
-      "sha256": "6da2ef7aa61ae4dff494438d9dbc3e206ef3ce2211d3ca57a4134c722c84c853"
+      "bytes": 2022,
+      "sha256": "1b7eb0e496943c7a55d6d276b93850498ba61c679959244c0eb6de017f7dabe1"
     },
     {
       "file": "engine.js",
@@ -119,8 +159,28 @@
     },
     {
       "file": "index.html",
-      "bytes": 437,
-      "sha256": "80f12511fee20d531e48e38619f7fe346b43978a2c94ddf1ff280ec5cadf0794"
+      "bytes": 591,
+      "sha256": "3851e0f8dff6d47caca66465c58c5b128b088b3ae12b014dacc8c288d5555553"
+    },
+    {
+      "file": "LICENSE",
+      "bytes": 1077,
+      "sha256": "7f557741b56126071291548c43a130d83ab77256a3c78ceb42ac4651ac44f377"
+    },
+    {
+      "file": "local-automations.css",
+      "bytes": 3062,
+      "sha256": "4bb03a56273b19ac433973eef574ae1afbf529d45186b1fc3fe565012b5b5b09"
+    },
+    {
+      "file": "local-automations.js",
+      "bytes": 9504,
+      "sha256": "ece7397fe3dae0b9def318d36218f7c1c809675220f24c349a53bceca05e7b85"
+    },
+    {
+      "file": "mcp-connection.js",
+      "bytes": 3642,
+      "sha256": "2b23ed2c7e005b6a9a3ffc989405dbe935a11c0562928cce76aeb465b1b5ad2c"
     },
     {
       "file": "mcp-server.mjs",
@@ -130,12 +190,12 @@
     {
       "file": "package-lock.json",
       "bytes": 166755,
-      "sha256": "11d128b99eddc3e127700dc36f6b8be184964fdc98499e26032be64be032ffd4"
+      "sha256": "9bf914d7971743fa58bab17dad42110ab504e161f66e605189618b26e7bf5c29"
     },
     {
       "file": "package.json",
-      "bytes": 4125,
-      "sha256": "1a529ba32442a922862b5dfa6ac703fa71d9698c04cae532ead668853d430820"
+      "bytes": 4577,
+      "sha256": "c3616c58fac66e73b075a9f32549d36d0dd9714c5d19971cbb0d50dc29eaa159"
     },
     {
       "file": "playwright.config.mjs",
@@ -208,6 +268,11 @@
       "sha256": "013005342277b8a10e5866f4713c283b7e21791538168fddc61b238e5844b444"
     },
     {
+      "file": "README.md",
+      "bytes": 21035,
+      "sha256": "dc7945e862c4c922e1eca4b0a2244df05cf18f7451daef41f3c0d3007883669d"
+    },
+    {
       "file": "runtime/apply-generated-shot.mjs",
       "bytes": 6443,
       "sha256": "0d5766d501dc571552cb568a6c9469283eb651f73d085174c043fdad49db3516"
@@ -228,6 +293,11 @@
       "sha256": "4e38ac30fbce787bd15005967f827fa1e01a3f9841260a68add02fdc7135d86b"
     },
     {
+      "file": "runtime/asset-library.test.mjs",
+      "bytes": 9421,
+      "sha256": "d3c37293d2e2b854aed0c7ca2704afe5bd5e9592392605d823f9286b01b1183d"
+    },
+    {
       "file": "runtime/audio-models.lock.json",
       "bytes": 2895,
       "sha256": "bced9332dac5b3e59e8d846e66b9604434930d66881f0d1fe97f486cc0c18ff0"
@@ -238,14 +308,19 @@
       "sha256": "58c708d3906554b537147c88a2bd9361ace7f1188ebf4cdbfd6f4b8c8cc7c353"
     },
     {
+      "file": "runtime/automation-tools-stdio.test.mjs",
+      "bytes": 3343,
+      "sha256": "d455b7532b52ed20f96503c6028cf301b36792147363844678ad3ce6b0c0702f"
+    },
+    {
       "file": "runtime/automation-tools.mjs",
-      "bytes": 30620,
-      "sha256": "f9248f1f22e9deafa89a07396c3499c65652fd691b687a0a9096e939fa1a19d2"
+      "bytes": 33509,
+      "sha256": "80f82754cfb224ab366b0e4fdbe9dc16e32936f2f1ff888e69c8c3236de9af0c"
     },
     {
       "file": "runtime/automation-tools.test.mjs",
-      "bytes": 13416,
-      "sha256": "185ed45242844873ab41f3dbec61432de5f9094265246a333ecfa2b80af8c261"
+      "bytes": 15872,
+      "sha256": "701a66890afe0702e755e188f69ea0ea040bec20e0df31b169977bf06b1a15ea"
     },
     {
       "file": "runtime/bootstrap.lock.json",
@@ -261,6 +336,16 @@
       "file": "runtime/capability-tiers.test.mjs",
       "bytes": 28307,
       "sha256": "bb3738635c206537b1e94faa94d07aa56cafd9d783323a75af4b8451710dff12"
+    },
+    {
+      "file": "runtime/caption-pages.mjs",
+      "bytes": 2428,
+      "sha256": "1c97df95d3e3df088f4c4cb3e7f0e11c64972d44d5eb1f083d701e71043d887e"
+    },
+    {
+      "file": "runtime/caption-pages.test.mjs",
+      "bytes": 2203,
+      "sha256": "63d88fe524b1162fee80d074aecca56830a9636e41496a8f7e96863c4c2777b0"
     },
     {
       "file": "runtime/capture-integrity.mjs",
@@ -294,8 +379,8 @@
     },
     {
       "file": "runtime/cinematic-studio.test.mjs",
-      "bytes": 6454,
-      "sha256": "19fe0be4b25e45d4f3dd3050257c70e19039baa18ffd8fc42dbe3dfcaea6595f"
+      "bytes": 10230,
+      "sha256": "a2ddb71be577acc35e7d6c32e905df41b1d330b6a6df5ab3a136c19866ac9aa9"
     },
     {
       "file": "runtime/comfy-performance-profile.mjs",
@@ -324,13 +409,18 @@
     },
     {
       "file": "runtime/creator-pack.mjs",
-      "bytes": 12886,
-      "sha256": "487481e05132b38817833771de783f9ea0bef4ddbad17f3699c9c80df0b9814d"
+      "bytes": 12935,
+      "sha256": "d97846f8d9b4df134fb44d086a447cf334ec5da09bbb2ac5fef813339f4f96e2"
     },
     {
       "file": "runtime/creator-pack.test.mjs",
-      "bytes": 5940,
-      "sha256": "68a1f8a326b3c3525f71033c8851a52279b986df467bdc9239889f066c21fa17"
+      "bytes": 6835,
+      "sha256": "c4890dc68426bdbc511c51e9a1b525390cf001dcf31663f0ab16996c4bbf637d"
+    },
+    {
+      "file": "runtime/creator-templates.test.mjs",
+      "bytes": 12336,
+      "sha256": "987db2e511a7be214197696bc47157e8fc04f5f321338de78acb4f04d08c57d1"
     },
     {
       "file": "runtime/creator-workflow.mjs",
@@ -404,13 +494,13 @@
     },
     {
       "file": "runtime/flagship-catalogue.mjs",
-      "bytes": 12363,
-      "sha256": "1bdd58aa5b13c28bff9397da1a034c18d93d896362ccd9407e13c653ba44366d"
+      "bytes": 12405,
+      "sha256": "68c30d5fccaecb6c4190c6efdcdfd719916483515e018dde439fb8dedbd0ecbf"
     },
     {
       "file": "runtime/flagship-catalogue.test.mjs",
-      "bytes": 23729,
-      "sha256": "0c1498c785d5963339d2c58518eb26f735bdf5a1a5e10c7dc507563845fb3ec8"
+      "bytes": 23586,
+      "sha256": "f0abe89edf5f6ed9593e64b6728cb4d70035cbd06bb1371da1828c19cf7ef71c"
     },
     {
       "file": "runtime/format-audio.mjs",
@@ -558,6 +648,26 @@
       "sha256": "0ab85d8a65c381a18290907bf5f8b0782351c65f53430e6601190d3b03578f02"
     },
     {
+      "file": "runtime/local-automations-http.test.mjs",
+      "bytes": 10339,
+      "sha256": "4855a737241c0aa18d0576d521113a004b42617026225a69c699cc09d11178e1"
+    },
+    {
+      "file": "runtime/local-automations-ui.test.mjs",
+      "bytes": 2108,
+      "sha256": "f78967d3908bc34b0f843058a480f9a918bd6f78a4ba0ee2ca5fb3aa252f89d8"
+    },
+    {
+      "file": "runtime/local-automations.mjs",
+      "bytes": 24776,
+      "sha256": "665a8903cd9c08f1b468c754391f14d6253571cccb7f744f3596d2f4c421251d"
+    },
+    {
+      "file": "runtime/local-automations.test.mjs",
+      "bytes": 21451,
+      "sha256": "0be5058cfbd7cdb830708e96ae1edf77f1376b067912d1d7abca57cc1cd583f5"
+    },
+    {
       "file": "runtime/ltx-production.mjs",
       "bytes": 19059,
       "sha256": "49fd85e20ac675432b2a739cbf16d0ab1e82fa83bedd0ad56250a6b954e1fcbb"
@@ -591,6 +701,16 @@
       "file": "runtime/manifest.json",
       "bytes": 773,
       "sha256": "d14ff13b72a1574677ad173013a2e402d0045f74b452b3d1819a69aff66fc51c"
+    },
+    {
+      "file": "runtime/mcp-connection.mjs",
+      "bytes": 3524,
+      "sha256": "aa15928baec475bf87f10a6d48416cca669f416b785034a7eff0bba15114d3d6"
+    },
+    {
+      "file": "runtime/mcp-connection.test.mjs",
+      "bytes": 2033,
+      "sha256": "f6ece55a345a39ed73aafe06869e5879670d0ee93b7ee50134c196632b438403"
     },
     {
       "file": "runtime/media-stream.mjs",
@@ -673,6 +793,11 @@
       "sha256": "230184f60bae2feaf244f10a8bac053c8ff33a183bcc365b4d8b876d2b7f4809"
     },
     {
+      "file": "runtime/notices/FFmpeg-build-configuration.txt",
+      "bytes": 2298,
+      "sha256": "ccf923e713e82e8b3d7b4534dca9347bfc69618112d3b7fdc02d7d148512476c"
+    },
+    {
       "file": "runtime/notices/FFmpeg-GPL-3.0.txt",
       "bytes": 35823,
       "sha256": "230184f60bae2feaf244f10a8bac053c8ff33a183bcc365b4d8b876d2b7f4809"
@@ -683,19 +808,14 @@
       "sha256": "c2f822d7f8ff9ea331fd16c09090cc2fc98b49903ce5e347ccdbf1939b9ab989"
     },
     {
-      "file": "runtime/notices/FFmpeg-build-configuration.txt",
-      "bytes": 2298,
-      "sha256": "ccf923e713e82e8b3d7b4534dca9347bfc69618112d3b7fdc02d7d148512476c"
+      "file": "runtime/notices/Real-ESRGAN-BSD-3-Clause.txt",
+      "bytes": 1519,
+      "sha256": "4a699ec4863d96a91fc265948a0c90033f7e8735d515524dcf3444736406e0c2"
     },
     {
       "file": "runtime/notices/RIFE-NCNN-Vulkan-MIT.txt",
       "bytes": 1093,
       "sha256": "de18cbedb0c3b0d1eeb9ccac3988cdf69c21fa89039cd97dd8846cb68f661f81"
-    },
-    {
-      "file": "runtime/notices/Real-ESRGAN-BSD-3-Clause.txt",
-      "bytes": 1519,
-      "sha256": "4a699ec4863d96a91fc265948a0c90033f7e8735d515524dcf3444736406e0c2"
     },
     {
       "file": "runtime/notices/uv-LICENSE-APACHE.txt",
@@ -989,8 +1109,8 @@
     },
     {
       "file": "runtime/ui-polling.test.mjs",
-      "bytes": 2621,
-      "sha256": "e15cbda588e7affee93a09384cf5bf7387f0bdf41bd585b2e1759e445b56c081"
+      "bytes": 2578,
+      "sha256": "d2e2f275a01ccf17903bf9290b06ca79701f72ce4d09f3e7c35e28516aa13840"
     },
     {
       "file": "runtime/upscale-4k.mjs",
@@ -1033,24 +1153,9 @@
       "sha256": "e4e1577be636422fbf2ccae484df364c93fd64ef3af4ba7797ec3f7c3bd4ac2b"
     },
     {
-      "file": "scripts/Extract-InterpolationRuntime.ps1",
-      "bytes": 1140,
-      "sha256": "bdfb58c6f9d4628a20e3cb73afea03234f6e409c6b338892c23efcf4ccd0013b"
-    },
-    {
-      "file": "scripts/Setup-AudioRuntime.ps1",
-      "bytes": 3914,
-      "sha256": "a1c6299f0c580c635dcb35fbebefd36ddab1312b989ccbc8dabc4f003b10a3de"
-    },
-    {
-      "file": "scripts/Setup-NeuralRuntime.ps1",
-      "bytes": 2937,
-      "sha256": "be6c0f3d8ed0360e691a5959bfb4a78ba78ff665f5cffe9ec4a17fababbaef64"
-    },
-    {
-      "file": "scripts/Test-Interpolation.mjs",
-      "bytes": 2938,
-      "sha256": "f3aec8141c9b7f2bd558f3bce437a0248e4f48d674acec804f19ba1de62ca8e4"
+      "file": "runtime/workspace-quality-ui.test.mjs",
+      "bytes": 3518,
+      "sha256": "099e1f400380ec1968f30c320313045bc3ab29d7288df5fb329f2b7991260b93"
     },
     {
       "file": "scripts/audit-live-capture.mjs",
@@ -1059,13 +1164,13 @@
     },
     {
       "file": "scripts/audit-public-source.mjs",
-      "bytes": 3907,
-      "sha256": "40107a1911057caf0e4243e15048bd9ce567dc59e3924e64ec7d115cd8d3cacb"
+      "bytes": 4006,
+      "sha256": "a476dda9e60a55d7a8ceb6b8fd4899b8e8dd59dcf29a508702df9405b92d8835"
     },
     {
       "file": "scripts/audit-public-source.test.mjs",
-      "bytes": 2456,
-      "sha256": "92b9cf6c9224080c342207e0ad4d81634098ddf5a011501cfb24a838af191ad4"
+      "bytes": 5020,
+      "sha256": "3603407f64e13f2493193b74cbefe937d20370aedad3410ff08ac327786b07ca"
     },
     {
       "file": "scripts/audit-recovered-capture.mjs",
@@ -1096,6 +1201,11 @@
       "file": "scripts/download-neural-models.py",
       "bytes": 3173,
       "sha256": "a53119e50dc9fbb9163943abdf69f8c2fc91161309072c523c4139dbbeb5fdbf"
+    },
+    {
+      "file": "scripts/Extract-InterpolationRuntime.ps1",
+      "bytes": 1140,
+      "sha256": "bdfb58c6f9d4628a20e3cb73afea03234f6e409c6b338892c23efcf4ccd0013b"
     },
     {
       "file": "scripts/extract-runtime.py",
@@ -1158,19 +1268,39 @@
       "sha256": "70f7ad6c281ee9a285e15ea71fcf07d6c6175e52fb97cf2abe2bfbf17b976c90"
     },
     {
-      "file": "scripts/stage-public-source.mjs",
-      "bytes": 3919,
-      "sha256": "c9711588827590a2ae4527c1eb64850e30d8b24de478d8b5380daadfa4761cd8"
+      "file": "scripts/Setup-AudioRuntime.ps1",
+      "bytes": 3914,
+      "sha256": "a1c6299f0c580c635dcb35fbebefd36ddab1312b989ccbc8dabc4f003b10a3de"
     },
     {
-      "file": "scripts/test-stabilization.mjs",
-      "bytes": 1073,
-      "sha256": "777c37c961a18b7645ce49cf6773ea4513f0a8ebb4362e244e2f24b289d85d62"
+      "file": "scripts/Setup-NeuralRuntime.ps1",
+      "bytes": 2937,
+      "sha256": "be6c0f3d8ed0360e691a5959bfb4a78ba78ff665f5cffe9ec4a17fababbaef64"
+    },
+    {
+      "file": "scripts/stage-public-source.mjs",
+      "bytes": 4147,
+      "sha256": "883b1744028dc301fbcfc86e9b6bcc28b2d12ce3f6d0ef1b4b7fdd37af98f32d"
     },
     {
       "file": "scripts/test_audio_download.py",
       "bytes": 2236,
       "sha256": "f7deaf9cdedf86a35304bea8beca4a6f2e077f294ab5ceb2a42631fc59743fe4"
+    },
+    {
+      "file": "scripts/Test-Interpolation.mjs",
+      "bytes": 2938,
+      "sha256": "f3aec8141c9b7f2bd558f3bce437a0248e4f48d674acec804f19ba1de62ca8e4"
+    },
+    {
+      "file": "scripts/test-stabilization.mjs",
+      "bytes": 1471,
+      "sha256": "442937b27c409e79c7a8c30de6a121b900098fe02456b7f5f521c5b9b1fa4c90"
+    },
+    {
+      "file": "scripts/verify-automation-journey.mjs",
+      "bytes": 6953,
+      "sha256": "ce0f0805b197a0c5d2b8656785b4ff8d3bb7a07484deeb6c59123301d7ba1d0e"
     },
     {
       "file": "scripts/verify-clean-source.mjs",
@@ -1208,6 +1338,11 @@
       "sha256": "b9dfbcf49ff8e441fc95ac27f8ab8dade3de1f26be66178fb7702fb410cd3098"
     },
     {
+      "file": "scripts/verify-template-journey.mjs",
+      "bytes": 4077,
+      "sha256": "d5fca0f5443bf3f563171242d61f6a32e4a8a2ab6d8fcb9a18987d438a6c1c38"
+    },
+    {
       "file": "scripts/verify-timeline-journey.mjs",
       "bytes": 4646,
       "sha256": "e80c048c3eab0966c31e71c3eb8af7cedeabf46098e4bdc874259e056cc28ace"
@@ -1229,18 +1364,18 @@
     },
     {
       "file": "server.js",
-      "bytes": 86656,
-      "sha256": "994a74ddecb5589f5fb8ab379066f57b35558eaafe1de881fe3c1dbe9385e33d"
+      "bytes": 94600,
+      "sha256": "41ed3bda551c1368463645107f8bf5e0076d9bc2bb29d7a5028afd3b917add7a"
     },
     {
       "file": "studio-chat.js",
-      "bytes": 25169,
-      "sha256": "8a8744b3f1c93ce4c029c80cea452cbfdf0b38b1fd9245e1ebd46c0a2aa26e61"
+      "bytes": 25280,
+      "sha256": "04eadec73165ba0dda2b8e87175435019d98027b51f582521f66221815c72941"
     },
     {
       "file": "styles.css",
-      "bytes": 68549,
-      "sha256": "1441fa86c843554e63c23c8c7a0122eef0990d7979f346b1c0280533ea05d770"
+      "bytes": 75851,
+      "sha256": "75f720318b8eed757a7470422743402d0e7ea1514ef1f7453b4e4e05cf6eb830"
     },
     {
       "file": "tests/emberforge-golden.spec.ts",
@@ -1254,8 +1389,8 @@
     },
     {
       "file": "timeline-editor.js",
-      "bytes": 24205,
-      "sha256": "faa5db564292e3d9a6af72a8e98890e3ede53712a85b65fa5f18b219820ce809"
+      "bytes": 24267,
+      "sha256": "9844f615c03719ca531265f4ef968ae6dd3d6d0781e3934cf190474d9d29093c"
     },
     {
       "file": "workers/audio-local.py",
@@ -1264,8 +1399,8 @@
     },
     {
       "file": "workers/audio.mjs",
-      "bytes": 1353,
-      "sha256": "898afdddaec4484db22181b97c54f0e05020fcdd1a643fb47f53ce99cd1c1a8e"
+      "bytes": 2494,
+      "sha256": "de0f1bb00cfb82981453d38e41276c5895ca97cdbfa22d5b7eb19e1f866e1c63"
     },
     {
       "file": "workers/blender_scene.py",
@@ -1356,14 +1491,6 @@
       "file": "youtube-settings.js",
       "bytes": 15754,
       "sha256": "f601c0a9bef18a215acf9fc0a4397b3a7d5dc9df375afa39bf49606457d0db09"
-    },
-    {
-      "file": ".gitattributes",
-      "bytes": 72,
-      "sha256": "27d6631f97f67e10f7034f2c53e9847a09fb3154325714fc2de1627b095984e4"
     }
-  ],
-  "publication": {
-    "lineEndings": "Preserved exactly by .gitattributes; no runtime source changes."
-  }
+  ]
 }

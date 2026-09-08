@@ -174,3 +174,17 @@ test('interpolation queues the owned reviewed export, with strict paths and revi
  const stale=await dispatchTool('interpolate_video',{...args,expectedRevision:1},{api});assert.equal(stale.status,'failed');assert.equal(calls.length,3);
  const wrongDevice=await dispatchTool('interpolate_video',{...args,device:'cloud'},{api});assert.equal(wrongDevice.status,'failed');assert.equal(calls.length,3);
 });
+
+test('research and creator pack expose checked route receipts, not blocked stubs',async()=>{
+ const calls=[],api=async(path,method,body)=>{calls.push({path,method,body});if(!method)return{id:'p',revision:2};if(path.endsWith('/research'))return{id:'j',projectId:'p',revision:2,type:'research',status:'running'};return{project:{id:'p',revision:3},job:{id:'pack',projectId:'p',type:'creator-pack',status:'succeeded'},pack:{jobId:'pack',projectRevision:2,sourceAssetId:'video',source:{sha256:'a'.repeat(64)},assets:{thumbnail:'thumb'},attached:true}};};
+ const research=await dispatchTool('research_topic',{projectId:'p',expectedRevision:2,query:'Earth',sourceUrls:['https://example.com/page'],onlineAuthorized:true},{api});
+ assert.equal(research.status,'running');assert.equal(research.verification.status,'not-run');assert.equal(research.metadata.nextTool,'inspect_job');assert.equal(calls[1].body.onlineAuthorized,true);
+ const pack=await dispatchTool('prepare_creator_pack',{projectId:'p',expectedRevision:2},{api});assert.equal(pack.status,'succeeded');assert.equal(pack.metadata.pack.source.sha256,'a'.repeat(64));assert.equal(pack.reproducibility.revision,2);assert.equal(pack.verification.kind,'local-creator-pack-receipt');
+});
+test('new tools reject missing consent revisions and invalid inputs before writes',async()=>{
+ let writes=0;const api=async(_,method)=>{if(method)writes++;return{id:'p',revision:2};};
+ for(const args of [{projectId:'p',expectedRevision:2,query:'Earth'},{projectId:'p',expectedRevision:2,query:'Earth',onlineAuthorized:false},{projectId:'p',query:'Earth',onlineAuthorized:true},{projectId:'p',expectedRevision:2,query:' ',onlineAuthorized:true},{projectId:'p',expectedRevision:2,query:'Earth',sourceUrls:[],onlineAuthorized:true}])assert.equal((await dispatchTool('research_topic',args,{api})).status,'failed');
+ assert.equal((await dispatchTool('prepare_creator_pack',{projectId:'p',expectedRevision:1},{api})).diagnostics[0].code,'REVISION_CONFLICT');
+ assert.equal((await dispatchTool('prepare_creator_pack',{projectId:'p',expectedRevision:2,videoPath:'secret'},{api})).status,'failed');assert.equal(writes,0);
+ const result=await dispatchTool('prepare_creator_pack',{projectId:'p',expectedRevision:2},{api:async(_,method)=>{if(method)throw Object.assign(Error('Render first'),{code:'CREATOR_PACK_SOURCE'});return{id:'p',revision:2};}});assert.equal(result.diagnostics[0].code,'CREATOR_PACK_SOURCE');
+});

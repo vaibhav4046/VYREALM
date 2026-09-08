@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 
 const blockedFolders=new Set(['.git','node_modules','data','work','outputs','release','assets','models','cache','__pycache__']);
 const blockedFile=/\.(?:sqlite(?:-(?:shm|wal))?|db|exe|dll|onnx|safetensors|gguf|pt|ckpt|zip|7z|mp4|wav|png|jpg|pem|pfx)$/i;
+const reviewedBrandAssets=new Set(['desktop/resources/icon.png']);
 const credentials=[
   ['PRIVATE_KEY',/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g],
   ['GITHUB_TOKEN',/\b(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,})\b/g],
@@ -29,7 +30,7 @@ export async function auditPublicSource(directory) {
       if(entry.isDirectory()){if(blockedFolders.has(entry.name))note(name,'DISALLOWED_DIRECTORY');else await inspect(name);continue;}
       if(name==='source-manifest.json')continue;
       seen.add(name);
-      if(blockedFile.test(name)||/^\.env(?:\.|$)/.test(entry.name)&&entry.name!=='.env.example'||/^(?:credentials|client_secret.*)\.json$/i.test(entry.name)){note(name,'DISALLOWED_FILE');continue;}
+      if(blockedFile.test(name)&&!reviewedBrandAssets.has(name)||/^\.env(?:\.|$)/.test(entry.name)&&entry.name!=='.env.example'||/^(?:credentials|client_secret.*)\.json$/i.test(entry.name)){note(name,'DISALLOWED_FILE');continue;}
       if(!expected.has(name))note(name,'UNLISTED_FILE');
       const path=join(root,name);if((await stat(path)).size>2*1024*1024){note(name,'OVERSIZED_SOURCE');continue;}
       const bytes=await readFile(path);

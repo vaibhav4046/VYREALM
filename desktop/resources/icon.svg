@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="-3.5 -3.5 32 32">
+  <title>VYREALM</title>
+  <desc>Original VYREALM UI mark: 25-unit square, 8-unit outer radius, 5-unit inset, 3-unit inner radius, rotated minus five degrees. Matches styles.css .brand-mark.</desc>
+  <defs>
+    <linearGradient id="lavender" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eedbd0"/>
+      <stop offset="1" stop-color="#b9a3ff"/>
+    </linearGradient>
+  </defs>
+  <g transform="rotate(-5 12.5 12.5)">
+    <rect width="25" height="25" rx="8" fill="url(#lavender)"/>
+    <rect x="5" y="5" width="15" height="15" rx="3" fill="#101115"/>
+  </g>
+</svg>

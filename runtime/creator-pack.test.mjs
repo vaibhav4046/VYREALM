@@ -36,3 +36,13 @@ test('saved publishing description takes precedence over production instructions
  const pack=await buildCreatorPack({...f,project:{...project,brief:'source 1 from 0s to 2s; horizontal; fit',description}});assert.equal(pack.metadata.description,description);assert.ok(pack.campaigns.every(campaign=>campaign.copy.includes(description)));assert.ok(!JSON.stringify(pack.metadata).includes('source 1 from'));assert.ok(!JSON.stringify(pack.campaigns).includes('source 1 from'));
  const onlyDescription=await buildCreatorPack({...f,outputDir:path.join(f.dir,'description-only'),project:{...project,brief:'',description}});assert.equal(onlyDescription.metadata.description,description);
 });
+
+test('source URLs stay in publishing credits but never change suggested hashtags',async t=>{
+ const f=await fixture(t),description='Aurora and clouds above Earth. Space station views reveal ocean horizons.';
+ const clean=await buildCreatorPack({...f,project:{...project,name:'Earth after dark',description}});
+ const creditedDescription=description+'\nhttps://svs.gsfc.nasa.gov/30771/\nHTTPS://svs.gsfc.nasa.gov/31281/\nwww.nasa.gov/nasa-brand-center/images-and-media/';
+ const credited=await buildCreatorPack({...f,outputDir:path.join(f.dir,'credited-pack'),project:{...project,name:'Earth after dark',description:creditedDescription}});
+ assert.deepEqual(credited.metadata.hashtags,clean.metadata.hashtags);
+ assert.equal(credited.metadata.description,creditedDescription);
+ assert.ok(credited.campaigns.find(c=>c.platform==='YouTube').copy.includes('https://svs.gsfc.nasa.gov/30771/'));
+});

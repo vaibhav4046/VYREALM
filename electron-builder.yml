@@ -12,6 +12,13 @@ files:
   - "studio-chat.js"
   - "cinematic-studio.js"
   - "timeline-editor.js"
+  - "asset-library.js"
+  - "mcp-connection.js"
+  - "asset-library.css"
+  - "creator-templates.js"
+  - "creator-templates.css"
+  - "local-automations.js"
+  - "local-automations.css"
   - "youtube-settings.js"
   - "index.html"
   - "styles.css"
@@ -39,6 +46,13 @@ asarUnpack:
   - "studio-chat.js"
   - "cinematic-studio.js"
   - "timeline-editor.js"
+  - "asset-library.js"
+  - "mcp-connection.js"
+  - "asset-library.css"
+  - "creator-templates.js"
+  - "creator-templates.css"
+  - "local-automations.js"
+  - "local-automations.css"
   - "youtube-settings.js"
   - "index.html"
   - "styles.css"
@@ -55,13 +69,12 @@ asarUnpack:
 win:
   target:
     - nsis
-  signAndEditExecutable: false
-  verifyUpdateCodeSignature: false
+  icon: desktop/resources/icon.ico
+  signExecutable: false
 mac:
   target:
     - dmg
   hardenedRuntime: true
-  gatekeeperAssess: false
   category: public.app-category.video
 nsis:
   oneClick: false

@@ -1,63 +1,95 @@
-# VYREALM
+<div align="center">
 
-**A complete video studio that runs on one Windows laptop, and refuses to lie about what it made.**
+# VYREALM ▲
 
-A written brief becomes a shot plan, a rendered film, local narration, timed captions, a synthesised
-sound bed, a 4K thumbnail and a private YouTube upload. No cloud service, no API key, no account,
-no rented GPU. Every model runs locally on a 6 GB consumer card or on CPU, and every output carries
-a receipt naming the model, the seed and the hash that produced it.
+**The video studio that never phones home.**
 
-Repository: [vaibhav4046/VYREALM](https://github.com/vaibhav4046/VYREALM). Package name is `vyrelum`.
+[![License](https://img.shields.io/badge/license-MIT-black?style=flat-square)](LICENSE)
+[![Node](https://img.shields.io/badge/node-24.12.0-black?style=flat-square)](https://nodejs.org)
+[![Platform](https://img.shields.io/badge/platform-Windows-black?style=flat-square)](#quickstart)
+[![VRAM](https://img.shields.io/badge/VRAM-6%20GB-7C3AED?style=flat-square)](#the-constraint)
+[![Cloud](https://img.shields.io/badge/cloud-none-7C3AED?style=flat-square)](#the-constraint)
+[![Tests](https://img.shields.io/badge/tests-356-black?style=flat-square)](#testing)
 
-**Watch first:** `outputs/demo/VYREALM_SHOWCASE_FILM_1080P.mp4`. 110.6 seconds, 1920x1080, h264 + aac,
-25 narration beats, 104 seconds of local Piper speech synthesised one line per beat so the captions
-cannot drift off the audio. Built by `scripts/build-showcase-film.mjs` with the same FFmpeg binary the
-studio itself uses. Nothing in that film reached the network.
+[Watch the film](https://www.youtube.com/watch?v=NYoma7xy0vc) · [Showcase](SHOWCASE.md) · [Quickstart](#quickstart) · [Receipts](#receipts)
 
----
+</div>
 
-## The honest part, up front
+* * *
 
-The format library defines **36 formats across 5 delivery platforms**. Expanded with the evidence
-retimes that is **151 renderable variants** (105 without them). Those 151 variants are cut from
-**seven source clips totalling about 91 seconds of footage**, and two of the seven are not filmed
-material at all: they are generated stills panned for five seconds each.
+A written brief goes in. A rendered, narrated, captioned, thumbnailed film comes out, and lands on YouTube.
 
-| Source clip | Length | What it is |
-|---|---:|---|
-| `VYREALM_RAINLINE_TRAILER_1080P.mp4` | 15.0 s | locally generated |
-| `VYREALM_CINEMATIC_15S_TRAILER_1080P.mp4` | 15.0 s | composited |
-| `VYREALM_ASSET_FIRST_TRAILER_1080P.mp4` | 30.0 s | composited |
-| `VYREALM_UI_PROJECT_OUTPUT_1080P.mp4` | 15.0 s | composited |
-| `ODYSSEY_FILM_CINEMATIC_1080P.mp4` | 6.0 s | Blender 3D render |
-| `VYREALM_ANIME_HERO_5S.mp4` | 5.04 s | generated still, panned |
-| `VYREALM_TALKING_HEAD_5S.mp4` | 5.04 s | generated still, panned |
-| **Total** | **91.1 s** | |
+Every model runs on your machine. No API key, no account, no upload of your footage to anyone. The whole thing was built and demonstrated on one Windows laptop with an RTX 3050 and 6 GB of VRAM.
 
-A 151-file catalogue built from 91 seconds of source advertises the repetition, not the engine. So the
-batch was curated **down**, not shipped whole. `scripts/curate-showcase.mjs` hashed 170 rendered files
-and kept **19 distinct pictures**:
+**[▶ Watch the 110-second showcase film](https://www.youtube.com/watch?v=NYoma7xy0vc)** — every frame, every word of narration and every caption in it was produced by this repo, offline.
 
-| Dropped | Count | Why |
-|---|---:|---|
-| Same picture | 70 | Reels / TikTok / Shorts share a 1080x1920 canvas; siblings differ only in caption placement |
-| Evidence retimes | 56 | The 53 s / 150 s / 300 s variants are the same cut slowed or ping-ponged |
-| Byte-identical | 16 | Groups of files with matching SHA-256 content hashes |
-| Visual review | rest | Flat-vector mascot and plain gradient title-card families: they render correctly, they are just not worth showing |
+* * *
 
-Run `node scripts/curate-showcase.mjs` and it re-derives those counts against whatever is currently in
-`outputs/`, hashes every file and prints its own reasoning. Add `--write` to repopulate
-`outputs/showcase/`.
+## The constraint
 
-The interesting claim here was never "we made 151 videos". It is that a brief becomes a shot plan, a
-render, timed captions, a sound bed, a thumbnail and an upload without a single network call, on
-consumer hardware, with a provenance receipt attached to every output.
+Read this part first. It is the most honest thing here, and it shapes everything else.
 
----
+**The catalogue is 151 rendered variants cut from about 91 seconds of source footage.** Seven source files, two of which are generated stills panned rather than filmed motion. Thirty-six formats across five delivery platforms expand into 151 renderable variants, and every one of them is cut from those 91 seconds.
+
+So the repo does not ship all 151. `scripts/curate-showcase.mjs` hashes every rendered file and keeps one per distinct picture:
+
+| Dropped | Why |
+|---|---|
+| Same picture | Reels, TikTok and Shorts share a 1080×1920 canvas; siblings differ only in caption placement |
+| Evidence retimes | The 53s / 150s / 300s variants are the same cut, slowed or ping-ponged |
+| Byte-identical | Groups of files with matching content hashes |
+| Visual review | Flat-vector output with no motion design, cut on sight |
+
+Run it yourself — it prints its reasoning per file and re-derives the counts every time:
+
+```powershell
+node scripts/curate-showcase.mjs
+```
+
+A big number would have looked better. It would also have been the wrong number.
+
+* * *
+
+## What it does
+
+**A brief becomes a shot plan.** Thirty-six formats — cold open, false start loop, micro horror turn, anime character intro, documentary chapter, product hero orbit — each with its own pacing, hook pattern, camera grammar and caption style.
+
+**It renders real video.** FFmpeg assembles the sequence at 1080p in landscape, portrait or square. Duration is exact, not approximate: the batch renderer reports drift per file and flags anything over 0.1 s.
+
+**It writes and speaks the narration.** Piper synthesises the voiceover locally on CPU. In the showcase film each line is synthesised separately, so every caption is timed against its own audio rather than an estimate.
+
+**It captions from the audio it just made.** faster-whisper transcribes locally and returns timed captions marked `review_required`, because a draft transcriber should not be trusted word for word. Ours transcribed "Someone" as "some more". That is why the review step exists.
+
+**It scores the picture.** A local ACE-Step model synthesises the bed, and the layers come back editable rather than baked in.
+
+**It makes the thumbnail alongside the film.** 4K, generated during production rather than bolted on afterwards, and attached to the upload so YouTube never falls back to a frame grab.
+
+**It publishes.** The video and its thumbnail upload to YouTube as a private video, through a path that re-hashes the file and verifies the channel before it sends a single byte.
+
+* * *
+
+## Receipts
+
+This is the part that matters, and it is the part that makes the product slower on purpose.
+
+Most tools are optimised to make their output look more impressive than it is. This one is built to make that impossible.
+
+> **The system refuses to overstate what it made.**
+> `runtime/generation-gate.mjs` will not label composited footage as generated.
+> `runtime/format-render.mjs` stamps `sourceMethod: 'composited-from-existing-footage'` on every batch output.
+> `scripts/render-format-batch.mjs` writes `"No pixels were generated by this batch."` into its own evidence file.
+
+**Nothing generated ships unreviewed.** A generated still lands at `review_required` and stays there until a human opens it, inspects it and writes down the defects. The approval is bound to the file's SHA-256, so approving one frame cannot silently bless another.
+
+**Bulk publishing is blocked in code.** `assertNotBulkPublishable` refuses to mass-upload recut variants, because doing so would breach YouTube's policy on repetitive automated content. The feature that would have inflated the numbers is the one deliberately disabled.
+
+**Every upload is gated.** Before a byte leaves the machine the uploader checks the project revision, verifies the channel live, re-hashes the file on disk, and requires the output to be `reviewed` rather than merely rendered. Privacy is forced to `private`; any other value throws `YOUTUBE_PRIVATE_ONLY`.
+
+* * *
 
 ## Quickstart
 
-Install **Node.js 24** (24.12.0 is what was tested), then:
+Install **Node.js 24** (24.12.0 tested). Then:
 
 ```powershell
 git clone https://github.com/vaibhav4046/VYREALM
@@ -65,210 +97,105 @@ cd VYREALM
 node server.js
 ```
 
-Open <http://127.0.0.1:4173>. Stop with `Ctrl+C`.
+Open **http://127.0.0.1:4173**.
 
-That is the whole install. The studio boots with **zero npm dependencies**, using Node's built-in
-modules including `node:sqlite`. No models, no GPU, no API key and no account are needed to start it,
-create a project, import media and reopen the library. The server listens on loopback, not on your
-network interface.
+That is the whole install. The studio boots on Node's built-in modules including `node:sqlite` — no `npm install`, no models, no GPU, no account, no API key. Upload footage, describe the edit, choose **Produce video**.
 
-Projects land in `data/` inside the repo by default. To put them somewhere else, set the paths before
-starting and keep using the same ones to reopen that library:
+To keep projects somewhere other than the repo:
 
 ```powershell
-$env:VYRELUM_DATA_DIR    = Join-Path $env:LOCALAPPDATA 'VYREALM\projects'
+$env:VYRELUM_DATA_DIR = Join-Path $env:LOCALAPPDATA 'VYREALM\projects'
 $env:VYRELUM_RUNTIME_DIR = Join-Path $env:LOCALAPPDATA 'VYREALM\runtime'
 node server.js
 ```
 
-### Rendering your own footage
+> **Heads up:** the test suite renders and probes real video, so it needs FFmpeg on disk. The binaries are ~227 MB each and are not committed. Put `ffmpeg.exe` and `ffprobe.exe` in `workers/tools/`, or point `VYRELUM_FFMPEG` and `VYRELUM_FFPROBE` at an existing install. `npm test` checks this first and tells you exactly what is missing.
 
-Exporting video needs an FFmpeg build with H.264/AAC support plus its matching FFprobe. Drop
-`ffmpeg.exe` and `ffprobe.exe` into `workers/tools/`, or point at an existing install:
+* * *
+
+## The local stack
+
+Everything below runs on your machine. Nothing in this table calls a network service.
+
+| Job | Model | Runs on |
+|---|---|---|
+| Video generation | LTX-Video 2B distilled, Q8 GGUF | Local ComfyUI, GPU |
+| Image-to-video | Wan2.2-TI2V-5B, Q4_K_M GGUF | Local ComfyUI, GPU |
+| Narration | Piper `en_US-ljspeech-high` | CPU |
+| Captions | faster-whisper `tiny.en` | CPU |
+| Music | ACE-Step | Local |
+| Assembly, probing, delivery | FFmpeg | CPU |
+
+Wan2.2 peaks at **5.85 GiB** on a 6 GB card. Every downstream decision in this repo is shaped by that 0.15 GiB of headroom.
+
+* * *
+
+## Quality detection
+
+Generated video fails in specific, nameable ways. The detector suite scores each one, and every threshold is calibrated against measured clips rather than guessed.
+
+| Failure mode | Measured on |
+|---|---|
+| Temporal flicker | VBench flicker score |
+| Motion stall | Longest run of near-duplicate frames |
+| Dead footage | Optical-flow top-5% mean |
+| Detail collapse | Max single-frame sharpness drop |
+| Terminal detail decay | Min-over-median sharpness |
+| Morphing geometry | ORB homography inlier ratio |
+| Scene drift | First-frame histogram correlation |
+| Colour drift | Max per-channel spread drift |
+| Stepped cadence | RGB MAE alternation ratio |
+| Encode blocking | Blockiness ratio |
+
+Each threshold carries its own confidence note. Where a metric is intent-dependent, it says so — animating on twos is correct craft for anime, not a defect, and the code records that rather than pretending the number is universal.
+
+* * *
+
+## Interfaces
+
+| Surface | What it is |
+|---|---|
+| Browser studio | `node server.js`, port 4173, zero dependencies |
+| Desktop app | Electron build, Windows installer |
+| MCP server | `npm run mcp` — agents drive the same engine |
+| CLI | Batch rendering, curation, film assembly, publishing |
+
+Useful scripts:
 
 ```powershell
-$env:VYRELUM_FFMPEG  = 'C:\tools\ffmpeg\bin\ffmpeg.exe'
-$env:VYRELUM_FFPROBE = 'C:\tools\ffmpeg\bin\ffprobe.exe'
-node server.js
+node scripts/render-format-batch.mjs --retimes --extend --skip-existing   # render the catalogue, resumable
+node scripts/curate-showcase.mjs --write                                  # keep one file per distinct picture
+node scripts/build-showcase-film.mjs                                      # assemble the narrated long-form film
+node scripts/publish-film.mjs <file.mp4> "<title>" <notes.txt>            # project, render, review, upload
+npm run doctor                                                            # verify the local runtime
 ```
 
-Import media, open **Timeline**, cut, then **Export edit**. `npm run doctor` verifies the rest of the
-local runtime and tells you what is missing.
+The batch renderer takes `--offset` and `--limit`, so shards render disjoint slices in parallel without colliding on output filenames, and `--skip-existing` makes a paused run resumable.
 
-### Optional local runtimes
-
-| Capability | What it needs | How |
-|---|---|---|
-| Chat / shot planning | Ollama with a local model (default `qwen3:4b-instruct`) | set `OLLAMA_HOST`, `VYRELUM_CHAT_MODEL` |
-| Narration and captions | Piper + faster-whisper on CPU | **Settings → Voice & captions → Install**, or `.\scripts\Setup-AudioRuntime.ps1` |
-| Generated shots | ComfyUI, a compatible GPU, ~25 GB free disk | `npm run setup:neural` (needs Git and uv) |
-
-The guided audio install verifies eight model files and 26 pinned package versions, generates a real
-Piper sample and transcribes it with Whisper before registering the configuration. Measured footprint
-including caches and proof files: about 808 MiB. Pinned hashes live in
-`runtime/audio-models.lock.json` and `runtime/audio-requirements-windows.lock.txt`.
-
----
-
-## What it does
-
-| Stage | Runs on | Notes |
-|---|---|---|
-| **Plan** | local LLM via Ollama | Brief becomes a concrete shot plan against the 36-format library |
-| **Render** | FFmpeg | 1080p landscape, portrait or square; duration drift measured per file |
-| **Narrate** | Piper `en_US-ljspeech-high`, CPU | One WAV per line, so captions cannot drift |
-| **Caption** | faster-whisper `tiny.en`, CPU | Returns `review_required`; a draft transcriber is not trusted verbatim |
-| **Score** | ACE-Step | Sound bed synthesised locally, mixed as editable layers |
-| **Thumbnail** | FFmpeg | 4K thumbnail produced alongside the film, not after it |
-| **Publish** | `publishing/` | Private YouTube upload, hash-verified, thumbnail bound to the video |
-
-Generation is real when the hardware allows it: LTX-Video 2B distilled Q8 GGUF and Wan2.2-TI2V-5B
-Q4_K_M GGUF run under a local ComfyUI on an RTX 3050 with 6 GB of VRAM. Wan2.2 peaks at **5.85 GiB**.
-Every downstream choice in this project is shaped by that remaining sliver of headroom.
-
----
-
-## Provenance: the receipts
-
-Most of the engineering here is a provenance system that constrains the product rather than
-flattering it. This is the part worth reading the source for.
-
-**`runtime/generation-gate.mjs`** will not let anything be labelled "generated" on the strength of a
-detected executable. It requires a reachable provider, the exact pinned models
-(`Wan2.2-TI2V-5B-Q4_K_M.gguf`, `umt5-xxl-encoder-Q4_K_S.gguf`, `wan2.2_vae.safetensors`), eleven named
-ComfyUI nodes, a measurable GPU with at least 4 GB of VRAM, and a verified output that physically
-exists inside the durable job directory. Anything short of that returns
-`BLOCKED_NEURAL_GENERATION` and tells you which precondition failed. A provider that is installed but
-has no reviewed adapter returns `NEURAL_ADAPTER_SMOKE_TEST_REQUIRED` rather than quietly counting as
-capability.
-
-`recordGeneratedProvenance` writes the receipt: provider id, model id, workflow hash, seed, prompt,
-output SHA-256, resolution, fps, frame count, VRAM peak, render time, provider prompt id, and a
-lineage chain. An artifact outside its own job directory is refused outright
-(`GENERATED_OUTPUT_OUTSIDE_JOB`).
-
-**`runtime/format-render.mjs`** stamps `sourceMethod: 'composited-from-existing-footage'` on every
-batch output, so a recut can never be mistaken for a generation.
-
-**`scripts/render-format-batch.mjs`** writes, into its own evidence file, the sentence:
-
-> "No pixels were generated by this batch."
-
-It also refuses to substitute stand-in footage: plans whose shot roles have no honest source are
-skipped and reported by name, never filled in.
-
-**Generated stills sit at `review_required`** until a human inspects the image and writes down its
-specific defects. Approval is bound to that image's SHA-256, so editing the project cannot silently
-re-approve an older frame.
-
-**`assertNotBulkPublishable`** in `runtime/format-library.mjs` blocks mass-uploading recut variants
-outright, citing YouTube's and Instagram's own policies on repetitive and unoriginal content. Format
-variants are production plans, not approved uploads.
-
-**Uploads are private-only and hash-gated.** `publishing/youtube-service.mjs` re-reads the approved
-file, re-hashes it with SHA-256 and compares against the expected hash before a byte is sent
-(`YOUTUBE_FILE_CHANGED` if it moved). It re-checks the connected channel against the channel you
-confirmed (`YOUTUBE_CHANNEL_MISMATCH`), refuses anything whose visual review did not pass
-(`YOUTUBE_REVIEW_REQUIRED`), refuses files outside the profile's media folder
-(`YOUTUBE_ASSET_BOUNDARY`), and requires an explicit synthetic-media disclosure boolean. Credentials
-sit in a Windows DPAPI-protected vault and are never logged.
-
-The system declines to overstate what it made, including in its own documentation. That is the
-feature.
-
----
-
-## Quality detectors
-
-`runtime/quality-detectors.mjs` scores delivered video against a catalogue of failure modes, each one
-calibrated against clips this project actually produced, each carrying its own `calibratedOn`,
-`confidence` and source citation. Thresholds are labelled provisional, because two clips of evidence
-is two clips of evidence.
-
-| Mode | Signal | Example measurement |
-|---|---|---|
-| Temporal flicker | VBench frame-difference score | 0.9803 accepted, 0.9030 bad on every axis |
-| Motion stall | Run of near-duplicate frame pairs | Re-roll is the only repair |
-| Dead footage | Top-5% optical flow below spec | Gated against shot intent, not applied blind |
-| Detail collapse | Step drop in Laplacian variance | Frame 34 to 35 lost 4.03x its detail, invisible to every frame-difference metric |
-| Terminal detail decay | Monotonic decay over the last ~15 frames | Ends at 50.4% of shot median; trim or crossfade the tail |
-| Morphing geometry | High ORB match ratio, low RANSAC inlier ratio | 0.809 inliers against 0.951 on stable shots |
-| Scene drift | Histogram correlation against frame one | Named as a proxy, not identity |
-| Colour drift | Per-channel means sliding apart | Red draining at 3.02 levels/sec against 0.07 on blue |
-| Stepped cadence | Period-2 autocorrelation structure | Polarity is intent-dependent: correct for anime, a defect in live action |
-| Encode blocking | Gradient energy on the 8x8 transform grid | Measures the encoder, not the generator. Telemetry, not a gate |
-
-Four further modes (VAE chunk seam, face below latent resolution, garbled on-screen text, off-bucket
-resolution) are catalogued as **not detectable** on this box and are handled by refusal at
-prompt-compile time instead. Naming an undetectable failure is cheaper than a 26-minute re-roll.
-
-Scoring is off by default in batch renders, and the reason is measured: one 8-second 1080x1080 clip
-takes 8.8 s to render and 99.7 s to probe and score. Pass `--score` when you want the measurement, and
-the evidence file then records the thresholds behind every verdict.
-
----
+* * *
 
 ## Testing
 
 ```powershell
-npm ci                            # dev dependencies only; the studio itself needs none
-npx playwright install chromium   # browser journeys
-npm test                          # ~356 node tests
+npm test
 ```
 
-`npm test` renders and probes real video, so a `pretest` guard checks for FFmpeg and FFprobe first.
-The binaries are about 227 MB each and are deliberately not committed. Without the guard a fresh
-clone fails eleven tests deep with a bare `ENOENT` that explains nothing, so the guard fails
-immediately instead and prints the exact fix, including the download URL and the two environment
-variables.
+Around 356 tests across the engine, publishing, capability registry, format library, quality detectors, timeline worker, media verifier and provider adapters. A `pretest` guard checks for the FFmpeg binaries first and prints exact instructions rather than failing eleven tests deep on an opaque `ENOENT`.
 
-`npm run test:release` adds stabilisation, creator-pack, automation and YouTube service suites.
-
----
-
-## Architecture
-
-```
-app.js  studio-chat.js  timeline-editor.js  youtube-settings.js   browser workspace
-server.js  runtime/  publishing/                                  local API, SQLite revisions, jobs
-workers/  desktop/                                                media processing, Electron host
-scripts/                                                          batch render, curation, film build
-```
-
-- **Storage** is SQLite through `node:sqlite`, with project revisions and portable export/import.
-- **Jobs** are durable rows, recovered on restart. An interrupted worker surfaces as *Needs attention*
-  rather than silently resuming.
-- **MCP**: `npm run mcp` exposes the same engine over stdio, so an agent can drive it. **MCP tools →
-  Test local bridge** performs a real `initialize`, `tools/list` and read-only `list_projects` through
-  the actual transport.
-- **Desktop**: an Electron build exists for Windows via `npm run desktop:dist`.
-
-See `docs/VYREALM_ARCHITECTURE.md` for the data flow and runtime boundaries.
-
----
+* * *
 
 ## Known limits
 
-- **Source variety is the binding constraint, not the pipeline.** More formats do not add more
-  footage. Generating genuinely new shots runs at roughly 500 to 1500 seconds per shot on this GPU.
-- **Native generation resolution is low**, 512x288 to 1024x576, and upscaled with Lanczos for
-  delivery. Delivery dimensions do not imply native detail, and no AI enhancement is claimed.
-- **Whisper `tiny.en` is a draft transcriber.** It rendered "Someone" as "some more" in our own demo
-  run. Captions ship marked for review, not as truth.
-- **Bulk publishing is blocked on purpose**, and that is not configurable.
-- **Windows x64 only.** Tested on Node 24.12.0, Intel Core i5-12450HX, 16 GiB RAM, RTX 3050 Laptop
-  6 GB. macOS and Linux are unqualified.
-- **A rendered file is not a reviewed film.** A clean encode and a full decode say nothing about
-  whether the shot is any good, and the system does not pretend otherwise.
+Stated plainly, because a tool built on provenance does not get to be vague about itself.
 
----
+- **Source variety is the binding constraint.** More formats do not create more footage. Generating genuinely new shots runs at roughly 500–1500 s per shot on this GPU, and new stills sit at `review_required` until a human approves them.
+- **Native generation resolution is low** — 512×288 to 1024×576, upscaled for delivery. Delivery dimensions do not imply native detail.
+- **Cross-shot subject consistency is not solved.** In the Night Lines film the two trains are different designs.
+- **`tiny.en` is a draft transcriber.** Captions are meant to be reviewed, not trusted verbatim.
+- **macOS is not qualified.** Windows only, for now.
 
-## Credits and licence
+* * *
 
-Built with Node.js, SQLite, Electron, Vite and FFmpeg, with optional Piper, faster-whisper, Ollama,
-ACE-Step and ComfyUI / Wan2.2 and LTX-Video. Runtime notices and pinned model information are in
-`runtime/notices/` and the runtime lock files. Every dependency, binary and model keeps its own terms;
-the Windows FFmpeg build reports GPLv3-or-later, with its licence and source links included.
+## License
 
-Original VYREALM code is [MIT](LICENSE), copyright 2026 VYREALM contributors. That does not relicense
-third-party binaries, libraries or model weights, none of which are in this repository.
+MIT. See [LICENSE](LICENSE).

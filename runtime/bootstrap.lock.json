@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "platform": "win32-x64",
+  "uv": {
+    "version": "0.11.21",
+    "path": "bootstrap/uv.exe",
+    "sha256": "5a7ec85884c2ccb1be560cb8fac3eb890df1adf49bfcc070a270ba70401bdd68",
+    "archiveUrl": "https://releases.astral.sh/github/uv/releases/download/0.11.21/uv-x86_64-pc-windows-msvc.zip",
+    "archiveSha256": "ace861f360c6de2babedc1607d0f454b6b09a820dbc8182dc15af927e4df9589",
+    "license": "MIT OR Apache-2.0",
+    "notices": ["notices/uv-LICENSE-MIT.txt", "notices/uv-LICENSE-APACHE.txt"]
+  },
+  "archives": [
+    {"id": "comfyui", "url": "https://codeload.github.com/Comfy-Org/ComfyUI/zip/fbed745c8d7d62573b099cd61fe51cb64b9b807e", "bytes": 12805044, "sha256": "08c1475549133fefd3beea48558f0864063ae11e21505282e6ec3040422163d4", "prefix": "ComfyUI-fbed745c8d7d62573b099cd61fe51cb64b9b807e", "destination": "ComfyUI"},
+    {"id": "gguf", "url": "https://codeload.github.com/city96/ComfyUI-GGUF/zip/6ea2651e7df66d7585f6ffee804b20e92fb38b8a", "bytes": 38051, "sha256": "aad273a0b774684285b4496f6edff7e2293bd29d71ef89926d6861bfdf4947ac", "prefix": "ComfyUI-GGUF-6ea2651e7df66d7585f6ffee804b20e92fb38b8a", "destination": "ComfyUI/custom_nodes/ComfyUI-GGUF"}
+  ],
+  "archiveIntegrityNote": "Code archive digests were measured from HTTPS downloads at pinned commits. The uv archive digest matches the published release checksum."
+}

@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "profile": "wan22-5b-q4-6gb-experimental",
+  "qualification": "two-five-second-shots-measured-on-rtx3050-6gb-windows",
+  "measurements": {"sourceResolution": "1024x576", "fps": 24, "framesPerClip": 120, "firstJobId": "148be8ce-5a53-4b23-9d00-b9280372332d", "referenceShotJobId": "2ea931b5-5edd-42ca-bb46-80f5de2a9ed9", "firstRunSeconds": 1838.020, "referenceShotSeconds": 1716.804, "wholeDeviceVramPeakGiB": 5.8486328125, "scope": "Operator-reviewed local motion studies, not general cinematic parity or macOS qualification"},
+  "comfyui": {"repository": "https://github.com/Comfy-Org/ComfyUI", "commit": "fbed745c8d7d62573b099cd61fe51cb64b9b807e", "license": "GPL-3.0"},
+  "ggufNodes": {"repository": "https://github.com/city96/ComfyUI-GGUF", "commit": "6ea2651e7df66d7585f6ffee804b20e92fb38b8a", "license": "Apache-2.0"},
+  "models": [
+    {"repository": "QuantStack/Wan2.2-TI2V-5B-GGUF", "revision": "57437632ddd08bdcbd1508c866aa22e126ed51d2", "file": "Wan2.2-TI2V-5B-Q4_K_M.gguf", "destination": "diffusion_models/Wan2.2-TI2V-5B-Q4_K_M.gguf", "bytes": 3433116000, "sha256": "95b19697b7f98e65b0a543640e9ca7b4dfec32e2a6e3731e8e10708be52655e2", "license": "Apache-2.0"},
+    {"repository": "city96/umt5-xxl-encoder-gguf", "revision": "b535255bee98c2b0a59ea7c0ae2dcd0c6657b3b7", "file": "umt5-xxl-encoder-Q4_K_S.gguf", "destination": "text_encoders/umt5-xxl-encoder-Q4_K_S.gguf", "bytes": 3497596768, "sha256": "4a3176f32fd70c0a335b4419fcbf8c86cc875e23498c0fc06f5b4aa0930889e0", "license": "Apache-2.0"},
+    {"repository": "Comfy-Org/Wan_2.2_ComfyUI_Repackaged", "revision": "c4f60d30c55a624e35427060fdd217579a6c1d77", "file": "split_files/vae/wan2.2_vae.safetensors", "destination": "vae/wan2.2_vae.safetensors", "bytes": 1409400960, "sha256": "e40321bd36b9709991dae2530eb4ac303dd168276980d3e9bc4b6e2b75fed156", "license": "Apache-2.0"}
+  ]
+}

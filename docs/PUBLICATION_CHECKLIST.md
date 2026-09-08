@@ -1,0 +1,15 @@
+# VYREALM source publication procedure
+
+Run this after the implementation owner declares a release checkpoint. An in-progress snapshot is useful for diagnostics, but is not the final release. The tooling here does not create a repository, commit, upload or submit anything.
+
+1. Run `node scripts/stage-public-source.mjs`. It creates a new `work/public-source-<timestamp>` directory and prints its path. Only allowlisted source files, model lock files and license notices are copied. Browser imports are followed so new UI modules cannot silently disappear. The script rejects non-regular files and checks that source bytes did not change during copying.
+2. Run `node scripts/audit-public-source.mjs work/public-source-<timestamp>`. Require exit 0 and `ok: true`. It checks manifest hashes, the original-code MIT notice, unwanted files/directories, symlinks and known credential patterns. Findings show only rule, path and line; never print a suspicious value while resolving a finding. This scan is not a guarantee that every possible secret is absent.
+3. Review the manifest and source diff. Confirm there is no user media, account configuration, SQLite state, generated/rejected showcase content, cache, binary or copied git history. Check any personal machine paths and reference material before publication. Preserve separate licenses for dependencies and models. The original-code MIT license does not replace them.
+4. Run `node scripts/verify-clean-source.mjs work/public-source-<timestamp>`. Require its PASS line. This verifies basic source boot, HTTP modules, empty initial state and actual browser creation/reopening of a project with an isolated home directory. It is not an installer or model-installation test.
+5. The publication owner may then initialize git **inside that audited snapshot**, review the staged file list and publish it to the intended repository. Do not push the working repository's existing history or use a broad upload from its parent folder. Inspect the published tree and confirm the actual commit and public URL.
+
+Keep audit reports outside the staged source directory. New or changed files after an audit invalidate it. The `source-manifest.json` records the exact source files that were audited; never silently update its hashes to conceal changes.
+
+Build input is a separate copy. Add audited FFmpeg/FFprobe and any approved setup helper only to the **package** copy, not the source-publication snapshot. Retain their notices and source links. Build to a new version-specific output directory and run `scripts/verify-package-coherence.mjs` against the frozen input. A successful package build does not establish installed startup or a successful external account connection.
+
+Optional fixture evidence must be selected separately through its explicit manifest and identified as original test media. Do not add videos or screenshots to the README before the owner approves actual outputs for presentation. Devpost remains a draft until the owner explicitly authorizes final submission.

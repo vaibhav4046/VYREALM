@@ -1,0 +1,71 @@
+appId: com.vyrealm.studio
+productName: VYREALM
+artifactName: VYREALM-${version}-${os}-${arch}.${ext}
+# The source is bundled for review; installers are produced only when Electron
+# and electron-builder are installed in a controlled build environment.
+directories:
+  output: release
+  buildResources: desktop/resources
+files:
+  - "desktop/**/*"
+  - "app.js"
+  - "studio-chat.js"
+  - "cinematic-studio.js"
+  - "timeline-editor.js"
+  - "youtube-settings.js"
+  - "index.html"
+  - "styles.css"
+  - "server.js"
+  - "mcp-server.mjs"
+  - "cli.mjs"
+  - "scripts/**/*"
+  - "publishing/**/*"
+  - "capabilities/**/*"
+  - "runtime/**/*"
+  - "workers/**/*"
+  # Uploaded-footage release: retain editing tools and optional setup code.
+  # Blender and sample media remain separate from this lean distribution.
+  - "package.json"
+  - "LICENSE"
+  - "!data{,/**/*}"
+  - "!outputs{,/**/*}"
+  - "!dist{,/**/*}"
+  - "!node_modules{,/**/*}"
+  - "!workers/tools/blender.exe"
+  - "!runtime/assets{,/**/*}"
+asar: true
+asarUnpack:
+  - "app.js"
+  - "studio-chat.js"
+  - "cinematic-studio.js"
+  - "timeline-editor.js"
+  - "youtube-settings.js"
+  - "index.html"
+  - "styles.css"
+  - "server.js"
+  - "publishing/**"
+  - "capabilities/**"
+  - "scripts/**"
+  - "mcp-server.mjs"
+  - "cli.mjs"
+  - "runtime/**"
+  - "workers/**"
+  - "runtime/node/**"
+  - "workers/tools/**"
+win:
+  target:
+    - nsis
+  signAndEditExecutable: false
+  verifyUpdateCodeSignature: false
+mac:
+  target:
+    - dmg
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  category: public.app-category.video
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true

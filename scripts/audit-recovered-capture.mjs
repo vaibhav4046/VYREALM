@@ -1,0 +1,33 @@
+import { readFile, writeFile, appendFile } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
+import { resolve, join, basename } from 'node:path';
+import { createHash } from 'node:crypto';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+import { validateCaptureSegment } from '../runtime/capture-integrity.mjs';
+
+const [runArg, recordArg, sourceArg, recoveredArg] = process.argv.slice(2);
+if (![runArg,recordArg,sourceArg,recoveredArg].every(Boolean)) throw new Error('Usage: audit-recovered-capture.mjs run-directory segment-record source-video recovered-video');
+const runDir=resolve(runArg), recordPath=join(runDir,recordArg), sourcePath=join(runDir,sourceArg), recoveredPath=join(runDir,recoveredArg);
+const digest=value=>createHash('sha256').update(value).digest('hex');
+const hashFile=path=>new Promise((ok,bad)=>{const h=createHash('sha256'),s=createReadStream(path);s.on('data',b=>h.update(b));s.on('error',bad);s.on('end',()=>ok(h.digest('hex')));});
+const state=JSON.parse(await readFile(join(runDir,'run-status.json'),'utf8'));
+if(state.state!=='stopped')throw new Error('Only stopped capture journals can be audited');
+const record=JSON.parse(await readFile(recordPath,'utf8'));
+const journalPath=join(runDir,'journal.jsonl'), originalJournal=await readFile(journalPath,'utf8');
+let previousEventHash=null,sequence=0;
+for(const line of originalJournal.trim().split('\n')){const{eventHash,...entry}=JSON.parse(line);if(entry.previousEventHash!==previousEventHash||entry.sequence!==sequence+1||digest(JSON.stringify(entry))!==eventHash)throw new Error('Original journal hash chain failed');previousEventHash=eventHash;sequence=entry.sequence;}
+const exec=promisify(execFile), options={windowsHide:true,timeout:180000,maxBuffer:4_000_000}, ffprobe=resolve('workers/tools/ffprobe.exe'), ffmpeg=resolve('workers/tools/ffmpeg.exe');
+const probe=JSON.parse((await exec(ffprobe,['-v','error','-show_entries','format=duration:stream=codec_type,width,height,avg_frame_rate','-of','json',recoveredPath],options)).stdout);
+const packetArgs=['-v','error','-select_streams','v:0','-show_packets','-show_data_hash','sha256','-show_entries','packet=pts,dts,duration,data_hash','-of','csv=p=0'];
+const sourcePackets=(await exec(ffprobe,[...packetArgs,sourcePath],options)).stdout;
+const recoveredPackets=(await exec(ffprobe,[...packetArgs,recoveredPath],options)).stdout;
+if(sourcePackets!==recoveredPackets)throw new Error('Recovered encoded frames or timestamps differ from the original capture');
+const decode=await exec(ffmpeg,['-v','error','-i',recoveredPath,'-f','null','-'],options);
+if(decode.stderr.trim())throw new Error('Recovered file reported decode errors');
+const validation=validateCaptureSegment({wallSeconds:record.realElapsedSeconds,capturedSeconds:Number(probe.format.duration)});
+const at=new Date().toISOString(),file=`recovery-audit-${at.replace(/[:.]/g,'-')}.json`;
+const audit={schemaVersion:1,at,state:validation.state==='complete'?'recovered-duration-verified':'recovered-partial',originalRecord:basename(recordPath),originalRecordSha256:await hashFile(recordPath),originalJournalSha256:digest(originalJournal),priorRecordState:record.state,priorFinalizationError:record.interruptionReason,sourceFile:basename(sourcePath),sourceSha256:await hashFile(sourcePath),recoveredFile:basename(recoveredPath),recoveredSha256:await hashFile(recoveredPath),probe,packetCount:sourcePackets.trim().split('\n').length,encodedPacketsAndTimestampsIdentical:true,packetEvidenceSha256:digest(sourcePackets),fullDecode:{command:'ffmpeg -v error -i recovered-video -f null -',exitCode:0,stderr:decode.stderr},validation,audioCaptured:false,notes:['The original video was saved in the owned Playwright temporary recording directory despite client/context cleanup failure.','The separately recovered container preserves every encoded packet and timestamp; no replacement frames or retiming.','This verifies this observation interval only. Earlier gaps and the post-submission start remain disclosed.','Comparative film quality and completed neural generation are not established by this capture.']};
+const text=JSON.stringify(audit,null,2);await writeFile(join(runDir,file),text,{flag:'wx'});
+const entry={sequence:sequence+1,at,type:'capture_recovery_audit',file,sha256:digest(text),state:audit.state,originalSegmentIndex:record.index,previousEventHash};await appendFile(journalPath,JSON.stringify({...entry,eventHash:digest(JSON.stringify(entry))})+'\n');
+console.log(JSON.stringify({file:join(runDir,file),state:audit.state,packetCount:audit.packetCount,validation},null,2));

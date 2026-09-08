@@ -1,0 +1,935 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0c0d10">
+<title>VYREALM Catalogue</title>
+<style>
+/* Palette lifted verbatim from ../styles.css (the production :root block).
+   No new colours are invented here. */
+:root{
+  --bg:#0c0d10; --panel:#14161c; --panel-2:#1a1d24; --raised:#1e212b;
+  --violet:#b9a3ff; --lilac:#d5c7ff; --pink:#b9a3ff; --orange:#e9ad66;
+  --text:#f0f0f5; --muted:#a3a5b6; --line:#2b2e39;
+  --green:#a8cfb7; --danger:#ee9aa8;
+
+  /* One type scale, used everywhere. */
+  --f-mono:11px; --f-sm:12px; --f-md:14px; --f-lg:17px;
+  --f-xl:clamp(22px,2.6vw,30px);
+  --f-display:clamp(40px,8.5vw,92px);
+
+  --sans:ui-sans-serif,'Space Grotesk','Segoe UI',system-ui,sans-serif;
+  --mono:Consolas,'DM Mono',ui-monospace,monospace;
+
+  --gut:clamp(18px,3.4vw,46px);
+  --radius:13px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{color-scheme:dark}
+body{
+  margin:0; color:var(--text); font-family:var(--sans); letter-spacing:-.011em;
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,p,dl,dd,ul{margin:0}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+
+:focus-visible{outline:2px solid var(--lilac);outline-offset:3px;border-radius:4px}
+
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip{position:absolute;left:-9999px;top:8px;z-index:30;background:var(--raised);border:1px solid var(--violet);padding:10px 14px;border-radius:8px;text-decoration:none;color:var(--text)}
+.skip:focus{left:12px}
+
+.wrap{max-width:1520px;margin:0 auto;padding:0 var(--gut)}
+
+/* ---------- masthead: editorial, not a hero card ---------- */
+.masthead{padding:clamp(30px,6vw,74px) 0 clamp(20px,3vw,34px);border-bottom:1px solid var(--line)}
+.mark-row{display:flex;align-items:center;gap:11px}
+.mark{display:block;border-radius:9px}
+.wordmark{font:700 var(--f-md)/1 var(--sans);letter-spacing:.22em}
+.eyebrow{font:500 var(--f-mono)/1.4 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.masthead h1{
+  font:600 var(--f-display)/.92 var(--sans);letter-spacing:-.05em;
+  margin:clamp(16px,2.6vw,30px) 0 0;max-width:15ch;
+}
+.masthead h1 em{font-style:normal;color:var(--lilac);display:block}
+.lede{color:var(--muted);font-size:var(--f-md);line-height:1.65;max-width:56ch;margin-top:18px}
+.lede b{color:var(--text);font-weight:600}
+
+.rail{display:flex;flex-wrap:wrap;gap:0;margin-top:clamp(24px,3.4vw,40px);border-top:1px solid var(--line)}
+.rail>div{flex:1 1 150px;padding:16px 20px 15px;border-right:1px solid var(--line);min-width:0}
+.rail>div:last-child{border-right:0}
+.rail dt{font:500 var(--f-mono)/1.4 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.rail dd{font:600 var(--f-xl)/1.05 var(--sans);letter-spacing:-.04em;margin-top:9px}
+.rail dd small{display:block;font:500 var(--f-mono)/1.5 var(--mono);letter-spacing:0;color:var(--muted);margin-top:6px}
+
+/* ---------- filters ---------- */
+.filters{position:sticky;top:0;z-index:12;background:rgba(12,13,16,.94);backdrop-filter:blur(15px);border-bottom:1px solid var(--line)}
+.filters-inner{padding:16px 0 15px;display:flex;flex-direction:column;gap:13px}
+.filter-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.search-field{position:relative;flex:1 1 260px;max-width:400px;min-width:0}
+.search-field input{
+  width:100%;background:var(--panel);border:1px solid var(--line);border-radius:9px;
+  padding:11px 13px 11px 34px;font-size:var(--f-sm);outline:none;transition:border-color .18s
+}
+.search-field input:focus{border-color:var(--violet)}
+.search-field .glyph{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:var(--f-sm);pointer-events:none}
+.count{font:500 var(--f-mono)/1.4 var(--mono);color:var(--lilac);white-space:nowrap}
+.reset{background:transparent;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:var(--f-sm);color:var(--muted);margin-left:auto}
+.reset:hover{border-color:var(--violet);color:var(--text)}
+
+.facets{display:flex;gap:9px 26px;flex-wrap:wrap}
+fieldset{border:0;padding:0;margin:0;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;min-width:0}
+legend{float:left;font:500 var(--f-mono)/1.9 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--muted);padding:0 10px 0 0}
+.chip{
+  background:var(--panel);border:1px solid var(--line);border-radius:999px;
+  padding:6px 12px;font-size:var(--f-sm);color:var(--muted);transition:.18s;white-space:nowrap
+}
+.chip:hover{border-color:#4a3a68;color:var(--text)}
+.chip[aria-pressed="true"]{background:#20163a;border-color:var(--violet);color:var(--text)}
+.chip .n{font:500 10px/1 var(--mono);color:var(--muted);margin-left:6px}
+.chip[aria-pressed="true"] .n{color:var(--lilac)}
+
+/* ---------- grid ---------- */
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));
+  gap:clamp(14px,1.6vw,24px);align-items:start;
+  padding:clamp(24px,3.6vw,44px) 0 90px;
+}
+.film{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  overflow:hidden;min-width:0;transition:border-color .2s,transform .2s
+}
+.film:hover{border-color:#4c3a70;transform:translateY(-2px)}
+.film.playing{border-color:var(--violet);box-shadow:0 0 0 1px #8b5cf644,0 18px 46px #0009}
+.film[data-shape="h"]{grid-column:span 2}
+@media(max-width:560px){.film[data-shape="h"]{grid-column:span 1}}
+
+.frame{position:relative;background:#05040a;line-height:0}
+.frame video{width:100%;height:100%;display:block;background:#05040a}
+.film[data-shape="v"] .frame{aspect-ratio:9/16}
+.film[data-shape="h"] .frame{aspect-ratio:16/9}
+.film[data-shape="s"] .frame{aspect-ratio:1/1}
+.film .frame video{position:absolute;inset:0;object-fit:contain}
+.frame .niche-tag{
+  position:absolute;top:9px;left:9px;z-index:2;pointer-events:none;
+  background:#0b0910d9;border:1px solid #ffffff24;border-radius:5px;padding:4px 7px;
+  font:500 9px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#e5dcf5
+}
+
+.body{padding:13px 14px 15px;display:flex;flex-direction:column;gap:10px}
+.title-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.film h2{font:600 var(--f-md)/1.25 var(--sans);letter-spacing:-.02em;min-width:0}
+.slug{font:500 10px/1 var(--mono);color:var(--muted);flex:none}
+.specs{display:flex;flex-wrap:wrap;gap:4px 9px;font:500 var(--f-mono)/1.5 var(--mono);color:var(--muted)}
+.specs b{color:var(--lilac);font-weight:500}
+
+/* provenance ledger: original footage vs synthetic time-extension */
+.ledger{display:flex;height:5px;border-radius:3px;overflow:hidden;background:var(--line)}
+.ledger i{display:block;height:100%}
+.ledger .orig{background:linear-gradient(90deg,#6d46c9,var(--violet))}
+.ledger .syn{background:repeating-linear-gradient(45deg,var(--orange) 0 3px,#8a5327 3px 6px)}
+.ledger-note{font:500 10px/1.4 var(--mono);color:var(--muted)}
+.ledger-note b{color:var(--orange);font-weight:500}
+.ledger-note b.clean{color:var(--green)}
+
+.tags{display:flex;flex-wrap:wrap;gap:5px;list-style:none;padding:0}
+.tags li{font:500 9px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:5px 7px;border-radius:5px;border:1px solid #3a2f52;background:#171227;color:var(--lilac)}
+.tags li[data-t="time-extended"]{border-color:#5c4327;background:#20160e;color:var(--orange)}
+.tags li[data-t="locally-generated"]{border-color:#2f5741;background:#101d16;color:var(--green)}
+.tags li[data-t="unclassified"]{border-color:var(--line);background:transparent;color:var(--muted)}
+
+.disclose{
+  width:100%;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;
+  background:transparent;border:1px solid var(--line);border-radius:8px;padding:8px 11px;
+  font:500 var(--f-mono)/1.3 var(--mono);letter-spacing:.11em;text-transform:uppercase;color:var(--muted)
+}
+.disclose:hover{border-color:var(--violet);color:var(--text)}
+.disclose .caret{transition:transform .2s}
+.disclose[aria-expanded="true"]{color:var(--lilac);border-color:#41305e}
+.disclose[aria-expanded="true"] .caret{transform:rotate(90deg)}
+
+.prov{border:1px solid var(--line);border-radius:9px;background:#0b0910;padding:11px 12px}
+.prov dl{display:grid;grid-template-columns:minmax(84px,.75fr) minmax(0,1.25fr);gap:7px 12px;font-size:11px}
+.prov dt{color:var(--muted)}
+.prov dd{color:var(--text);overflow-wrap:anywhere}
+.prov dd.mono{font:500 10px/1.5 var(--mono)}
+.prov dd.quote{color:var(--lilac);font-style:italic;line-height:1.5}
+.prov .sub{margin-top:10px;padding-top:9px;border-top:1px solid var(--line);font:500 10px/1.6 var(--mono);color:var(--muted)}
+.prov .sub b{display:block;color:var(--text);letter-spacing:.11em;text-transform:uppercase;margin-bottom:5px;font-weight:500}
+.film.gone{border-color:#5a2b38}
+.film.gone .frame{opacity:.45}
+.missing{font:500 10px/1.4 var(--mono);color:var(--danger);border:1px solid #5a2b38;border-radius:6px;padding:6px 8px;overflow-wrap:anywhere}
+
+.prov .warn{color:var(--danger)}
+.prov .absent{color:var(--muted);font-style:italic}
+.scores{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.score{border:1px solid #3a2f52;border-radius:5px;padding:4px 7px;font:500 10px/1 var(--mono);color:var(--lilac)}
+
+/* ---------- states ---------- */
+.state{
+  margin:clamp(30px,6vw,80px) 0 100px;border:1px dashed #3b3048;border-radius:var(--radius);
+  padding:clamp(26px,5vw,54px);max-width:760px
+}
+.state h2{font:600 var(--f-lg)/1.3 var(--sans);letter-spacing:-.03em}
+.state p{color:var(--muted);font-size:var(--f-md);line-height:1.7;margin-top:11px}
+.state code{font:500 var(--f-sm)/1.5 var(--mono);color:var(--lilac);background:#171227;border:1px solid var(--line);border-radius:5px;padding:3px 7px}
+.state .picker{margin-top:22px;padding-top:19px;border-top:1px solid var(--line)}
+.state label{display:block;font:500 var(--f-mono)/1.5 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+.state input[type=file]{font-size:var(--f-sm);color:var(--muted);max-width:100%}
+.state input[type=file]::file-selector-button{background:var(--raised);color:var(--text);border:1px solid var(--line);border-radius:7px;padding:8px 12px;margin-right:11px;cursor:pointer}
+.state input[type=file]::file-selector-button:hover{border-color:var(--violet)}
+
+footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);font:500 var(--f-mono)/1.7 var(--mono)}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
+  .film:hover{transform:none}
+}
+
+/* ---------- premium motion layer ---------------------------------------
+   Compositor-only properties (transform, opacity, filter) so this stays
+   smooth on the same laptop that is busy rendering video. All of it
+   collapses under prefers-reduced-motion.                                */
+
+/* Slow aurora behind the page: two drifting radial fields. Fixed and
+   pointer-events:none so it never intercepts a click. */
+body::before{
+  content:"";position:fixed;inset:-25vmax;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(38vmax 30vmax at 18% 12%, color-mix(in oklab,var(--violet) 26%,transparent), transparent 62%),
+    radial-gradient(32vmax 28vmax at 82% 78%, color-mix(in oklab,var(--pink) 16%,transparent), transparent 60%);
+  filter:blur(18px) saturate(120%);
+  animation:drift 42s ease-in-out infinite alternate;
+}
+@keyframes drift{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(2.5%,-2%,0) scale(1.06)}
+  100%{transform:translate3d(-2%,2.5%,0) scale(1.02)}
+}
+/* Fine grain so flat blacks read as film rather than as CSS. */
+body::after{
+  content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.045;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
+}
+main,header{position:relative;z-index:2}
+
+/* Cards rise into place once, as they enter. */
+.film{
+  opacity:0;transform:translate3d(0,18px,0);
+  transition:opacity .55s cubic-bezier(.16,1,.3,1),transform .55s cubic-bezier(.16,1,.3,1),
+             box-shadow .35s ease,border-color .35s ease;
+  will-change:transform,opacity;
+}
+.film.in{opacity:1;transform:none}
+.film:hover,.film:focus-within{
+  transform:translate3d(0,-6px,0);
+  border-color:color-mix(in oklab,var(--violet) 55%,var(--line));
+  box-shadow:0 22px 60px -28px color-mix(in oklab,var(--violet) 70%,transparent),
+             0 0 0 1px color-mix(in oklab,var(--violet) 22%,transparent);
+}
+.film .frame{position:relative;overflow:hidden}
+.film .frame video{transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.film:hover .frame video,.film:focus-within .frame video{transform:scale(1.035)}
+
+/* Hover preview affordances. The bar fills across the sample window so a
+   viewer can see this is a preview, not the whole film. */
+.film .scrub{
+  position:absolute;left:0;right:0;bottom:0;height:2px;z-index:3;
+  background:color-mix(in oklab,var(--text) 12%,transparent);
+  opacity:0;transition:opacity .25s ease;
+}
+.film .scrub i{
+  display:block;height:100%;width:0%;
+  background:linear-gradient(90deg,var(--violet),var(--lilac));
+  box-shadow:0 0 12px color-mix(in oklab,var(--violet) 80%,transparent);
+}
+.film.previewing .scrub{opacity:1}
+.film .peek{
+  position:absolute;top:10px;right:10px;z-index:3;
+  font:600 var(--f-mono)/1 var(--mono);letter-spacing:.14em;
+  padding:5px 8px;border-radius:999px;
+  background:color-mix(in oklab,var(--bg) 72%,transparent);
+  border:1px solid color-mix(in oklab,var(--violet) 45%,transparent);
+  color:var(--lilac);backdrop-filter:blur(6px);
+  opacity:0;transform:translateY(-4px);transition:opacity .25s ease,transform .25s ease;
+}
+.film.previewing .peek{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  body::before{animation:none}
+  .film{opacity:1;transform:none;transition:none}
+  .film:hover,.film:focus-within{transform:none}
+  .film .frame video{transition:none}
+  .film:hover .frame video{transform:none}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#grid">Skip to the films</a>
+
+<div class="wrap">
+  <header class="masthead">
+    <div class="mark-row">
+      <img class="mark" width="30" height="30" alt="VYREALM"
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23C4B5FD'/%3E%3Cstop offset='1' stop-color='%238B5CF6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='%2312101C'/%3E%3Cpath d='M7.5 9h4.2l4.3 9.4L20.3 9h4.2l-8.5 17z' fill='url(%23g)'/%3E%3C/svg%3E">
+      <span class="wordmark">VYREALM</span>
+    </div>
+    <p class="eyebrow" style="margin-top:26px">Catalogue &middot; rendered on this machine</p>
+    <h1>Every film<em>and how it was made.</em></h1>
+    <p class="lede">
+      Anyone can show you a video. This catalogue shows the <b>provenance</b> of every frame:
+      what was generated locally, what was composited from footage this project already owned,
+      how much of a runtime is <b>synthetic time-extension</b> rather than original footage, and the
+      exact hook line the local language model wrote for it. Nothing here is a stand-in.
+    </p>
+    <dl class="rail" id="rail"></dl>
+  </header>
+</div>
+
+<section class="filters" aria-label="Filter the catalogue" id="filters" hidden>
+  <div class="wrap filters-inner">
+    <div class="filter-top">
+      <div class="search-field">
+        <label class="sr" for="q">Search films by name, format or platform</label>
+        <span class="glyph" aria-hidden="true">&#9906;</span>
+        <input id="q" type="search" placeholder="Search format, platform, hook line&hellip;" autocomplete="off">
+      </div>
+      <p class="count" id="count" role="status" aria-live="polite"></p>
+      <button type="button" class="reset" id="reset">Clear filters</button>
+    </div>
+    <div class="facets">
+      <fieldset id="f-platform"><legend>Platform</legend></fieldset>
+      <fieldset id="f-niche"><legend>Niche</legend></fieldset>
+      <fieldset id="f-prov"><legend>Provenance</legend></fieldset>
+    </div>
+  </div>
+</section>
+
+<main class="wrap">
+  <h2 class="sr" id="grid-heading">Films</h2>
+  <div class="grid" id="grid" aria-labelledby="grid-heading"></div>
+
+  <section class="state" id="state" hidden>
+    <h2 id="state-title"></h2>
+    <div id="state-body"></div>
+    <div class="picker">
+      <label for="pick">Load an evidence file by hand</label>
+      <input type="file" id="pick" accept="application/json,.json">
+    </div>
+  </section>
+
+  <footer>
+    Evidence: <code id="ev-path">outputs/formats/BATCH_EVIDENCE.json</code> &middot;
+    media: <code>outputs/formats/*.mp4</code> &middot; no network, no build step.
+  </footer>
+</main>
+
+<script>
+"use strict";
+
+/* Format id -> [niche, label]. Mirrored from runtime/format-library.mjs FORMATS
+   because a render receipt records only formatId. Regenerate with:
+   node -e "import('./runtime/format-library.mjs').then(m=>{const o={};for(const[k,v]of Object.entries(m.FORMATS))o[k]=[v.niche,v.label];console.log(JSON.stringify(o))})" */
+const FORMATS = {"cold-open-question":["general","Cold open question"],"false-start-loop":["general","False start loop"],"transformation-reveal":["general","Transformation reveal"],"before-after-split":["general","Before/after split"],"numbered-listicle":["general","Numbered listicle"],"satisfying-loop":["general","Satisfying loop"],"pov-immersion":["story","POV immersion"],"micro-horror-turn":["story","Micro-horror turn"],"story-narrative-30":["story","Story narrative 30s"],"text-story-scroll":["story","Text story scroll"],"anime-character-intro":["anime","Anime character intro"],"anime-action-beat":["anime","Anime action beat"],"anime-short-film":["anime","Anime short film"],"cinematic-trailer-30":["cinematic","Cinematic trailer 30s"],"cinematic-trailer-60":["cinematic","Cinematic trailer 60s"],"establishing-mood":["cinematic","Establishing mood piece"],"product-proof-15":["product","Product proof 15s"],"product-hero-orbit":["product","Product hero orbit"],"ugc-testimonial":["product","UGC testimonial"],"unboxing-reveal":["product","Unboxing reveal"],"product-launch-film":["product","Product launch film"],"tech-spec-flyover":["tech","Tech spec flyover"],"ai-model-demo":["tech","AI model demo"],"tech-review-longform":["tech","Tech review long-form"],"explainer-diagram":["education","Explainer with diagram"],"tutorial-15s":["education","Tutorial in 15s"],"tutorial-longform":["education","Tutorial long-form"],"myth-vs-fact":["education","Myth versus fact"],"mistake-warning":["education","Mistake warning"],"music-video-loop":["music","Music video loop"],"day-in-life":["lifestyle","Day in the life"],"behind-the-scenes":["lifestyle","Behind the scenes"],"reaction-commentary":["commentary","Reaction commentary"],"quote-card-motion":["commentary","Quote card in motion"],"documentary-chapter":["documentary","Documentary chapter"],"what-if-micro-doc":["documentary","What-if micro documentary"]};
+
+/* Mirrored from runtime/format-library.mjs PLATFORM_SPECS labels. */
+const PLATFORMS = {"instagram-reels":"Instagram Reels","tiktok":"TikTok","youtube-shorts":"YouTube Shorts","youtube-long":"YouTube long-form","square-feed":"Square feed post"};
+
+const PROV_LABELS = {
+  "locally-generated":"Locally generated",
+  "composited":"Composited",
+  "3d-render":"3D render",
+  "upscaled":"Upscaled",
+  "interpolated":"Interpolated",
+  "time-extended":"Time-extended",
+  "unclassified":"Unclassified"
+};
+
+/* Relative paths only. This page has to open from disk inside Electron with no server. */
+const EVIDENCE_CANDIDATES = [
+  // outputs/catalogue is where the batch writes now; outputs/formats is the
+  // older location. MEDIA_BASE is derived from whichever actually loaded, so
+  // masters resolve next to their own evidence rather than a guessed folder.
+  "../outputs/catalogue/BATCH_EVIDENCE.json",
+  "outputs/catalogue/BATCH_EVIDENCE.json",
+  "../outputs/formats/BATCH_EVIDENCE.json",
+  "outputs/formats/BATCH_EVIDENCE.json"
+];
+const HOOK_CANDIDATES = [
+  "../runtime/assets/format-hooks.json",
+  "runtime/assets/format-hooks.json"
+];
+
+const $ = sel => document.querySelector(sel);
+const esc = s => String(s == null ? "" : s)
+  .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const secs = n => Number(n || 0).toFixed(Math.abs(Number(n || 0)) < 10 ? 2 : 1) + "s";
+const pct = n => (Number(n || 0) * 100).toFixed(n > 0 && n < 0.01 ? 2 : 0) + "%";
+const basename = p => String(p || "").split(/[\\/]/).pop();
+
+let MEDIA_BASE = "../outputs/formats/";
+let HOOKS = null;
+let FILMS = [];
+const FILTER = { q: "", platform: new Set(), niche: new Set(), prov: new Set() };
+
+/* ---------- loading ---------- */
+
+async function loadFirst(paths) {
+  let blocked = false;
+  for (const path of paths) {
+    try {
+      const res = await fetch(path, { cache: "no-store" });
+      if (res.ok) return { path, data: await res.json() };
+    } catch (_) { blocked = true; }   // file:// forbids fetch; that is not a 404
+  }
+  // Only claim "you opened this from disk" when that is literally true. A fetch
+  // can also reject because a localhost server died, and telling that user they
+  // are on file:// is exactly the kind of confident wrong answer this page exists
+  // to avoid; they get the plain not-found panel, which offers the same picker.
+  const fromDisk = blocked && location.protocol === "file:";
+  const error = new Error(fromDisk ? "evidence fetch blocked" : "evidence not found");
+  error.code = fromDisk ? "EVIDENCE_FETCH_BLOCKED" : "EVIDENCE_NOT_FOUND";
+  throw error;
+}
+
+async function boot() {
+  try { HOOKS = (await loadFirst(HOOK_CANDIDATES)).data; } catch (_) { HOOKS = null; }
+
+  let evidence;
+  try {
+    const found = await loadFirst(EVIDENCE_CANDIDATES);
+    evidence = found.data;
+    MEDIA_BASE = found.path.replace(/BATCH_EVIDENCE\.json$/, "");
+    $("#ev-path").textContent = found.path;
+  } catch (error) {
+    return showState(error.code);
+  }
+  mount(evidence);
+}
+
+function showState(code, extra) {
+  const title = $("#state-title");
+  const body = $("#state-body");
+  $("#state").hidden = false;
+  if (code === "EVIDENCE_FETCH_BLOCKED") {
+    title.textContent = "The evidence file could not be read from disk";
+    body.innerHTML = "<p>This page was opened straight from the filesystem, where the browser refuses to read "
+      + "<code>outputs/formats/BATCH_EVIDENCE.json</code> over <code>file://</code>. The films themselves play "
+      + "fine from disk &mdash; only the JSON read is blocked. Pick the evidence file below, or serve the "
+      + "project folder over localhost.</p>";
+  } else if (code === "EMPTY") {
+    title.textContent = "No films rendered yet";
+    body.innerHTML = "<p>The evidence file exists but records no completed renders"
+      + (extra ? " (" + esc(extra) + ")" : "") + ". Run <code>scripts/render-format-batch.mjs</code> to produce "
+      + "the catalogue. Nothing appears here until real MP4s exist &mdash; there are no placeholder films.</p>";
+  } else if (code === "BAD_SHAPE") {
+    title.textContent = "That file is not a batch evidence file";
+    body.innerHTML = "<p>Expected an object with a <code>receipts</code> array, as written by "
+      + "<code>scripts/render-format-batch.mjs</code>.</p>";
+  } else {
+    title.textContent = "No films rendered yet";
+    body.innerHTML = "<p>No <code>outputs/formats/BATCH_EVIDENCE.json</code> was found. Run "
+      + "<code>scripts/render-format-batch.mjs</code> to render the catalogue. Nothing is invented here: until "
+      + "that file exists there is nothing honest to show.</p>";
+  }
+}
+
+$("#pick").addEventListener("change", event => {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsed;
+    try { parsed = JSON.parse(reader.result); }
+    catch (_) { return showState("BAD_SHAPE"); }
+    $("#state").hidden = true;
+    mount(parsed);
+  };
+  reader.readAsText(file);
+});
+
+/* ---------- provenance ---------- */
+
+function classify(receipt) {
+  const shots = (receipt.shotProvenance || []).join(" ").toLowerCase();
+  const method = [receipt.sourceMethod, receipt.generationStatus,
+    receipt.provenance && receipt.provenance.sourceMethod].filter(Boolean).join(" ").toLowerCase();
+  const all = shots + " " + method;
+  const tags = [];
+  if (/local-neural|(^|\s)generated/.test(all)) tags.push("locally-generated");
+  if (/composited/.test(all)) tags.push("composited");
+  if (/blender|3d/.test(shots)) tags.push("3d-render");
+  if (/upscal|4k/.test(method)) tags.push("upscaled");
+  if (/interpolat/.test(method)) tags.push("interpolated");
+  if ((receipt.extensions || []).length) tags.push("time-extended");
+  return tags.length ? tags : ["unclassified"];
+}
+
+function shapeOf(measured) {
+  if (!measured || !measured.width || !measured.height) return "v";
+  if (measured.width > measured.height) return "h";
+  return measured.width === measured.height ? "s" : "v";
+}
+
+function toFilm(receipt) {
+  const meta = FORMATS[receipt.formatId] || [];
+  const hook = HOOKS && HOOKS.hooks ? HOOKS.hooks[receipt.formatId] : null;
+  const measured = receipt.measured || {};
+  const runtime = Number(measured.seconds || receipt.requestedSeconds || 0);
+  const synthetic = Number(receipt.syntheticSeconds || 0);
+  return {
+    receipt,
+    file: basename(receipt.output),
+    title: (hook && hook.formatLabel) || meta[1] || receipt.formatId || "Untitled",
+    formatId: receipt.formatId || "unknown",
+    niche: meta[0] || "unfiled",
+    platform: receipt.platform || "unknown",
+    platformLabel: PLATFORMS[receipt.platform] || receipt.platform || "Unknown platform",
+    runtime,
+    synthetic,
+    syntheticShare: runtime > 0 ? Math.min(1, synthetic / runtime) : 0,
+    shape: shapeOf(measured),
+    tags: classify(receipt),
+    hook: hook || null,
+    scores: (receipt.quality && receipt.quality.scores) || receipt.scores || null
+  };
+}
+
+/* ---------- render ---------- */
+
+function mount(evidence) {
+  if (!evidence || typeof evidence !== "object" || !Array.isArray(evidence.receipts)) return showState("BAD_SHAPE");
+
+  // New evidence, new facets. Keeping the old selections would filter the new
+  // films against chips that no longer exist: an empty grid with nothing
+  // visibly switched on, which reads as "no films" rather than "still filtered".
+  clearFilters();
+  FILMS = evidence.receipts.map(toFilm);
+  renderRail(evidence);
+
+  if (!FILMS.length) {
+    $("#grid").innerHTML = "";
+    $("#filters").hidden = true;
+    const totals = evidence.totals || {};
+    return showState("EMPTY", totals.failed
+      ? totals.failed + " of " + (totals.attempted || 0) + " attempts failed"
+      : "");
+  }
+
+  $("#state").hidden = true;
+  $("#filters").hidden = false;
+  buildFacets();
+  renderGrid();
+  applyFilters();
+  observeVideos();
+}
+
+function renderRail(evidence) {
+  const totals = evidence.totals || {};
+  const runtime = FILMS.reduce((n, f) => n + f.runtime, 0);
+  const synthetic = FILMS.reduce((n, f) => n + f.synthetic, 0);
+  const exact = FILMS.filter(f => f.receipt.durationExact).length;
+  const cells = [
+    ["Films rendered", FILMS.length, totals.attempted ? "of " + totals.attempted + " attempted" : ""],
+    ["Formats", new Set(FILMS.map(f => f.formatId)).size, new Set(FILMS.map(f => f.niche)).size + " niches"],
+    ["Platforms", new Set(FILMS.map(f => f.platform)).size, "aspect-correct masters"],
+    ["Total runtime", (runtime / 60).toFixed(1) + " min", "measured by ffprobe"],
+    ["Synthetic time", secs(synthetic), runtime > 0 ? pct(synthetic / runtime) + " of runtime" : ""],
+    ["Duration exact", exact + "/" + FILMS.length, "within 0.1s of plan"]
+  ];
+  $("#rail").innerHTML = cells.map(cell =>
+    "<div><dt>" + esc(cell[0]) + "</dt><dd>" + esc(cell[1])
+    + (cell[2] ? "<small>" + esc(cell[2]) + "</small>" : "") + "</dd></div>").join("");
+}
+
+function facetCounts(key) {
+  const counts = new Map();
+  for (const film of FILMS) {
+    const values = key === "prov" ? film.tags : [film[key]];
+    for (const value of values) counts.set(value, (counts.get(value) || 0) + 1);
+  }
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+}
+
+function buildFacets() {
+  const groups = [
+    ["#f-platform", "platform", v => PLATFORMS[v] || v],
+    ["#f-niche", "niche", v => v.charAt(0).toUpperCase() + v.slice(1)],
+    ["#f-prov", "prov", v => PROV_LABELS[v] || v]
+  ];
+  for (const [selector, key, label] of groups) {
+    const field = $(selector);
+    field.querySelectorAll(".chip").forEach(chip => chip.remove());
+    for (const [value, n] of facetCounts(key)) {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip";
+      chip.setAttribute("aria-pressed", "false");
+      chip.innerHTML = esc(label(value)) + '<span class="n">' + n + "</span>";
+      chip.addEventListener("click", () => {
+        const set = FILTER[key];
+        const on = set.has(value);
+        if (on) set.delete(value); else set.add(value);
+        chip.setAttribute("aria-pressed", String(!on));
+        applyFilters();
+      });
+      field.appendChild(chip);
+    }
+  }
+}
+
+function cardHTML(film, position) {
+  const receipt = film.receipt;
+  const measured = receipt.measured || {};
+  const panelId = "prov-" + position;
+  const originalShare = 1 - film.syntheticShare;
+  const ledgerLabel = film.synthetic > 0
+    ? pct(originalShare) + " original footage, " + pct(film.syntheticShare) + " synthetic time-extension"
+    : "100% original footage, no synthetic time-extension";
+  const videoLabel = film.title + ", " + film.platformLabel + ", " + secs(film.runtime) + ", "
+    + (measured.width || "unknown") + " by " + (measured.height || "unknown") + ". " + ledgerLabel + ".";
+
+  return '<div class="frame">'
+    + '<span class="niche-tag">' + esc(film.niche) + "</span>"
+    + '<video preload="metadata" playsinline controls muted data-src="' + esc(MEDIA_BASE + film.file) + '"'
+      + ' aria-label="' + esc(videoLabel) + '"'
+      + ' title="' + esc(film.title + " - " + film.platformLabel) + '"></video>'
+    + '<span class="scrub" aria-hidden="true"><i></i></span>'
+    + '<span class="peek" aria-hidden="true">PREVIEW</span>'
+    + "</div>"
+    + '<div class="body">'
+      + '<div class="title-row"><h2>' + esc(film.title) + "</h2>"
+        + '<span class="slug">' + esc(String(position + 1).padStart(3, "0")) + "</span></div>"
+      + '<p class="specs"><b>' + esc(film.platformLabel) + "</b>"
+        + "<span>" + esc(secs(film.runtime)) + "</span>"
+        + "<span>" + esc(measured.width || "?") + "&times;" + esc(measured.height || "?") + "</span>"
+        + "<span>" + esc(Math.round(measured.fps || 0)) + "fps</span></p>"
+      + '<div class="ledger" role="img" aria-label="' + esc("Provenance split: " + ledgerLabel) + '">'
+        + '<i class="orig" style="width:' + (originalShare * 100).toFixed(2) + '%"></i>'
+        + '<i class="syn" style="width:' + (film.syntheticShare * 100).toFixed(2) + '%"></i></div>'
+      + '<p class="ledger-note">' + (film.synthetic > 0
+          ? "<b>" + esc(secs(film.synthetic)) + " synthetic</b> of " + esc(secs(film.runtime))
+          : '<b class="clean">No synthetic time</b>') + "</p>"
+      + '<ul class="tags">' + film.tags.map(tag =>
+          '<li data-t="' + esc(tag) + '">' + esc(PROV_LABELS[tag] || tag) + "</li>").join("") + "</ul>"
+      + '<button type="button" class="disclose" aria-expanded="false" aria-controls="' + panelId + '">'
+        + 'Provenance<span class="caret" aria-hidden="true">&#9656;</span></button>'
+      + '<div class="prov" id="' + panelId + '" hidden>' + provenanceHTML(film) + "</div>"
+    + "</div>";
+}
+
+function provenanceHTML(film) {
+  const receipt = film.receipt;
+  const measured = receipt.measured || {};
+  const rows = [];
+  const row = (key, value, cls) =>
+    rows.push("<dt>" + esc(key) + "</dt><dd" + (cls ? ' class="' + cls + '"' : "") + ">" + value + "</dd>");
+
+  row("Made by", esc(receipt.generationStatus || "unrecorded") + " &middot; "
+    + esc(receipt.sourceMethod || "unrecorded"), "mono");
+  row("Source shots", (receipt.shotProvenance || []).length
+    ? esc((receipt.shotProvenance || []).join(", "))
+    : '<span class="absent">not recorded in this evidence</span>', "mono");
+  row("Synthetic time", film.synthetic > 0
+    ? esc(secs(film.synthetic)) + " of " + esc(secs(film.runtime)) + " (" + esc(pct(film.syntheticShare)) + ")"
+    : "none, every frame is original footage at source timing", "mono");
+
+  if ((receipt.extensions || []).length) {
+    rows.push("<dt>Extended beats</dt><dd class=\"mono\">" + receipt.extensions.map(ext =>
+      "beat " + esc(ext.beatIndex) + " (" + esc(ext.role || ext.shotRole || "?") + "): "
+      + esc(ext.strategy || "?")
+      + (ext.syntheticSeconds ? " +" + esc(secs(ext.syntheticSeconds)) : "")).join("<br>") + "</dd>");
+  }
+
+  row("Cut", esc(receipt.beats || 0) + " beats &middot; requested " + esc(secs(receipt.requestedSeconds))
+    + " &middot; drift " + esc(secs(receipt.durationDriftSeconds || 0))
+    + (receipt.durationExact === false ? " (off plan)" : ""), "mono");
+  row("Master", esc(measured.width || "?") + "&times;" + esc(measured.height || "?") + " &middot; "
+    + esc(Math.round(measured.fps || 0)) + "fps &middot; " + esc(measured.frames || 0) + " frames", "mono");
+
+  if (receipt.captions) {
+    row("Captions", esc(receipt.captions.style) + " &middot; " + esc(receipt.captions.cueCount)
+      + " cues &middot; " + esc(pct(receipt.captions.coverage)) + " coverage", "mono");
+  }
+  if (receipt.audio) {
+    row("Audio", esc(receipt.audio.bedId || receipt.audio.bed || "bed")
+      + (receipt.audio.silent ? " &middot; silent track" : "")
+      + ((receipt.audio.streams || []).length ? " &middot; " + receipt.audio.streams.length + " stream(s)" : ""),
+      "mono");
+  }
+
+  if (film.hook && film.hook.line) {
+    row("Hook line", "&ldquo;" + esc(film.hook.line) + "&rdquo;", "quote");
+    row("Written by", esc(film.hook.source || receipt.hookSource || "unrecorded"), "mono");
+  } else {
+    row("Hook line", '<span class="absent">no hook recorded for this format</span>');
+  }
+
+  row("File", esc(film.file), "mono");
+  if (receipt.renderMs) {
+    row("Render time", esc((receipt.renderMs / 1000).toFixed(1)) + "s of CPU compositing", "mono");
+  }
+
+  let html = "<dl>" + rows.join("") + "</dl>";
+
+  if (film.scores && Object.keys(film.scores).length) {
+    const scored = Object.entries(film.scores).filter(pair => Number.isFinite(Number(pair[1])));
+    if (scored.length) {
+      html += '<div class="sub"><b>Quality scores</b><div class="scores">'
+        + scored.map(pair => '<span class="score">' + esc(pair[0]) + " " + esc(Number(pair[1])) + "</span>").join("")
+        + "</div></div>";
+    }
+  }
+  if ((receipt.lint || []).length) {
+    html += '<div class="sub"><b>Platform warnings</b>'
+      + receipt.lint.map(warning => '<div class="warn">' + esc(warning.code || "")
+        + " &mdash; " + esc(warning.message || "") + "</div>").join("")
+      + "</div>";
+  }
+  if (receipt.note) html += '<div class="sub"><b>Renderer note</b>' + esc(receipt.note) + "</div>";
+  return html;
+}
+
+function renderGrid() {
+  const grid = $("#grid");
+  grid.innerHTML = "";
+  FILMS.forEach((film, index) => {
+    const card = document.createElement("article");
+    card.className = "film";
+    card.dataset.shape = film.shape;
+    card.dataset.i = String(index);
+    card.innerHTML = cardHTML(film, index);
+    grid.appendChild(card);
+  });
+}
+
+/* Wired once against the static #grid, NOT inside renderGrid(): the evidence
+   picker calls mount() again on the same document, and a second copy of these
+   handlers toggles the disclosure twice per click (so it never opens) and
+   starts then immediately pauses a film. */
+{
+  const grid = $("#grid");
+
+  grid.addEventListener("click", event => {
+    const toggle = event.target.closest(".disclose");
+    if (toggle) {
+      const panel = document.getElementById(toggle.getAttribute("aria-controls"));
+      const open = toggle.getAttribute("aria-expanded") === "true";
+      toggle.setAttribute("aria-expanded", String(!open));
+      panel.hidden = open;
+      return;
+    }
+    if (event.target.closest("video")) return;   // the native transport owns its own clicks
+    const card = event.target.closest(".film");
+    if (!card) return;
+    const video = card.querySelector("video");
+    if (!video) return;
+    hydrate(video);
+    if (video.paused) video.play().catch(() => {}); else video.pause();
+  });
+
+  // One film at a time. The browser's own controls stay in charge of each.
+  grid.addEventListener("play", event => {
+    const playing = event.target;
+    grid.querySelectorAll("video").forEach(video => { if (video !== playing) video.pause(); });
+    grid.querySelectorAll(".film.playing").forEach(card => card.classList.remove("playing"));
+    const card = playing.closest(".film");
+    if (card) card.classList.add("playing");
+  }, true);
+  grid.addEventListener("pause", event => {
+    const card = event.target.closest(".film");
+    if (card) card.classList.remove("playing");
+  }, true);
+
+  /* An evidence file outlives the masters it describes: prune outputs/formats and
+     every receipt still claims a film. A black rectangle with a transport is
+     exactly the stand-in this page promises not to show, so say the file is gone.
+     Media errors do not bubble; the capture phase is how #grid hears them. */
+  grid.addEventListener("error", event => {
+    const video = event.target;
+    if (!video || video.tagName !== "VIDEO") return;
+    const card = video.closest(".film");
+    if (!card || card.querySelector(".missing")) return;
+    card.classList.add("gone");
+    const note = document.createElement("p");
+    note.className = "missing";
+    note.textContent = "Master missing from disk: " + basename(video.dataset.src || "");
+    card.querySelector(".body").prepend(note);
+  }, true);
+}
+
+
+function hydrate(video) {
+  if (!video.src && video.dataset.src) video.src = video.dataset.src;
+}
+
+/* Pulling metadata for a hundred local masters at once stalls the disk, so a
+   video only gets its src on approach.
+   ponytail: viewport hydration; a real poster pipeline would replace it. */
+function observeVideos() {
+  const videos = document.querySelectorAll("#grid video");
+  if (!("IntersectionObserver" in window)) {
+    videos.forEach(hydrate);
+    return;
+  }
+  const observer = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      hydrate(entry.target);
+      observer.unobserve(entry.target);
+    }
+  }, { rootMargin: "400px 0px" });
+  videos.forEach(video => observer.observe(video));
+}
+
+/* ---------- filtering ---------- */
+
+function matches(film) {
+  if (FILTER.platform.size && !FILTER.platform.has(film.platform)) return false;
+  if (FILTER.niche.size && !FILTER.niche.has(film.niche)) return false;
+  if (FILTER.prov.size && !film.tags.some(tag => FILTER.prov.has(tag))) return false;
+  if (!FILTER.q) return true;
+  const haystack = [film.title, film.formatId, film.platform, film.platformLabel, film.niche,
+    film.file, film.hook && film.hook.line].filter(Boolean).join(" ").toLowerCase();
+  return haystack.includes(FILTER.q);
+}
+
+function applyFilters() {
+  let shown = 0;
+  document.querySelectorAll("#grid .film").forEach(card => {
+    const ok = matches(FILMS[Number(card.dataset.i)]);
+    card.hidden = !ok;
+    if (ok) shown++;
+    else card.querySelectorAll("video").forEach(video => video.pause());
+  });
+  const plural = n => n + (n === 1 ? " film" : " films");
+  $("#count").textContent = shown === FILMS.length
+    ? plural(FILMS.length)
+    : "Showing " + shown + " of " + plural(FILMS.length);
+
+  if (shown === 0 && FILMS.length > 0) {
+    $("#state").hidden = false;
+    $("#state-title").textContent = "No films match these filters";
+    $("#state-body").innerHTML = "<p>Every rendered film is still on disk. This combination just has no member. "
+      + "Clear a filter to bring them back.</p>";
+  } else if (FILMS.length) {
+    $("#state").hidden = true;
+  }
+}
+
+$("#q").addEventListener("input", event => {
+  FILTER.q = event.target.value.trim().toLowerCase();
+  applyFilters();
+});
+function clearFilters() {
+  FILTER.q = "";
+  $("#q").value = "";
+  FILTER.platform.clear();
+  FILTER.niche.clear();
+  FILTER.prov.clear();
+  document.querySelectorAll(".chip").forEach(chip => chip.setAttribute("aria-pressed", "false"));
+}
+
+$("#reset").addEventListener("click", () => {
+  clearFilters();
+  applyFilters();
+  $("#q").focus();
+});
+
+boot();
+
+/* ---------- hover-to-preview -------------------------------------------
+   Loads a master only on intent, plays a muted sample, and resets on exit.
+   Nothing downloads until the pointer arrives, so a grid of a hundred films
+   costs nothing to scroll.                                                */
+(function () {
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var PREVIEW_SECONDS = 6;
+  var active = null;
+
+  function stop(card) {
+    if (!card) return;
+    var v = card.querySelector("video");
+    card.classList.remove("previewing");
+    if (!v) return;
+    try { v.pause(); v.currentTime = 0; } catch (e) { /* not seekable yet */ }
+    var bar = card.querySelector(".scrub i");
+    if (bar) bar.style.width = "0%";
+  }
+
+  function start(card) {
+    var v = card && card.querySelector("video");
+    if (!v || reduce) return;
+    /* If the viewer pressed play deliberately, do not hijack it. */
+    if (!v.paused && !card.classList.contains("previewing")) return;
+    if (active && active !== card) stop(active);
+    active = card;
+    if (!v.src && v.dataset.src) v.src = v.dataset.src;
+    if (v.currentTime < 0.05 && v.readyState > 0) { try { v.currentTime = 0; } catch (e) {} }
+    v.muted = true;
+    card.classList.add("previewing");
+    var p = v.play();
+    if (p && p.catch) p.catch(function () { card.classList.remove("previewing"); });
+  }
+
+  function progress(e) {
+    var v = e.target;
+    if (!v || !v.closest) return;
+    var card = v.closest(".film");
+    if (!card || !card.classList.contains("previewing")) return;
+    var bar = card.querySelector(".scrub i");
+    if (bar) bar.style.width = Math.min(100, (v.currentTime / PREVIEW_SECONDS) * 100) + "%";
+    if (v.currentTime >= PREVIEW_SECONDS) { try { v.currentTime = 0; } catch (err) { /* ignore */ } }
+  }
+
+  document.addEventListener("pointerenter", function (e) {
+    var card = e.target && e.target.closest && e.target.closest(".film");
+    if (card) start(card);
+  }, true);
+  document.addEventListener("pointerleave", function (e) {
+    var card = e.target && e.target.closest && e.target.closest(".film");
+    if (card) { stop(card); if (active === card) active = null; }
+  }, true);
+  /* Keyboard parity: focus previews too, so this is not mouse-only. */
+  document.addEventListener("focusin", function (e) {
+    var card = e.target && e.target.closest && e.target.closest(".film");
+    if (card) start(card);
+  });
+  document.addEventListener("focusout", function (e) {
+    var card = e.target && e.target.closest && e.target.closest(".film");
+    if (card && !card.contains(e.relatedTarget)) stop(card);
+  });
+  document.addEventListener("timeupdate", progress, true);
+
+  /* Reveal cards as they enter, then release the observer. */
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      en.target.classList.add("in");
+      /* Load just enough to paint a still. Without this the grid is a wall of
+         black rectangles until the pointer arrives, because the master is only
+         attached on hover. The media fragment parks on an early frame. */
+      var vv = en.target.querySelector("video");
+      if (vv && !vv.src && vv.dataset.src) vv.src = vv.dataset.src + "#t=0.6";
+      io.unobserve(en.target);
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+
+  function observeAll() {
+    document.querySelectorAll(".film:not(.in)").forEach(function (c) {
+      if (reduce) { c.classList.add("in"); return; }
+      io.observe(c);
+    });
+  }
+  observeAll();
+  /* The grid re-renders on filter changes, so pick up new cards. */
+  var grid = document.querySelector("#grid");
+  if (grid) new MutationObserver(observeAll).observe(grid, { childList: true });
+})();
+</script>
+</body>
+</html>

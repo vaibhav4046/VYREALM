@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "models": [
+    {
+      "repository": "rhasspy/piper-voices",
+      "revision": "1162a9173d0ce503555aed757976b7a9912eae4c",
+      "file": "en/en_US/ljspeech/high/MODEL_CARD",
+      "destination": "piper/MODEL_CARD",
+      "bytes": 513,
+      "sha256": "289f7421072d689a3d91f6c632f486af46f9b8b04417536104a4ea667b8a394b"
+    },
+    {
+      "repository": "rhasspy/piper-voices",
+      "revision": "1162a9173d0ce503555aed757976b7a9912eae4c",
+      "file": "en/en_US/ljspeech/high/en_US-ljspeech-high.onnx",
+      "destination": "piper/en_US-ljspeech-high.onnx",
+      "bytes": 114199011,
+      "sha256": "5d4f08ba6a2a48c44592eed3ce56bf85e9de3dd4e20df90541ae68a8310c029a"
+    },
+    {
+      "repository": "rhasspy/piper-voices",
+      "revision": "1162a9173d0ce503555aed757976b7a9912eae4c",
+      "file": "en/en_US/ljspeech/high/en_US-ljspeech-high.onnx.json",
+      "destination": "piper/en_US-ljspeech-high.onnx.json",
+      "bytes": 4970,
+      "sha256": "7e1f4634af596d83cca997fb7a931ba80b70f8a316a2655ee69c55365e0ace14"
+    },
+    {
+      "repository": "Systran/faster-whisper-tiny.en",
+      "revision": "0d3d19a32d3338f10357c0889762bd8d64bbdeba",
+      "file": "README.md",
+      "destination": "whisper-tiny.en/README.md",
+      "bytes": 1323,
+      "sha256": "1b7816626bf0548e4b71a467f4112b4592924bc818e3117f19aefcc50ce4b6aa"
+    },
+    {
+      "repository": "Systran/faster-whisper-tiny.en",
+      "revision": "0d3d19a32d3338f10357c0889762bd8d64bbdeba",
+      "file": "config.json",
+      "destination": "whisper-tiny.en/config.json",
+      "bytes": 2317,
+      "sha256": "14b1b421a90349bc551b881461426b561a874049cb9e4c4864f2ca384f6a7cc5"
+    },
+    {
+      "repository": "Systran/faster-whisper-tiny.en",
+      "revision": "0d3d19a32d3338f10357c0889762bd8d64bbdeba",
+      "file": "model.bin",
+      "destination": "whisper-tiny.en/model.bin",
+      "bytes": 75537502,
+      "sha256": "1a5afae06a4db91c975c9a9d78be5cc110ee4ea022ad57d55492e4550e936b2a"
+    },
+    {
+      "repository": "Systran/faster-whisper-tiny.en",
+      "revision": "0d3d19a32d3338f10357c0889762bd8d64bbdeba",
+      "file": "tokenizer.json",
+      "destination": "whisper-tiny.en/tokenizer.json",
+      "bytes": 2128466,
+      "sha256": "929c5252409436dce1b38a75d1abbcb5e132d170d8e324e4e04ed915fa2d22df"
+    },
+    {
+      "repository": "Systran/faster-whisper-tiny.en",
+      "revision": "0d3d19a32d3338f10357c0889762bd8d64bbdeba",
+      "file": "vocabulary.txt",
+      "destination": "whisper-tiny.en/vocabulary.txt",
+      "bytes": 422309,
+      "sha256": "ff77588746d3a2595d32ab5b69ffd7b95ce2441ac57533cb66fc3eb575a115cf"
+    }
+  ],
+  "piper": "1.8.0",
+  "fasterWhisper": "1.2.1",
+  "voice": "LJ Speech, trained from scratch, public-domain dataset; Piper GPL-3.0 runtime",
+  "transcription": "Whisper tiny.en, MIT"
+}

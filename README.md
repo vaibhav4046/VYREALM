@@ -4,7 +4,13 @@ A local creator studio for turning your footage and ideas into editable video pr
 
 Source repository: [vaibhav4046/VYREALM](https://github.com/vaibhav4046/VYREALM).
 
-VYREALM is an early Windows application. The editing and export workflow has been exercised end to end. Local cinematic generation, account publishing and installer readiness have separate qualification requirements.
+VYREALM is an early Windows application. The 1.0.7 Windows installer has been installed and exercised end to end: upload, trim, save, render, playback and download. Local cinematic generation and publishing have separate qualification requirements.
+
+## Windows download
+
+Download the **unsigned Windows x64 installer** from the [1.0.7 prerelease](https://github.com/vaibhav4046/VYREALM/releases/tag/v1.0.7). Actual installation and the packaged Electron app were tested with an isolated profile. The downloaded four-second H.264/AAC edit fully decoded with the bundled FFmpeg. macOS has not been tested.
+
+This README records a documentation checkpoint newer than the release source commit; the packaged runtime is unchanged.
 
 ## Start the basic studio
 
@@ -39,8 +45,8 @@ Keep using the same paths to reopen that library. The app listens on loopback, n
 | Creator materials | Extracts a real 1280×720 video frame and prepares text drafts from the saved brief. These are not trend research or generated-image claims. |
 | Narration and transcription | Local Piper narration and Whisper captions verified on the configured CPU runtime. Models are installed separately. |
 | Local cinematic generation | Optional ComfyUI/Wan route. Outputs need technical checks and visual review; no current showcase is advertised as approved. |
-| YouTube | Optional account connection, private-upload and analytics code. Live authorization and publishing are not established by the offline demo. |
-| Desktop distribution | Electron development/build scripts exist. A directory package was built; the current installer has not been qualified by installation and launch. |
+| YouTube | Live OAuth, channel readback and analytics access verified for one owner account. No video upload was performed; upload behavior is not qualified by that connection test. |
+| Desktop distribution | Windows x64 1.0.7 installer built, installed and launched successfully. Packaged upload, trim, save, render, playback and native download passed. Unsigned; macOS untested. |
 
 Missing runtimes must be configured before the relevant media operation can succeed. The source repository does not contain model weights, user projects or large executable tools.
 

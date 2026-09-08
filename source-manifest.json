@@ -1356,6 +1356,14 @@
       "file": "youtube-settings.js",
       "bytes": 15754,
       "sha256": "f601c0a9bef18a215acf9fc0a4397b3a7d5dc9df375afa39bf49606457d0db09"
+    },
+    {
+      "file": ".gitattributes",
+      "bytes": 72,
+      "sha256": "27d6631f97f67e10f7034f2c53e9847a09fb3154325714fc2de1627b095984e4"
     }
-  ]
+  ],
+  "publication": {
+    "lineEndings": "Preserved exactly by .gitattributes; no runtime source changes."
+  }
 }

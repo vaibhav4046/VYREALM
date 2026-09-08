@@ -123,6 +123,11 @@
       "sha256": "7d2660c3b76768426c79c4e808f76669fc19df8bdedda83bcfa09128dae4fc19"
     },
     {
+      "file": "docs/.nojekyll",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
       "file": "docs/ARCHITECTURE.md",
       "bytes": 4978,
       "sha256": "5ff948387f38dd59e28268446ff5f077843962b207808ecabce65e9d17aba432"
@@ -136,6 +141,11 @@
       "file": "docs/HACKATHON_VERIFICATION.md",
       "bytes": 5936,
       "sha256": "54d6d9923530278834feba1b8a7a73ad439b64a26510494c546e97401fba06ae"
+    },
+    {
+      "file": "docs/index.html",
+      "bytes": 3029,
+      "sha256": "d7f9674392ebd4690ee79674b33791a773cf063f0502f89e7ad8c0bd988a517b"
     },
     {
       "file": "docs/media/vyrealm-architecture-poster.png",
@@ -158,9 +168,24 @@
       "sha256": "1c3378bbacf775840fa720b6b078905d3381c1333db7d3d70f188daa30c87938"
     },
     {
+      "file": "docs/privacy.html",
+      "bytes": 5061,
+      "sha256": "72cb1f810b6ce0c85262ed30771921d5f66f9e42218e0741f1727024af92ed08"
+    },
+    {
       "file": "docs/PUBLICATION_CHECKLIST.md",
       "bytes": 3026,
       "sha256": "dc6fb3fe723bc2daa8d660d65ab0defe1cdd15c3e7a47bfe58fcc6870ff140a9"
+    },
+    {
+      "file": "docs/site.css",
+      "bytes": 1520,
+      "sha256": "6cba68dbeffa643a4bc1a26d6ad14c1697fa2bb3c41cf80e45c364890fb3eccf"
+    },
+    {
+      "file": "docs/terms.html",
+      "bytes": 3255,
+      "sha256": "52172f5d9960f07176cc5661b97bbb199cfcb4b9912beea56c25b01edd44bfea"
     },
     {
       "file": "docs/VYREALM_ARCHITECTURE.md",

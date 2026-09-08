@@ -283,8 +283,13 @@ export async function renderPlan({
   let captions = null;
   const wantsCaptions = captionText && plan.captionStyle?.id && plan.captionStyle.id !== 'none';
   const concatTarget = wantsCaptions ? join(workDir, 'concat.mp4') : output;
+  // Every segment above has the same canvas, rate, pixel format and encoder.
+  // Preserve its encoded frames at joins instead of paying for a second lossy
+  // encode. Caption burn-in, when requested, remains a separate picture pass.
+  const concatStarted = Date.now();
   await run(ffmpeg, ['-y', '-hide_banner', '-loglevel', 'error', '-f', 'concat', '-safe', '0',
-    '-i', listPath, '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '18', '-pix_fmt', 'yuv420p', concatTarget]);
+    '-i', listPath, '-map', '0:v:0', '-c:v', 'copy', concatTarget]);
+  const concatMs = Date.now() - concatStarted;
 
   if (wantsCaptions) {
     const cues = buildCueList({ text: captionText, durationSeconds: plan.durationSeconds, style: plan.captionStyle.id });
@@ -355,6 +360,7 @@ export async function renderPlan({
     },
     beats: plan.timeline.length,
     renderMs: Date.now() - started,
+    assembly: { method: 'stream-copy', concatMs, additionalLossyEncode: false },
     sourceMethod: 'composited-from-existing-footage',
     generationStatus: 'composited',
     extensions,

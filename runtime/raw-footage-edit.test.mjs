@@ -26,6 +26,11 @@ test('real raw edit preserves source lineage and natural noise without hallucina
     assert.equal(result.verification.ok,true);assert.equal(result.captionStatus,'no-speech');assert.equal(result.outputs.captions,null);assert.equal(result.timeline.length,2);assert.ok(result.timeline.every(clip=>clip.assetId==='original'));assert.equal(result.provenance.sources[0].sourceHash,sourceHash);
     assert.equal(result.provenance.neuralVideoGenerated,false);assert.equal(result.provenance.captions.vadEnabled,true);
     assert.equal(result.width,1920);assert.equal(result.height,1080);
+    assert.equal(result.audioStatus,'original-audio');assert.ok(result.sourceAudioLevels.peakDbFS>-80);
+    const silent=join(dir,'silent.mp4');await exec(ffmpeg,['-y','-v','error','-i',path,'-c:v','copy','-af','volume=0','-c:a','aac',silent],{windowsHide:true});
+    const silentHash=createHash('sha256').update(await readFile(silent)).digest('hex');
+    const silentResult=await editRawFootage({...request,durationSeconds:1,outputDir:join(dir,'silent-job'),sourceAssets:[{id:'silent',path:silent,mime:'video/mp4',sha256:silentHash}]},{ffmpeg,ffprobe});
+    assert.equal(silentResult.audioStatus,'silent-source');assert.equal(silentResult.captionStatus,'no-speech');assert.equal(silentResult.provenance.captions,null);assert.ok(silentResult.diagnostics.some(d=>d.code==='RAW_SOURCE_SILENT'));assert.ok(silentResult.outputAudioLevels.peakDbFS<=-80);
     await assert.rejects(()=>editRawFootage({...request,sourceAssets:[{...request.sourceAssets[0],sha256:'0'.repeat(64)}]},{ffmpeg,ffprobe}),error=>error.code==='RAW_SOURCE_HASH');
     console.log(JSON.stringify({rawCpuIntegration:result.provenance.timings,captionStatus:result.captionStatus}));
   }finally{await rm(dir,{recursive:true,force:true});}

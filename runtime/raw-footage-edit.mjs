@@ -12,6 +12,11 @@ const exec=promisify(execFile),sha=bytes=>createHash('sha256').update(bytes).dig
 const fail=(code,message)=>{throw Object.assign(new Error(message),{code});};
 const run=(bin,args)=>exec(bin,args,{windowsHide:true,timeout:180000,maxBuffer:8*1024**2});
 const stamp=t=>{const ms=Math.round(t*1000);return `${String(Math.floor(ms/3600000)).padStart(2,'0')}:${String(Math.floor(ms/60000)%60).padStart(2,'0')}:${String(Math.floor(ms/1000)%60).padStart(2,'0')},${String(ms%1000).padStart(3,'0')}`;};
+async function audioLevels(file,ffmpeg){
+  const {stderr}=await run(ffmpeg,['-hide_banner','-nostats','-i',file,'-vn','-af','volumedetect','-f','null','-']);
+  const peak=stderr.match(/max_volume:\s*(-?[\d.]+) dB/),mean=stderr.match(/mean_volume:\s*(-?[\d.]+) dB/);
+  return {peakDbFS:peak?Number(peak[1]):null,meanDbFS:mean?Number(mean[1]):null,method:'FFmpeg volumedetect; 16-bit measurement floor'};
+}
 
 /** Explicitly chronological coverage, not semantic highlights or AI direction. */
 export function planRawRanges(sources,durationSeconds){
@@ -53,9 +58,13 @@ export async function editRawFootage(request,{ffmpeg,ffprobe,onProgress=()=>{}}=
   }
   const list=join(outputDir,'segments.txt');await writeFile(list,segments.map(file=>`file '${file.replaceAll('\\','/').replaceAll("'","'\\''")}'`).join('\n'));
   const cut=join(outputDir,'cut.mp4');await run(ffmpeg,['-y','-v','error','-f','concat','-safe','0','-i',list,'-c','copy',cut]);
-  const editMs=Date.now()-editStarted,asrStarted=Date.now();let captionStatus=captionsEnabled?(hasAudio?'pending':'no-audio'):'disabled',cues=[],asr=null,config=null;const diagnostics=[];
-  if(captionsEnabled&&hasAudio){try{if(!audioConfigPath)throw new Error('No audio configuration supplied');config=JSON.parse(await readFile(audioConfigPath,'utf8'));}catch(error){captionStatus='unavailable';diagnostics.push({code:'RAW_CAPTION_RUNTIME_UNAVAILABLE',message:error.message});}}
-  if(captionsEnabled&&hasAudio&&config){
+  const sourceAudioLevels=hasAudio?await audioLevels(cut,ffmpeg):null;
+  const silentSource=hasAudio&&sourceAudioLevels.peakDbFS!==null&&sourceAudioLevels.peakDbFS<=-80;
+  const audioStatus=!hasAudio?'no-audio':silentSource?'silent-source':'original-audio';
+  const editMs=Date.now()-editStarted,asrStarted=Date.now();let captionStatus=captionsEnabled?(hasAudio?(silentSource?'no-speech':'pending'):'no-audio'):'disabled',cues=[],asr=null,config=null;const diagnostics=[];
+  if(silentSource)diagnostics.push({code:'RAW_SOURCE_SILENT',message:'The selected source audio is silent or below -80 dBFS. No replacement sound was added. Add an audio track if sound is wanted.'});
+  if(captionsEnabled&&hasAudio&&!silentSource){try{if(!audioConfigPath)throw new Error('No audio configuration supplied');config=JSON.parse(await readFile(audioConfigPath,'utf8'));}catch(error){captionStatus='unavailable';diagnostics.push({code:'RAW_CAPTION_RUNTIME_UNAVAILABLE',message:error.message});}}
+  if(captionsEnabled&&hasAudio&&!silentSource&&config){
     const asrDir=join(outputDir,'transcript');await mkdir(asrDir,{recursive:true});
     const asrRequest=join(outputDir,'transcribe-request.json');await writeFile(asrRequest,JSON.stringify({operation:'transcribe',inputPath:cut}));onProgress({stage:'Transcribing original audio locally',progress:0.6});
     try{await run(config.python,[fileURLToPath(new URL('../workers/raw-footage-asr.py',import.meta.url)),'--request',asrRequest,'--output',asrDir,'--config',resolve(audioConfigPath)]);asr=JSON.parse(await readFile(join(asrDir,'result.json'),'utf8'));}
@@ -69,16 +78,21 @@ export async function editRawFootage(request,{ffmpeg,ffprobe,onProgress=()=>{}}=
   const transcriptionMs=Date.now()-asrStarted,finishStarted=Date.now(),final=join(outputDir,'edited.mp4');let captions=null;
   const args=['-y','-v','error','-i',cut];
   if(cues.length){captions='captions.srt';await writeFile(join(outputDir,captions),cues.map((cue,i)=>`${i+1}\n${stamp(cue.start)} --> ${stamp(cue.end)}\n${cue.text}\n`).join('\n'));args.push('-vf',buildCaptionFilter({cues,style:'minimal-lower',canvas:{width,height,fps:24},safeArea:{top:Math.round(height*.08),bottom:Math.round(height*.2),left:Math.round(width*.07),right:Math.round(width*.14)},fontFile:DEFAULT_CAPTION_FONT}),'-c:v','libx264','-preset','veryfast','-crf','18');}else args.push('-c:v','copy');
-  args.push('-map','0:v:0','-map','0:a:0','-af','loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000','-c:a','aac','-b:a','192k','-t',String(durationSeconds),'-movflags','+faststart',final);onProgress({stage:'Finishing original audio and export',progress:0.85});await run(ffmpeg,args);
+  // Loudness normalization cannot create sound from digital silence and can
+  // emit nonfinite samples on very short silent clips in the pinned FFmpeg.
+  const audioNormalization=!hasAudio||silentSource?'bypassed-silence':durationSeconds<3?'peak-limit-short-clip':'loudnorm';
+  const audioFilter=audioNormalization==='bypassed-silence'?'aresample=48000':audioNormalization==='peak-limit-short-clip'?'alimiter=limit=0.84:level=false,aresample=48000':'loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000';
+  args.push('-map','0:v:0','-map','0:a:0','-af',audioFilter,'-c:a','aac','-b:a','192k','-t',String(durationSeconds),'-movflags','+faststart',final);onProgress({stage:'Finishing original audio and export',progress:0.85});await run(ffmpeg,args);
   const finishingMs=Date.now()-finishStarted;await run(ffmpeg,['-v','error','-xerror','-i',final,'-f','null','-']);
+  const outputAudioLevels=await audioLevels(final,ffmpeg);
   const verification=await verifyMedia({videoPath:final,ffmpeg,ffprobe,expected:{width,height,fps:24,durationSeconds,requireAudio:hasAudio,requireVisual:true}});
   if(!verification.ok)fail('RAW_EXPORT_VERIFY',verification.diagnostics.map(item=>item.code).join(', '));
   await run(ffmpeg,['-y','-v','error','-ss',String(Math.min(1,durationSeconds/3)),'-i',final,'-frames:v','1',join(outputDir,'poster.png')]);
   const result={schemaVersion:1,status:'review_required',validated:true,projectId,revision,sourceMethod:'local-raw-footage-edit',durationSeconds,width,height,fps:24,
     timeline:ranges.map((range,index)=>({id:`raw-${index+1}`,assetId:range.assetId,kind:'video',trimStart:range.start,duration:range.duration,muted:false})),
-    outputs:{video:'edited.mp4',poster:'poster.png',captions},verification,captionStatus,captionsStatus:captionStatus,captionsAvailable:captionStatus==='transcribed',segments:cues,
+    outputs:{video:'edited.mp4',poster:'poster.png',captions},verification,audioStatus,audioNormalization,sourceAudioLevels,outputAudioLevels,captionStatus,captionsStatus:captionStatus,captionsAvailable:captionStatus==='transcribed',segments:cues,
     provenance:{generationStatus:'edited',sourceMethod:'uploaded-real-footage',neuralVideoGenerated:false,outputHash:sha(await readFile(final)),sources:inventory.map(source=>({assetId:source.id,sourceHash:source.sourceHash,durationSeconds:source.durationSeconds,ranges:ranges.filter(range=>range.assetId===source.id)})),
-      selectionMethod:'chronological evenly spaced ranges up to five seconds; not semantic highlight detection',audioMethod:hasAudio?'original audio retained and normalized':'silent source; no replacement narration or music',captions:asr?.provenance||null,timings:{totalMs:Date.now()-started,editMs,transcriptionMs,finishingMs,sourceGenerationMs:null}},
+      selectionMethod:'chronological evenly spaced ranges up to five seconds; not semantic highlight detection',audioMethod:silentSource?'silent original source audio; no replacement added':hasAudio?'original audio retained and normalized':'no source audio; no replacement narration or music',captions:asr?.provenance||null,timings:{totalMs:Date.now()-started,editMs,transcriptionMs,finishingMs,sourceGenerationMs:null}},
     diagnostics:[...diagnostics,{code:'RAW_REVIEW_REQUIRED',message:'Review framing, cut continuity and any machine-transcribed words. The brief is retained as user intent; this deterministic edit does not claim to understand its visual semantics.'}]};
   await writeFile(join(outputDir,'result.json'),JSON.stringify(result,null,2));onProgress({stage:'Edited video ready for review',progress:1});return result;
 }

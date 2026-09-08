@@ -34,3 +34,13 @@ This is metadata-based planning, not visual understanding: descriptions must be 
 Tests exercise the host-adapter lifecycle, adopted casting, exact-hash review pauses, rejection, crash/idempotency replay, source insufficiency, and forbidden fresh-to-existing fallback. They are contract tests with controlled jobs, not a generated-video demonstration. The product's actual UI → database → provider → audio → rendered output journey still needs validation after host integration.
 
 No new GPU run, trained model, approved Mahabharata reference or 20–30s finished film was produced by these tests. The active main task owns casting and the single GPU slot. Rejected prior footage is not used as accepted demo content.
+
+## Real CPU finishing helper
+
+`finishShorts` in `runtime/shorts-finishing.mjs` runs the installed Piper CPU worker and existing format renderer, then mixes optional `rain-tension-v1` or `epic-dawn-v1` procedural sound and encodes the final MP4. Inputs: sources (4–6 distinct five-second videos with path, sha256, reviewedHash, review:'passed', sourceMethod, optional generationMs), matching narration lines, outputDir, audioConfigPath, ffmpeg, ffprobe, optional sound profile, captionsEnabled, width and height. The host must validate canonical ownership/review before supplying sources; the helper checks actual hashes/durations and forbids sources inside its output directory. It never generates or extends motion.
+
+Canvas accepts 720p/1080p portrait or landscape. `captionsEnabled:false` omits captions and preserves encoded picture during muxing. Captions use each Piper utterance's measured duration, with proportional paging inside the utterance; no claim of word-level alignment. Full video decoding and existing media verification run before a `review_required` receipt is written. Human visual and listening review remain required.
+
+Actual CPU integration test on 8 September: four distinct, explicitly labelled FFmpeg technical test patterns, 20s720×1280 output. Captioned + epic procedural sound: 15,801ms total (7,784ms voice; 468ms sound; 6,419ms assembly). No captions/no sound: 10,073ms total (5,615ms voice; 3,616ms assembly). Both outputs fully decoded and passed technical checks. Source generation is excluded and null in receipts; these patterns are not a creative demo or approved user media. Two finishing tests passed, zero skipped, using installed audio runtime. No model inference latency improvement is inferred from these editing measurements.
+
+Run the integration test by setting VYRELUM_FFMPEG, VYRELUM_FFPROBE and VYRELUM_AUDIO_CONFIG to the installed files, then `node --test runtime/shorts-finishing.test.mjs`. Optional VYRELUM_FINISH_TEST_OUTPUT retains the clearly marked fixtures for inspection.

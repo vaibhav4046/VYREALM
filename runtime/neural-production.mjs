@@ -149,7 +149,7 @@ export async function executeWanStage({ provider, jobRoot, stage, workflow, fram
     }
   }
   const submit=submission||await provider.generate_video({ workflow, requiredNodes: Object.values(workflow).map(n => n.class_type), requiredModels, frames, width: width ?? workflow['7'].inputs.width, height: height ?? workflow['7'].inputs.height, allowResourceWarnings: true });
-  if(!submission)await appendFile(logPath, JSON.stringify({ event: 'submitted', promptId: submit.promptId, workflowHash: hashJson(workflow), queuePolicy, timestamp: new Date().toISOString() }) + '\n');
+  if(!submission)await appendFile(logPath, JSON.stringify({ event: 'submitted', promptId: submit.promptId, ...(typeof submit.clientId==='string'?{clientId:submit.clientId}:{}), workflowHash: hashJson(workflow), queuePolicy, timestamp: new Date().toISOString() }) + '\n');
   const deadline = Date.now() + timeoutMs;
   // Model loading can temporarily starve the local HTTP server. A missed
   // heartbeat does not mean the owned inference failed; never resubmit it.

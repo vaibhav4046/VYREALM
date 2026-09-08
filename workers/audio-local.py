@@ -50,6 +50,11 @@ else:
     media=pathlib.Path(request['inputPath']).resolve()
     if not media.is_file():raise RuntimeError('TRANSCRIPTION_SOURCE_MISSING')
     print(json.dumps({'progressEvent':True,'stage':'Transcribing locally with Whisper tiny.en','progress':0.2}),flush=True)
+    # faster-whisper's decoder raises a bare IndexError when the container has no audio
+    # stream. Fail with a diagnosable code instead of a library traceback.
+    import av
+    with av.open(str(media)) as probe:
+        if not probe.streams.audio: raise RuntimeError('TRANSCRIPTION_SOURCE_HAS_NO_AUDIO')
     from faster_whisper import WhisperModel
     model=WhisperModel(config['whisper'],device='cpu',compute_type='int8',cpu_threads=4,num_workers=1,local_files_only=True)
     segments,info=model.transcribe(str(media),language='en',beam_size=3,word_timestamps=True,vad_filter=False)

@@ -82,6 +82,9 @@ async function startServer() {
     VYRELUM_ROOT: appRoot,
     VYRELUM_DATA_DIR: join(app.getPath('userData'), 'data'),
     VYRELUM_RUNTIME_DIR: join(app.getPath('userData'), 'runtime'),
+    // A publisher's native Desktop registration is separate from every user's
+    // protected OAuth tokens. Only its release resource path crosses this boundary.
+    VYRELUM_YOUTUBE_DESKTOP_CONFIG: app.isPackaged ? join(process.resourcesPath, 'oauth', 'youtube-desktop.json') : process.env.VYRELUM_YOUTUBE_DESKTOP_CONFIG,
     VYRELUM_BLENDER: blenderRuntimePath({configured:process.env.VYRELUM_BLENDER,bundled:app.isPackaged?join(process.resourcesPath,'blender-runtime','blender.exe'):undefined}),
     VYRELUM_FFMPEG: join(appRoot, 'workers', 'tools', 'ffmpeg.exe'),
     VYRELUM_FFPROBE: join(appRoot, 'workers', 'tools', 'ffprobe.exe'),

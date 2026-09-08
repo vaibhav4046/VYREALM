@@ -13,7 +13,7 @@
  */
 
 import { mkdir, writeFile } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -70,9 +70,11 @@ function parseArgs(argv) {
   // 8 s 1080x1080 / 240-frame clip, 8.814 s to render and 99.666 s to probe and
   // score it (108.8 s total). Scoring a hundred-plan batch is hours, so the
   // existing fast path stays fast unless the operator asks for the measurement.
-  const args = { limit: Infinity, out: 'outputs/formats', retimes: false, extend: false, score: false };
+  const args = { limit: Infinity, offset: 0, out: 'outputs/formats', retimes: false, extend: false, score: false, skipExisting: false };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--limit') args.limit = Number(argv[++i]);
+    else if (argv[i] === '--offset') args.offset = Number(argv[++i]);
+    else if (argv[i] === '--skip-existing') args.skipExisting = true;
     else if (argv[i] === '--out') args.out = argv[++i];
     else if (argv[i] === '--retimes') args.retimes = true;
     else if (argv[i] === '--extend') args.extend = true;
@@ -134,25 +136,34 @@ async function main() {
 
   const renderable = variants.filter(plan => plan.renderable);
   const skipped = variants.filter(plan => !plan.renderable);
-  const queue = renderable.slice(0, args.limit);
+  // Shards render disjoint slices in parallel. Names use the GLOBAL plan index so
+  // concurrent shards cannot collide on an output filename.
+  const queue = renderable.slice(args.offset, args.offset + args.limit);
 
   console.log(`${variants.length} plans, ${renderable.length} renderable, ${skipped.length} skipped for missing sources`);
   console.log(`rendering ${queue.length}\n`);
 
+  let skippedExisting = 0;
   const started = Date.now();
   const receipts = [];
   const results = [];
   const failures = [];
 
   for (const [index, plan] of queue.entries()) {
-    const name = `${String(index + 1).padStart(3, '0')}-${plan.formatId}-${plan.platform}-${plan.durationSeconds}s.mp4`;
+    const globalIndex = args.offset + index;
+    const name = `${String(globalIndex + 1).padStart(3, '0')}-${plan.formatId}-${plan.platform}-${plan.durationSeconds}s.mp4`;
+    // Resume: a finished variant is skipped so a paused batch can relaunch without redoing work.
+    if (args.skipExisting) {
+      const done = join(outDir, name);
+      if (existsSync(done) && statSync(done).size > 0) { skippedExisting++; continue; }
+    }
     const label = `[${index + 1}/${queue.length}] ${plan.formatId} @ ${plan.platform} ${plan.durationSeconds}s`;
     try {
       const result = await renderAndScore({
         plan,
         shotLibrary: resolved,
         output: join(outDir, name),
-        workDir: join(workRoot, String(index)),
+        workDir: join(workRoot, String(globalIndex)),
         allowExtension: args.extend,
         captionText: hooks[plan.formatId]?.line ?? null,
         // Only supply audio when the bed can actually be satisfied. A bed that

@@ -5,6 +5,65 @@ import { createMcpHandler } from '../mcp-server.mjs';
 import { buildViralHooks, inferViralFormat } from './viral-formats.mjs';
 import { buildViralVariants } from './viral-variants.mjs';
 
+test('uploaded-footage MCP tool admits only the local edit route at a checked revision', async () => {
+  const calls = [], args = { projectId: 'project-1', expectedRevision: 4, brief: 'Make a 20 second landscape edit without captions' };
+  const job = { id: 'edit-1', projectId: args.projectId, type: 'raw-footage-edit', status: 'queued' };
+  const api = async (path, method, body) => { calls.push({ path, method, body }); return method === 'POST' ? { project: { id: args.projectId, revision: 5 }, job } : { id: args.projectId, revision: 4 }; };
+  const receipt = await dispatchTool('edit_uploaded_footage', args, { api });
+  assert.equal(receipt.status, 'queued');
+  assert.equal(receipt.verification.status, 'not-run');
+  assert.equal(receipt.metadata.job, job);
+  assert.equal(receipt.metadata.provenance, null);
+  assert.equal(receipt.metadata.nextTool, 'get_production_run');
+  assert.deepEqual(calls[1], { path: '/api/projects/project-1/production-run', method: 'POST', body: { expectedRevision: 4, brief: args.brief, sourceMode: 'uploaded-media' } });
+  for (const invalid of [{ ...args, sourcePath: 'C:/outside.mp4' }, { ...args, sourceMode: 'local-generation' }, { ...args, brief: '   ' }, { ...args, projectId: '../outside' }, { ...args, expectedRevision: 0 }]) {
+    const result = await dispatchTool('edit_uploaded_footage', invalid, { api });
+    assert.equal(result.status, 'failed'); assert.equal(result.diagnostics[0].code, 'INVALID_INPUT');
+  }
+  assert.equal(calls.length, 2, 'invalid calls cannot admit a job');
+  const stale = await dispatchTool('edit_uploaded_footage', { ...args, expectedRevision: 3 }, { api });
+  assert.equal(stale.diagnostics[0].code, 'REVISION_CONFLICT');
+  assert.equal(calls.length, 3, 'stale revision performs a read but no POST');
+});
+
+test('production MCP inspection preserves edited provenance and unapproved playable status', async () => {
+  const provenance = { generationStatus: 'edited', sourceMediaMethod: 'imported', nativeAIGeneration: false, outputHash: 'a'.repeat(64) };
+  const state = { project: { id: 'p', revision: 7 }, plan: { cuts: ['source-1'] }, job: { id: 'j', projectId: 'p', status: 'review_required', type: 'raw-footage-edit', output: { provenance, outputs: { video: 'owned/edit.mp4' }, verification: { ok: true } } } };
+  const calls = [], handle = createMcpHandler({ api: async (...args) => { calls.push(args); return state; }, dispatch: dispatchTool });
+  const result = await handle({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'get_production_run', arguments: { projectId: 'p' } } });
+  const receipt = JSON.parse(result.result.content[0].text);
+  assert.equal(receipt.status, 'review_required');
+  assert.deepEqual(receipt.metadata.provenance, provenance);
+  assert.deepEqual(receipt.metadata.plan, state.plan);
+  assert.equal(receipt.verification.kind, 'worker-media-verification');
+  assert.equal(receipt.verification.visualRealismEvaluated, false);
+  assert.equal(receipt.diagnostics[0].code, 'VISUAL_REVIEW_REQUIRED');
+  assert.deepEqual(calls, [['/api/projects/p/production-run']]);
+});
+
+test('production inspection reports absent, cancelled and failed jobs without fabricated completion', async () => {
+  for (const status of [null, 'cancelled', 'failed']) {
+    const state = { project: { id: 'p', revision: 2 }, job: status ? { id: 'j', projectId: 'p', status, error: status === 'failed' ? 'No uploaded source video' : null } : null };
+    const receipt = await dispatchTool('get_production_run', { projectId: 'p' }, { api: async () => state });
+    assert.equal(receipt.status, status || 'not_started');
+    assert.equal(receipt.verification.status, 'not-run');
+    assert.deepEqual(receipt.outputPaths, []);
+    if (!status) assert.equal(receipt.diagnostics[0].code, 'NO_PRODUCTION_RUN');
+    if (status === 'failed') assert.equal(receipt.diagnostics[0].message, 'No uploaded source video');
+  }
+});
+
+test('production MCP rejects wrong-project responses, non-edit admission and failed worker verification', async () => {
+  const args = { projectId: 'p', expectedRevision: 2, brief: 'Edit my footage' };
+  for (const invalid of [{ project: { id: 'other', revision: 3 }, job: null }, { project: { id: 'p', revision: 3 }, job: { id: 'j', projectId: 'p', status: 'queued', type: 'generation-keyframe' } }]) {
+    const result = await dispatchTool('edit_uploaded_footage', args, { api: async (_, method) => method === 'POST' ? invalid : { id: 'p', revision: 2 } });
+    assert.equal(result.status, 'failed');
+  }
+  const result = await dispatchTool('get_production_run', { projectId: 'p' }, { api: async () => ({ project: { id: 'p', revision: 3 }, job: { id: 'j', projectId: 'p', status: 'succeeded', output: { verification: { ok: false } } } }) });
+  assert.equal(result.status, 'failed');
+  assert.equal(result.verification.status, 'failed');
+});
+
 test('viral variant planner creates reproducible editable recipes without claiming renders', () => {
   const result = buildViralVariants({ brief: 'a courier crossing a flooded neon market', count: 120, platform: 'instagram-reel' });
   assert.equal(result.variants.length, 120);
@@ -114,4 +173,18 @@ test('interpolation queues the owned reviewed export, with strict paths and revi
  const bad=await dispatchTool('interpolate_video',{...args,sourcePath:'C:/outside.mp4'},{api});assert.equal(bad.status,'failed');assert.equal(calls.length,2);
  const stale=await dispatchTool('interpolate_video',{...args,expectedRevision:1},{api});assert.equal(stale.status,'failed');assert.equal(calls.length,3);
  const wrongDevice=await dispatchTool('interpolate_video',{...args,device:'cloud'},{api});assert.equal(wrongDevice.status,'failed');assert.equal(calls.length,3);
+});
+
+test('research and creator pack expose checked route receipts, not blocked stubs',async()=>{
+ const calls=[],api=async(path,method,body)=>{calls.push({path,method,body});if(!method)return{id:'p',revision:2};if(path.endsWith('/research'))return{id:'j',projectId:'p',revision:2,type:'research',status:'running'};return{project:{id:'p',revision:3},job:{id:'pack',projectId:'p',type:'creator-pack',status:'succeeded'},pack:{jobId:'pack',projectRevision:2,sourceAssetId:'video',source:{sha256:'a'.repeat(64)},assets:{thumbnail:'thumb'},attached:true}};};
+ const research=await dispatchTool('research_topic',{projectId:'p',expectedRevision:2,query:'Earth',sourceUrls:['https://example.com/page'],onlineAuthorized:true},{api});
+ assert.equal(research.status,'running');assert.equal(research.verification.status,'not-run');assert.equal(research.metadata.nextTool,'inspect_job');assert.equal(calls[1].body.onlineAuthorized,true);
+ const pack=await dispatchTool('prepare_creator_pack',{projectId:'p',expectedRevision:2},{api});assert.equal(pack.status,'succeeded');assert.equal(pack.metadata.pack.source.sha256,'a'.repeat(64));assert.equal(pack.reproducibility.revision,2);assert.equal(pack.verification.kind,'local-creator-pack-receipt');
+});
+test('new tools reject missing consent revisions and invalid inputs before writes',async()=>{
+ let writes=0;const api=async(_,method)=>{if(method)writes++;return{id:'p',revision:2};};
+ for(const args of [{projectId:'p',expectedRevision:2,query:'Earth'},{projectId:'p',expectedRevision:2,query:'Earth',onlineAuthorized:false},{projectId:'p',query:'Earth',onlineAuthorized:true},{projectId:'p',expectedRevision:2,query:' ',onlineAuthorized:true},{projectId:'p',expectedRevision:2,query:'Earth',sourceUrls:[],onlineAuthorized:true}])assert.equal((await dispatchTool('research_topic',args,{api})).status,'failed');
+ assert.equal((await dispatchTool('prepare_creator_pack',{projectId:'p',expectedRevision:1},{api})).diagnostics[0].code,'REVISION_CONFLICT');
+ assert.equal((await dispatchTool('prepare_creator_pack',{projectId:'p',expectedRevision:2,videoPath:'secret'},{api})).status,'failed');assert.equal(writes,0);
+ const result=await dispatchTool('prepare_creator_pack',{projectId:'p',expectedRevision:2},{api:async(_,method)=>{if(method)throw Object.assign(Error('Render first'),{code:'CREATOR_PACK_SOURCE'});return{id:'p',revision:2};}});assert.equal(result.diagnostics[0].code,'CREATOR_PACK_SOURCE');
 });

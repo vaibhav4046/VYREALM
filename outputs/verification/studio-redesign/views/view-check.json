@@ -1,0 +1,469 @@
+{
+  "passed": true,
+  "date": "2026-09-08T02:15:00.005Z",
+  "views": [
+    {
+      "view": "Create",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Build your production."
+    },
+    {
+      "view": "Create",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Build your production."
+    },
+    {
+      "view": "Production plan",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Direct the sequence."
+    },
+    {
+      "view": "Production plan",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Direct the sequence."
+    },
+    {
+      "view": "Storyboard",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "See the story."
+    },
+    {
+      "view": "Storyboard",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "See the story."
+    },
+    {
+      "view": "Timeline",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Edit the sequence."
+    },
+    {
+      "view": "Timeline",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Edit the sequence."
+    },
+    {
+      "view": "Assets",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Your media library."
+    },
+    {
+      "view": "Assets",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Your media library."
+    },
+    {
+      "view": "Templates",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Templates for makers."
+    },
+    {
+      "view": "Templates",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(29, 31, 41)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Templates for makers."
+    },
+    {
+      "view": "Automations",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Automations for makers."
+    },
+    {
+      "view": "Automations",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Automations for makers."
+    },
+    {
+      "view": "Jobs",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Production jobs."
+    },
+    {
+      "view": "Jobs",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Production jobs."
+    },
+    {
+      "view": "Settings",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Your local engine."
+    },
+    {
+      "view": "Settings",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Your local engine."
+    },
+    {
+      "view": "Export",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Make it reviewable."
+    },
+    {
+      "view": "Export",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Make it reviewable."
+    },
+    {
+      "view": "MCP tools",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Automate the craft."
+    },
+    {
+      "view": "MCP tools",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Automate the craft."
+    }
+  ],
+  "errors": []
+}

@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#08070D">
+<meta name="theme-color" content="#08070d">
 <title>VYREALM Catalogue</title>
 <style>
 /* Palette lifted verbatim from ../styles.css (the production :root block).
    No new colours are invented here. */
 :root{
-  --bg:#08070D; --panel:#14100e; --panel-2:#14111d; --raised:#1c1511;
-  --violet:#ff7a18; --lilac:#ffbd83; --pink:#ff9b4a; --orange:#ffb17a;
-  --text:#F5F3FA; --muted:#A7A2B5; --line:#3a2920;
-  --green:#9DF3BB; --danger:#FF8A9B;
+  --bg:#07060b; --panel:#100e17; --panel-2:#191420; --raised:#231b30;
+  --violet:#a855f7; --lilac:#c99bff; --pink:#c2a4ff; --orange:#c2a4ff;
+  --text:#f5f1fc; --muted:#b0a6c1; --line:#241e33;
+  --green:#a8cfb7; --danger:#ee9aa8;
 
   /* One type scale, used everywhere. */
   --f-mono:11px; --f-sm:12px; --f-md:14px; --f-lg:17px;
@@ -30,7 +30,7 @@
 html{color-scheme:dark}
 body{
   margin:0; color:var(--text); font-family:var(--sans); letter-spacing:-.011em;
-  background:radial-gradient(900px 500px at 72% -5%,#241248 0%,transparent 60%),var(--bg);
+  background:var(--bg);
   -webkit-font-smoothing:antialiased;
 }
 h1,h2,h3,p,dl,dd,ul{margin:0}
@@ -67,7 +67,7 @@ button{cursor:pointer}
 .rail dd small{display:block;font:500 var(--f-mono)/1.5 var(--mono);letter-spacing:0;color:var(--muted);margin-top:6px}
 
 /* ---------- filters ---------- */
-.filters{position:sticky;top:0;z-index:12;background:rgba(8,7,13,.9);backdrop-filter:blur(15px);border-bottom:1px solid var(--line)}
+.filters{position:sticky;top:0;z-index:12;background:rgba(12,13,16,.94);backdrop-filter:blur(15px);border-bottom:1px solid var(--line)}
 .filters-inner{padding:16px 0 15px;display:flex;flex-direction:column;gap:13px}
 .filter-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .search-field{position:relative;flex:1 1 260px;max-width:400px;min-width:0}

@@ -6,8 +6,8 @@ const execFileAsync = promisify(execFile);
 
 const EXE = {
   node: process.execPath,
-  python: process.platform === 'win32' ? 'C:/Users/lalwa/AppData/Local/Programs/Python/Python313/python.exe' : 'python3',
-  ollama: process.platform === 'win32' ? 'C:/Users/lalwa/AppData/Local/Programs/Ollama/ollama.exe' : 'ollama',
+  python: process.env.VYRELUM_PYTHON || (process.platform === 'win32' ? 'python' : 'python3'),
+  ollama: process.env.VYRELUM_OLLAMA || 'ollama',
   nvidiaSmi: process.platform === 'win32' ? 'C:/Windows/system32/nvidia-smi.exe' : 'nvidia-smi',
   ffmpeg: 'ffmpeg', blender: 'blender',
 };

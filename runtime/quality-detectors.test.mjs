@@ -216,7 +216,7 @@ test('evidence refuses a bare score map', () => {
 
 // --- integration: one real clip, real pixels -------------------------------
 
-const SAMPLE = resolve(process.env.VYREALM_QC_SAMPLE || 'C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\desktop\\VYREALM_ANIME_HERO_5S.mp4');
+const SAMPLE = resolve(process.env.VYREALM_QC_SAMPLE || 'outputs/desktop/VYREALM_ANIME_HERO_5S.mp4');
 
 // What the probe actually reads off SAMPLE. Two full probe runs on 2026-09-07
 // were bit-for-bit identical (ORB/RANSAC included), so these are pins, not

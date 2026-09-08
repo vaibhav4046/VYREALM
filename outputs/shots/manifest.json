@@ -46,6 +46,276 @@
       "frames": 97,
       "fps": 25,
       "provenance": "local-neural-source"
+    },
+    "candle-dark": {
+      "file": "candle-dark.mp4",
+      "prompt": "A single candle flame in a dark room, wax glistening, faint smoke curling upward, slow push in. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90009,
+      "generationSeconds": 65.2,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "mountain-fog": {
+      "file": "mountain-fog.mp4",
+      "prompt": "Fog rolling through a steep alpine valley at dawn, ridgelines emerging and vanishing, slow crane. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90010,
+      "generationSeconds": 35.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "rain-window": {
+      "file": "rain-window.mp4",
+      "prompt": "Rain running down a window pane at night, city bokeh beyond the glass, static macro. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90011,
+      "generationSeconds": 35.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "desert-road": {
+      "file": "desert-road.mp4",
+      "prompt": "An empty desert highway shimmering with heat haze, mountains distant, static wide shot. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90012,
+      "generationSeconds": 35.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "autumn-leaves": {
+      "file": "autumn-leaves.mp4",
+      "prompt": "Golden autumn leaves falling slowly in a quiet park, warm afternoon light, slow drift. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90013,
+      "generationSeconds": 65.3,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "steel-forge": {
+      "file": "steel-forge.mp4",
+      "prompt": "Molten steel glowing orange as it pours in a dark foundry, sparks arcing, slow push in. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90014,
+      "generationSeconds": 40.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "lighthouse": {
+      "file": "lighthouse.mp4",
+      "prompt": "A lighthouse beam sweeping through heavy sea fog at night, waves below, slow orbit. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90015,
+      "generationSeconds": 35.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "anime-rooftop": {
+      "file": "anime-rooftop.mp4",
+      "prompt": "Original 2D anime style, clean bold ink outlines, flat two-tone cel shading, painterly background art. No text, no watermark. A teenage girl with short teal hair in a red hooded jacket stands on a rooftop at golden hour, wind moving her hair, city skyline behind, slow parallax push in.",
+      "seed": 90016,
+      "generationSeconds": 65.3,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "anime-train": {
+      "file": "anime-train.mp4",
+      "prompt": "Original 2D anime style, clean bold ink outlines, flat two-tone cel shading, painterly background art. No text, no watermark. A quiet train carriage at dusk, warm interior light, countryside blurring past the windows, slow drift along the aisle.",
+      "seed": 90017,
+      "generationSeconds": 35.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "anime-street": {
+      "file": "anime-street.mp4",
+      "prompt": "Original 2D anime style, clean bold ink outlines, flat two-tone cel shading, painterly background art. No text, no watermark. A narrow Japanese shopping street in early evening, paper lanterns lit, light rain, slow push forward.",
+      "seed": 90018,
+      "generationSeconds": 40.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "anime-sky": {
+      "file": "anime-sky.mp4",
+      "prompt": "Original 2D anime style, clean bold ink outlines, flat two-tone cel shading, painterly background art. No text, no watermark. Towering cumulus clouds over a blue summer sky, a single contrail crossing slowly, static wide shot.",
+      "seed": 90019,
+      "generationSeconds": 40.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "anime-cat": {
+      "file": "anime-cat.mp4",
+      "prompt": "Original 2D anime style, clean bold ink outlines, flat two-tone cel shading, painterly background art. No text, no watermark. A calico cat asleep on a sunlit windowsill beside a potted plant, curtains breathing in the breeze, slow push in.",
+      "seed": 90020,
+      "generationSeconds": 65.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "anime-festival": {
+      "file": "anime-festival.mp4",
+      "prompt": "Original 2D anime style, clean bold ink outlines, flat two-tone cel shading, painterly background art. No text, no watermark. Paper lanterns strung above a night festival path, warm glow, petals drifting, slow crane upward.",
+      "seed": 90021,
+      "generationSeconds": 35.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "product-watch": {
+      "file": "product-watch.mp4",
+      "prompt": "A brushed titanium wristwatch on dark slate, cold rim light, condensation beading on the crystal, slow orbit. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90022,
+      "generationSeconds": 40.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "product-sneaker": {
+      "file": "product-sneaker.mp4",
+      "prompt": "A single white sneaker on a concrete plinth, hard directional studio light, dust motes in the beam, slow orbit. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90023,
+      "generationSeconds": 40.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "product-bottle": {
+      "file": "product-bottle.mp4",
+      "prompt": "A frosted glass bottle on wet stone, backlit, water running down its side, slow push in. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90024,
+      "generationSeconds": 65.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "product-headphones": {
+      "file": "product-headphones.mp4",
+      "prompt": "Matte black over-ear headphones on a dark surface, soft top light, subtle reflections, slow orbit. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90025,
+      "generationSeconds": 35.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
+    },
+    "tech-server": {
+      "file": "tech-server.mp4",
+      "prompt": "Rows of server racks with blue status lights in a dark data centre, slow dolly down the aisle. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90026,
+      "generationSeconds": 40.1,
+      "model": "ltxv-2b-0.9.8-distilled-q8_0",
+      "steps": 8,
+      "resolution": {
+        "width": 768,
+        "height": 512
+      },
+      "frames": 97,
+      "fps": 25,
+      "provenance": "local-neural-source"
     }
   }
 }

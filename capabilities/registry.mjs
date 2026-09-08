@@ -74,7 +74,7 @@ export async function inspectCapabilities({ root = ROOT, env = process.env } = {
       report[name] = await shared.get(name);
     }
     const missing = Object.entries(report).filter(([, value]) => !value.available).map(([name, value]) => ({ name, reason: value.reason }));
-    result.push({ id: capability.id, label: capability.label, version: capability.version, adapter: capability.adapter, adapterPath: capability.adapterPath, available: missing.length === 0, status: missing.length ? 'blocked' : 'ready', reason: missing.length ? missing.map(x => `${x.name}: ${x.reason}`).join('; ') : 'Qualified local adapter ready', dependencies: report, inputs: capability.inputs, outputs: capability.outputs });
+    result.push({ id: capability.id, label: capability.label, version: capability.version, adapter: capability.adapter, adapterPath: capability.adapterPath, available: missing.length === 0, status: missing.length ? 'blocked' : 'ready', reason: missing.length ? missing.map(x => `${x.name}: ${x.reason}`).join('; ') : 'Required dependencies detected. Run this operation and inspect its output to verify it.', dependencies: report, inputs: capability.inputs, outputs: capability.outputs });
   }
   return { schemaVersion: 1, catalogue: manifest.catalogue, attribution: manifest.attribution, screenedReferences: manifest.screenedReferences || [], capabilities: result };
 }

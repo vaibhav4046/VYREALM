@@ -1,0 +1,416 @@
+{
+  "failure": "Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   {\n+     message: \"Cannot read properties of undefined (reading 'map')\",\n+     stack: \"TypeError: Cannot read properties of undefined (reading 'map')\\n\" +\n+       '    at recipePlanMarkup (http://127.0.0.1:4173/app.js:444:510)\\n' +\n+       '    at ensureRecipePlanControls (http://127.0.0.1:4173/app.js:448:168)\\n' +\n+       '    at render (http://127.0.0.1:4173/app.js:467:201)\\n' +\n+       '    at button.onclick (http://127.0.0.1:4173/app.js:126:200)',\n+     view: 'Create'\n+   },\n+   {\n+     message: \"Cannot read properties of undefined (reading 'map')\",\n+     stack: \"TypeError: Cannot read properties of undefined (reading 'map')\\n\" +\n+       '    at recipePlanMarkup (http://127.0.0.1:4173/app.js:444:510)\\n' +\n+       '    at ensureRecipePlanControls (http://127.0.0.1:4173/app.js:448:168)\\n' +\n+       '    at render (http://127.0.0.1:4173/app.js:467:201)\\n' +\n+       '    at button.onclick (http://127.0.0.1:4173/app.js:126:200)',\n+     view: 'Production plan'\n+   },\n+   {\n+     message: \"Cannot read properties of undefined (reading 'map')\",\n+     stack: \"TypeError: Cannot read properties of undefined (reading 'map')\\n\" +\n+       '    at recipePlanMarkup (http://127.0.0.1:4173/app.js:444:510)\\n' +\n+       '    at ensureRecipePlanControls (http://127.0.0.1:4173/app.js:448:168)\\n' +\n+       '    at render (http://127.0.0.1:4173/app.js:467:201)\\n' +\n+       '    at button.onclick (http://127.0.0.1:4173/app.js:126:200)',\n+     view: 'Storyboard'\n+   }\n+ ]\n- []\n",
+  "views": [
+    {
+      "view": "Create",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Shape a world."
+    },
+    {
+      "view": "Create",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Shape a world."
+    },
+    {
+      "view": "Production plan",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [],
+      "heading": "Direct the sequence."
+    },
+    {
+      "view": "Production plan",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [],
+      "heading": "Direct the sequence."
+    },
+    {
+      "view": "Storyboard",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [],
+      "heading": "See the story."
+    },
+    {
+      "view": "Storyboard",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [],
+      "heading": "See the story."
+    },
+    {
+      "view": "Timeline",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Shape a world."
+    },
+    {
+      "view": "Timeline",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Shape a world."
+    },
+    {
+      "view": "Assets",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Your creative memory."
+    },
+    {
+      "view": "Assets",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Your creative memory."
+    },
+    {
+      "view": "Templates",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Templates for makers."
+    },
+    {
+      "view": "Templates",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(29, 31, 41)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Templates for makers."
+    },
+    {
+      "view": "Automations",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Automations for makers."
+    },
+    {
+      "view": "Automations",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(29, 31, 41)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Automations for makers."
+    },
+    {
+      "view": "Jobs",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Nothing gets lost."
+    },
+    {
+      "view": "Jobs",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Nothing gets lost."
+    },
+    {
+      "view": "Settings",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Your local engine."
+    },
+    {
+      "view": "Settings",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Your local engine."
+    },
+    {
+      "view": "Export",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Make it reviewable."
+    },
+    {
+      "view": "Export",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(20, 22, 28)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Make it reviewable."
+    },
+    {
+      "view": "MCP tools",
+      "width": 1440,
+      "scroll": 1425,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Automate the craft."
+    },
+    {
+      "view": "MCP tools",
+      "width": 390,
+      "scroll": 390,
+      "background": "rgb(12, 13, 16)",
+      "panels": [
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        },
+        {
+          "background": "rgb(21, 23, 30)",
+          "color": "rgb(240, 240, 245)"
+        }
+      ],
+      "heading": "Automate the craft."
+    }
+  ],
+  "errors": [
+    {
+      "message": "Cannot read properties of undefined (reading 'map')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'map')\n    at recipePlanMarkup (http://127.0.0.1:4173/app.js:444:510)\n    at ensureRecipePlanControls (http://127.0.0.1:4173/app.js:448:168)\n    at render (http://127.0.0.1:4173/app.js:467:201)\n    at button.onclick (http://127.0.0.1:4173/app.js:126:200)",
+      "view": "Create"
+    },
+    {
+      "message": "Cannot read properties of undefined (reading 'map')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'map')\n    at recipePlanMarkup (http://127.0.0.1:4173/app.js:444:510)\n    at ensureRecipePlanControls (http://127.0.0.1:4173/app.js:448:168)\n    at render (http://127.0.0.1:4173/app.js:467:201)\n    at button.onclick (http://127.0.0.1:4173/app.js:126:200)",
+      "view": "Production plan"
+    },
+    {
+      "message": "Cannot read properties of undefined (reading 'map')",
+      "stack": "TypeError: Cannot read properties of undefined (reading 'map')\n    at recipePlanMarkup (http://127.0.0.1:4173/app.js:444:510)\n    at ensureRecipePlanControls (http://127.0.0.1:4173/app.js:448:168)\n    at render (http://127.0.0.1:4173/app.js:467:201)\n    at button.onclick (http://127.0.0.1:4173/app.js:126:200)",
+      "view": "Storyboard"
+    }
+  ]
+}

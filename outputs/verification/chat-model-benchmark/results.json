@@ -1,0 +1,22 @@
+[
+  {
+    "model": "gemma3:1b",
+    "elapsedMs": 14071,
+    "text": "Okay, let’s refine this 30-second bow restring tutorial. Here are three specific improvements focusing on visual clarity and engaging the viewer:\n\n1.  **Faster Rests:** Reduce the time spent on the rests. Focus on a quick, efficient rest – 2 seconds max – to keep the pacing quick.  \n2. **Visual Focus:** Enhance the visual of the wood grain/texture during the rest. Use subtle zooms or slight color adjustments to highlight the wood's natural patterns.  \n3. **Clearer Cuts:** Improve the cuts between the rest and the final string.  Ensure the audience clearly sees the change in wood grain.\n\nWorkspace Actions:\n1.  Review footage for rest durations.\n2.  Experiment with subtle color grading to highlight wood grain.\n3.  Optimize cut timing for visual impact.",
+    "actions": [],
+    "source": "ollama-local-draft",
+    "digest": "8648f39daa8fbf5b18c7b4e6a8fb4990c692751d49917417b8842ca5758e7ffc",
+    "wallMs": 14071,
+    "execution": "suggestions-only"
+  },
+  {
+    "model": "qwen3:4b-instruct",
+    "elapsedMs": 25022,
+    "text": "Direction received for “Bow workshop”. Open the suggested workspace to turn this direction into a saved production step.\n\n0 timeline clips · output: none. No media job was started by this message.",
+    "actions": [
+      "assets"
+    ],
+    "source": "local-workflow-guide",
+    "diagnostic": "Local model exceeded the response time limit"
+  }
+]

@@ -1,0 +1,28 @@
+{
+  "visualDirectionRevision": 7,
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "scope": "One original Arjuna casting still; no automatic motion or film approval",
+  "canonicalDirection": "CASTING_DIRECTION_R7.md",
+  "requestFile": "keyframe-requests-r7/02-the-cost.json",
+  "rejectedReferences": [
+    {"jobId":"a707a1a2-66da-415d-9051-c8ff805cb915","imageHash":"957efafb8aa68c96a6efd2417fdc4137e0b0d481a000986a1aa485d58561e75b","reviewedVideoHash":"2a46c05ae50b1ca041ce4f3968ca6a5a37c0fb6b4da8edae2559dbab2c65ce98","status":"rejected","useAsInput":false},
+    {"jobId":"b8c598d8-fa72-4baa-9b53-7c2ce289b20a","imageHash":"ada7a1acbadf83130bd002981f99636122386822f31b819f356bdc837568d82c","status":"rejected","useAsInput":false}
+  ],
+  "visualChecks": ["natural face and eyes","clean-shaven character design","hair tied low behind neck, no high topknot","restrained bronze chest guard","ivory dhoti and saffron waist sash","coherent bow, taut string and visible grip","quiver with distinct arrows","natural hand and arm anatomy","textured timber chariot","dusty battlefield depth","no imported actor or prior rejected reference"],
+  "motionStatus": "not-authorized-for-this-candidate-until-root-visual-approval",
+  "sourceMethod": "local-generated-keyframe",
+  "model": "Wan2.2-TI2V-5B-Q4_K_M.gguf",
+  "newModelsDownloaded": false,
+  "identityLock": "none; independent text-conditioned candidate",
+  "attempt": {
+    "jobId": "3c7275da-79b4-463a-8286-90bb28ee1440",
+    "projectRevision": 8,
+    "providerPromptId": "63b4b728-fbec-433c-ac58-51e3af21379d",
+    "outputHash": "0547f5e4ba984589ac63dc4247bdf3bba2ea85f9164b2fd5a73c73717eec670d",
+    "renderTimeMs": 145518,
+    "status": "rejected",
+    "reason": "Specified bronze chest guard, saffron sash and circlet absent; arrow fletching unclear",
+    "reviewFile": "KEYFRAME_R7_REVIEW.md",
+    "animated": false
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "commit": "777807a262bb7384ff406fd4b35fdcd02e9514c3",
+  "files": [
+    {
+      "name": "youtube",
+      "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/777807a262bb7384ff406fd4b35fdcd02e9514c3/icons/youtube.svg",
+      "sha256": "5038808acbbc4e6edda16cbeb1cc6dec80e4e4ee4e227e039c41229fa222aa8c"
+    },
+    {
+      "name": "github",
+      "url": "https://raw.githubusercontent.com/simple-icons/simple-icons/777807a262bb7384ff406fd4b35fdcd02e9514c3/icons/github.svg",
+      "sha256": "3bf8cceead820aec50d4ee825a3fd02c5a1cd6665cc9cf4cbf3d9c8861a204bb"
+    }
+  ],
+  "licenceUrl": "https://raw.githubusercontent.com/simple-icons/simple-icons/777807a262bb7384ff406fd4b35fdcd02e9514c3/LICENSE.md",
+  "note": "Brand marks identify actual features/source links. No sponsorship or connection state is implied."
+}

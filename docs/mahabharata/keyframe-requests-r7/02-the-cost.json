@@ -1,0 +1,11 @@
+{
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "expectedRevision": 8,
+  "prompt": "Live-action Indian Mahabharata epic film still. Arjuna, an original adult male archer prince aged thirty, pauses in a timber war chariot at dawn. Medium three-quarter shot from head to upper thighs. Clean-shaven expressive face, realistic skin and eyes, black hair swept back and tied low behind the neck, narrow low gold circlet. Athletic natural proportions. Simple fitted bronze chest guard, leather wrist guards, ivory dhoti and deep saffron waist sash. One hand naturally grips a tall curved wooden Gandiva bow with a taut string at frame-left. A leather quiver of distinct feathered arrows rises behind his shoulder. The complete head, bow grip and costume are visible. He looks across the battlefield with quiet concern. Carved wooden chariot rail in foreground, detailed archer in midground, dusty ground and woven battle standards in a softly focused background. Warm dawn light from camera-left, cool fill, natural shadows, controlled highlights, textured metal, wood and cloth. Realistic cinema photography, 50mm lens, restrained shallow depth of field. Original fictional character, no actor likeness.",
+  "negativePrompt": "beard, moustache, goatee, stubble, facial hair, high topknot, hair bun, loose hair covering shoulders, large earrings, dangling earrings, heavy jewellery, glamour portrait, fashion portrait, red sari, red shoulder drape, bare chest, oversized shoulder plates, segmented lamellar shoulder armour, European knight armour, Roman helmet, fantasy horns, plastic face, wax skin, cartoon, flat illustration, low poly, duplicate bow, missing bowstring, broken bow, fused fingers, extra fingers, extra arms, detached hand, clipped head, black empty background, modern buildings, gun, text, watermark",
+  "seed": 730702,
+  "width": 1024,
+  "height": 576,
+  "steps": 20,
+  "queuePolicy": "fifo"
+}

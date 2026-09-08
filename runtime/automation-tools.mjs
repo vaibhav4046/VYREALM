@@ -27,6 +27,8 @@ tool('generate_variations', 'Save a bounded matrix of original, editable deliver
 tool('write_script', 'Save supplied script text or a disclosed deterministic draft.', object({ projectId, expectedRevision: revision, text: text(50000) }, ['projectId', 'expectedRevision']));
 tool('create_storyboard', 'Save an editable text shot list. This does not generate images.', object({ projectId, expectedRevision: revision, durationSeconds: numeric(1, 3600), shotCount: integer(1, 24) }, ['projectId', 'expectedRevision']));
 tool('generate_production_plan', 'Queue the local director; inspect_job is required for completion.', projectRevision);
+tool('edit_uploaded_footage', 'Queue a local edit of videos already uploaded to this project. Originals remain imported; this does not generate video or approve its quality. Poll get_production_run for the actual result.', object({ projectId, expectedRevision: revision, brief: text(6000) }, ['projectId', 'expectedRevision', 'brief']));
+tool('get_production_run', 'Read the latest product-owned production job, editable plan, and source provenance. No job means not_started; playable output may still require visual review.', object({ projectId }, ['projectId']));
 tool('edit_timeline', 'Replace ordered source clips at a checked revision.', object({ projectId, expectedRevision: revision, clips: array(clip), settings: object({ width: integer(16, 4096), height: integer(16, 4096), fps: numeric(1, 60) }, ['width', 'height', 'fps']) }, ['projectId', 'expectedRevision', 'clips']));
 const captions = object({ projectId, expectedRevision: revision, captions: array(object({ clipId: text(200), text: { type: 'string', maxLength: 1000 } }, ['clipId', 'text'])) }, ['projectId', 'expectedRevision', 'captions']);
 tool('add_captions', 'Save editable captions on timeline clips; text spans each clip.', captions);
@@ -39,7 +41,16 @@ tool('compare_versions', 'Compare two saved project revisions.', object({ projec
 tool('export_project', 'Write a complete portable JSON project export. Missing media or bundles exceeding embedded-media limits are rejected.', object({ projectId, outputPath: text(4096) }, ['projectId']));
 tool('inspect_hardware', 'Inspect local hardware measurements.', empty);
 tool('list_models', 'Inspect local provider health and installed checkpoints.', empty);
-tool('run_generation_test', 'Queue a real local Wan keyframe and five-second image-to-video job. Poll inspect_job; generated media still requires visual review.', object({projectId,brief:text(6000),seed:integer(0,Number.MAX_SAFE_INTEGER)}));
+tool('run_generation_test', 'Run the named local Wan diagnostic smoke test. This is not the default original-film route. Poll inspect_job; generated media still requires visual review. Use generate_original_keyframe for a custom shot with a separate still-review boundary.', object({projectId,brief:text(6000),seed:integer(0,Number.MAX_SAFE_INTEGER)}));
+const originalId={...text(100),pattern:'^[a-zA-Z0-9-]{1,100}$'},originalHash={...text(64),minLength:64,pattern:'^[a-f0-9]{64}$'};
+const originalRevision={projectId:originalId,expectedRevision:revision},originalDirection={brief:text(6000),seed:integer(0,Number.MAX_SAFE_INTEGER)};
+const ORIGINAL_TOOLS=['generate_original_keyframe','inspect_original_generation','review_original_keyframe','animate_original_keyframe','retry_original_generation','cancel_original_generation'];
+tool('generate_original_keyframe','Queue one original still from an explicit shot prompt using the installed local Wan provider. This stops for image inspection and does not animate. Admission is not completed media; poll inspect_original_generation. The saved project description stays separate.',object({...originalRevision,...originalDirection,negativePrompt:text(2000)},['projectId','expectedRevision','brief']));
+tool('inspect_original_generation','Read the current original still/motion jobs, provider evidence, exact image hash, registered assets and actual review status. Source generation and upscaled delivery are separate. Technical verification is not a realism score.',object({projectId:originalId},['projectId']));
+tool('review_original_keyframe','Record an explicit operator approval or rejection after visual inspection of the exact still. Supply that operator decision and inspection notes; never approve solely from job completion or a self-awarded quality score. This records image review only and does not start animation.',object({...originalRevision,jobId:originalId,expectedOutputHash:originalHash,verdict:{enum:['passed','rejected']},notes:text(4000)},['projectId','expectedRevision','jobId','expectedOutputHash','verdict','notes']));
+tool('animate_original_keyframe','Separately queue five seconds of local motion from the exact approved, locally generated still. Wan remains the default; ltx-draft-512 explicitly selects an experimental 288p eight-step tiled source with custom model terms. No automatic fallback. Imported, changed or rejected references are refused. Output requires motion review; poll inspect_original_generation.',object({...originalRevision,keyframeJobId:originalId,expectedOutputHash:originalHash,...originalDirection,motionEngine:{enum:['wan','ltx-draft-512']}},['projectId','expectedRevision','keyframeJobId','expectedOutputHash']));
+tool('retry_original_generation','Retry a failed, blocked or cancelled original-generation stage at the exact project revision. The backend retains verified intermediate work, limits retries, and refuses changed references. This does not approve an image or video.',object({...originalRevision,jobId:originalId},['projectId','expectedRevision','jobId']));
+tool('cancel_original_generation','Request cancellation of a current original-generation job in this project. Completed work is retained; inspect the returned status because cancellation may be pending or the job may already have completed.',object({projectId:originalId,jobId:originalId},['projectId','jobId']));
 for(const name of ['generate_next_shot','generate_video_shot'])tool(name,'Animate a reviewed local keyframe into a new five-second shot and append it at the saved project revision. Reuses the reference; identity and action still require visual review.',object({projectId,expectedRevision:revision,referenceJobId:text(200),brief:text(6000),seed:integer(0,Number.MAX_SAFE_INTEGER)},['projectId','expectedRevision','referenceJobId','brief']));
 for(const name of ['generate_voiceover','create_voiceover'])tool(name,'Queue offline Piper narration on the CPU. Review pronunciation before rendering.',object({projectId,expectedRevision:revision,text:text(5000)},['projectId','expectedRevision','text']));
 tool('transcribe_media','Queue offline Whisper transcription of a project audio/video asset. No diarization is implied.',object({projectId,expectedRevision:revision,assetId:text(200)},['projectId','expectedRevision','assetId']));
@@ -47,10 +58,12 @@ tool('enhance_4k','Queue tiled Real-ESRGAN enhancement of a verified local neura
 tool('interpolate_video','Queue local RIFE interpolation of a reviewed 24/30 fps export to 60 fps. This is post-processing, not native 60 fps generation. Poll inspect_job and visually review the result.',object({projectId,expectedRevision:revision,device:{enum:['auto','cpu']}},['projectId','expectedRevision']));
 tool('generate_sound_design','Create original local rain and timed sound cues as an editable audio layer. This is procedural sound synthesis, not neural audio or lip-sync.',object({projectId,expectedRevision:revision,footsteps:array(numeric(0,90),120),shelterAt:numeric(0,90),climaxAt:numeric(0,90),seed:integer(0,Number.MAX_SAFE_INTEGER)},['projectId','expectedRevision']));
 tool('run_quality_check', 'Run technical FFprobe/FFmpeg checks; it does not score realism.', object({ videoPath: text(4096), expected: object({ width: integer(16, 8192), height: integer(16, 8192), fps: numeric(1, 120), durationSeconds: numeric(0.01, 21600), requireAudio: { type: 'boolean' }, requireVisual: { type: 'boolean' } }) }, ['videoPath']));
+tool('research_topic','Queue explicitly authorized public-source research through the local server. Uses supplied URLs or Wikipedia; no cloud model default. Poll inspect_job; admission is not completed research.',object({projectId,expectedRevision:revision,query:text(500),sourceUrls:array(text(2048),3),onlineAuthorized:{type:'boolean',enum:[true]}},['projectId','expectedRevision','query','onlineAuthorized']));
+for(const name of ['prepare_creator_pack','create_thumbnail'])tool(name,'Prepare a thumbnail extracted from the current rendered video plus local draft publishing copy. No neural image generation or publishing. Requires the exact saved revision.',projectRevision);
 const BLOCKED = {
- research_topic: 'RESEARCH_NOT_CONNECTED', create_character_sheet: 'CHARACTER_MODEL_UNQUALIFIED', create_location_sheet: 'LOCATION_MODEL_UNQUALIFIED', generate_keyframe: 'KEYFRAME_MODEL_UNQUALIFIED', edit_region: 'INPAINTING_NOT_CONNECTED', restyle_video: 'VIDEO_RESTYLE_NOT_CONNECTED', transfer_motion: 'MOTION_TRANSFER_NOT_CONNECTED', dub_video: 'DUBBING_NOT_CONNECTED', lip_sync_video: 'LIP_SYNC_NOT_CONNECTED', extract_podcast_clips: 'PODCAST_SELECTION_NOT_CONNECTED', create_thumbnail: 'THUMBNAIL_NOT_CONNECTED', schedule_campaign: 'SCHEDULER_NOT_CONNECTED', create_platform_variants: 'VARIANT_QUEUE_NOT_CONNECTED'
+  create_character_sheet: 'CHARACTER_MODEL_UNQUALIFIED', create_location_sheet: 'LOCATION_MODEL_UNQUALIFIED', generate_keyframe: 'KEYFRAME_MODEL_UNQUALIFIED', edit_region: 'INPAINTING_NOT_CONNECTED', restyle_video: 'VIDEO_RESTYLE_NOT_CONNECTED', transfer_motion: 'MOTION_TRANSFER_NOT_CONNECTED', dub_video: 'DUBBING_NOT_CONNECTED', lip_sync_video: 'LIP_SYNC_NOT_CONNECTED', extract_podcast_clips: 'PODCAST_SELECTION_NOT_CONNECTED',  schedule_campaign: 'SCHEDULER_NOT_CONNECTED', create_platform_variants: 'VARIANT_QUEUE_NOT_CONNECTED'
 };
-const blockedDescriptions = { RESEARCH_NOT_CONNECTED: 'No local research adapter is connected; fact verification requires supplied source notes.', CHARACTER_MODEL_UNQUALIFIED: 'Import face, body, and wardrobe references until a qualified local model is installed.', LOCATION_MODEL_UNQUALIFIED: 'Import location and lighting references until a qualified local model is installed.', KEYFRAME_MODEL_UNQUALIFIED: 'ComfyUI health exists, but no qualified checkpoint/workflow is connected to production.', VIDEO_MODEL_UNQUALIFIED: 'A measured local image-to-video checkpoint is required before neural shot generation.', INPAINTING_NOT_CONNECTED: 'No qualified region editing model is connected.', VIDEO_RESTYLE_NOT_CONNECTED: 'No qualified video-to-video workflow is connected.', MOTION_TRANSFER_NOT_CONNECTED: 'No qualified motion-transfer workflow is connected.', LOCAL_VOICE_NOT_CONNECTED: 'Import recorded narration; no qualified local speech adapter is connected.', TRANSCRIPTION_NOT_CONNECTED: 'Supply transcript text; no qualified Whisper worker is connected.', DUBBING_NOT_CONNECTED: 'Transcription, translation, and local voice adapters are required.', LIP_SYNC_NOT_CONNECTED: 'No qualified lip-sync checkpoint is connected.', PODCAST_SELECTION_NOT_CONNECTED: 'Use edit_timeline for manual trims; diarization/highlight selection is not connected.', THUMBNAIL_NOT_CONNECTED: 'No thumbnail generation worker is connected.', ENHANCEMENT_QUEUE_NOT_CONNECTED: 'The 4K CLI is available separately, but is not connected to durable jobs.', SCHEDULER_NOT_CONNECTED: 'Scheduling requires an explicit publishing adapter and authorization.', VARIANT_QUEUE_NOT_CONNECTED: 'Render each explicit canvas revision; automatic multi-aspect export is not connected.' };
+const blockedDescriptions = { RESEARCH_NOT_CONNECTED: 'No local research adapter is connected; fact verification requires supplied source notes.', CHARACTER_MODEL_UNQUALIFIED: 'Import face, body, and wardrobe references until a qualified local model is installed.', LOCATION_MODEL_UNQUALIFIED: 'Import location and lighting references until a qualified local model is installed.', KEYFRAME_MODEL_UNQUALIFIED: 'This legacy keyframe tool has no adapter. Use generate_original_keyframe with an explicit shot brief and checked revision for the local provider route.', VIDEO_MODEL_UNQUALIFIED: 'A measured local image-to-video checkpoint is required before neural shot generation.', INPAINTING_NOT_CONNECTED: 'No qualified region editing model is connected.', VIDEO_RESTYLE_NOT_CONNECTED: 'No qualified video-to-video workflow is connected.', MOTION_TRANSFER_NOT_CONNECTED: 'No qualified motion-transfer workflow is connected.', LOCAL_VOICE_NOT_CONNECTED: 'Import recorded narration; no qualified local speech adapter is connected.', TRANSCRIPTION_NOT_CONNECTED: 'Supply transcript text; no qualified Whisper worker is connected.', DUBBING_NOT_CONNECTED: 'Transcription, translation, and local voice adapters are required.', LIP_SYNC_NOT_CONNECTED: 'No qualified lip-sync checkpoint is connected.', PODCAST_SELECTION_NOT_CONNECTED: 'Use edit_timeline for manual trims; diarization/highlight selection is not connected.', THUMBNAIL_NOT_CONNECTED: 'No thumbnail generation worker is connected.', ENHANCEMENT_QUEUE_NOT_CONNECTED: 'The 4K CLI is available separately, but is not connected to durable jobs.', SCHEDULER_NOT_CONNECTED: 'Scheduling requires an explicit publishing adapter and authorization.', VARIANT_QUEUE_NOT_CONNECTED: 'Render each explicit canvas revision; automatic multi-aspect export is not connected.' };
 const blockedSchema = object({ projectId, prompt: text(), assetId: text(200), topic: text(), text: text(50000), inputPath: text(4096), language: text(40), region: text(120), start: numeric(0, 21600), end: numeric(0, 21600) });
 for (const [name, code] of Object.entries(BLOCKED)) tool(name, blockedDescriptions[code], blockedSchema, true);
 export const TOOL_DEFINITIONS = Object.freeze(definitions);
@@ -71,17 +84,128 @@ export function createLocalApi({ base = process.env.VYREALM_API || process.env.V
   let token; async function session() { const response = await fetchImpl(`${url.origin}/api/session`, { signal: AbortSignal.timeout(5000), redirect: 'error' }); const data = await response.json(); if (!response.ok || !data.token) throw new ToolError('SESSION_UNAVAILABLE', 'Local VYREALM session could not be opened'); token = data.token; }
   return async (path, method = 'GET', body) => { if (!path.startsWith('/api/')) throw new ToolError('INVALID_ROUTE', 'Only local API routes are allowed'); if (!token) await session(); for (let attempt = 0; attempt < 2; attempt++) { const response = await fetchImpl(`${url.origin}${path}`, { method, signal: AbortSignal.timeout(30000), redirect: 'error', headers: { 'content-type': 'application/json', 'x-vyrelum-token': token }, body: body == null ? undefined : JSON.stringify(body) }); if (response.status === 401 && !attempt) { await session(); continue; } const data = await response.json(); if (!response.ok) throw new ToolError(data.code || `API_${response.status}`, data.error || `Local API ${response.status}`, data.details); return data; } };
 }
+const isOriginalId=value=>typeof value==='string'&&/^[a-zA-Z0-9-]{1,100}$/.test(value);
+const isOriginalHash=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
+const ORIGINAL_MOTION_RECEIPTS=Object.freeze({
+  wan:{sourceMethod:'local-wan22-gguf',modelId:'Wan2.2-TI2V-5B-Q4_K_M.gguf'},
+  'ltx-draft-512':{sourceMethod:'local-ltx098-distilled-gguf',modelId:'ltxv-2b-0.9.8-distilled-q8_0.gguf'},
+});
+const originalMismatch=message=>{throw new ToolError('ORIGINAL_RECEIPT_MISMATCH',message);};
+function checkOriginalJob(job,projectId,kind){
+  if(!job||!isOriginalId(job.id)||job.projectId!==projectId||!['keyframe','motion'].includes(job.stageKind)||kind&&job.stageKind!==kind||job.type!==(job.stageKind==='keyframe'?'generation-keyframe':'generation-shot')||!['queued','running','validating','cancelling','review_required','succeeded','rejected','failed','blocked','cancelled'].includes(job.status))originalMismatch('The response does not identify a matching original-generation job.');
+  return job;
+}
+function checkOriginalState(value,projectId){
+  if(value?.project?.id!==projectId||!Number.isSafeInteger(value.project.revision)||value.project.revision<1)originalMismatch('The original-generation response belongs to another project or has no saved revision.');
+  for(const [key,kind] of [['keyframeJob','keyframe'],['motionJob','motion']])if(value[key]){
+    checkOriginalJob(value[key],projectId,kind);
+    if(value.project.originalGeneration?.[`${key}Id`]!==value[key].id)originalMismatch('The returned job does not match the current project generation pointer.');
+  }
+  if(value.job){checkOriginalJob(value.job,projectId);if(![value.keyframeJob?.id,value.motionJob?.id].includes(value.job.id))originalMismatch('The active job is not one of the project generation stages.');}
+  else if(value.keyframeJob||value.motionJob)originalMismatch('The current generation job is missing.');
+  return value;
+}
+function originalReceipt(receipt,state,job=state.job){
+  receipt.status=job?.status||'not_started';
+  receipt.reproducibility.projectId=state.project.id;receipt.reproducibility.revision=state.project.revision;
+  receipt.metadata={project:state.project,job,keyframeJob:state.keyframeJob,motionJob:state.motionJob,profile:state.profile,mediaKind:job?.stageKind==='motion'?'video':job?'image':null,generatedVideo:false,animationStarted:!!state.motionJob,provenance:null,assets:{},review:null,nextTool:'inspect_original_generation'};
+  if(!job){receipt.diagnostics.push({code:'NO_ORIGINAL_GENERATION',message:'No original still or motion job has been started in this project.'});return receipt;}
+  if(['review_required','succeeded','rejected'].includes(job.status)){
+    const output=job.output,p=output?.provenance,kind=job.stageKind;
+    if(output?.validated!==true||output.verification?.ok!==true||p?.providerId!=='comfyui-local'||!p.modelId||p.generationStatus!=='generated'||![p.outputHash,p.workflowHash,p.evidenceHash].every(isOriginalHash))originalMismatch('Completed media needs a verified local-provider receipt and matching generation hashes.');
+    if(kind==='keyframe'&&(p.mediaKind!=='image'||output.sourceMethod!=='local-generated-keyframe'||!isOriginalId(output.assets?.image)))originalMismatch('A still must be a registered locally generated image, not an imported asset or video.');
+    if(kind==='motion'){
+      const engine=job.motionEngine??'wan',expected=Object.hasOwn(ORIGINAL_MOTION_RECEIPTS,engine)?ORIGINAL_MOTION_RECEIPTS[engine]:null;
+      if(!expected||output.sourceMethod!==expected.sourceMethod||p.modelId!==expected.modelId||p.source?.modelId!==expected.modelId||p.source?.providerId!=='comfyui-local'||!isOriginalId(output.assets?.video)||!isOriginalId(output.assets?.sourceVideo)||p.source?.outputHash!==p.sourceHash||!isOriginalHash(p.sourceHash)||p.source?.generationStatus!=='generated'||!p.deliveryMethod||!p.deliveryResolution)originalMismatch('Motion needs verified source and delivery records for the explicitly selected local engine and model.');
+    }
+    Object.assign(receipt.metadata,{provenance:p,assets:output.assets,review:output.review||null,generatedVideo:kind==='motion'});
+    receipt.verification={status:'passed',kind:'worker-media-verification',visualRealismEvaluated:false,result:output.verification};
+    const review=output.review,reviewed=review?.verdict==='passed'&&review.outputHash===p.outputHash&&review.reviewer==='operator-visual-review'&&typeof review.notes==='string'&&!!review.notes.trim()&&(kind!=='keyframe'||review.mediaKind==='image'&&review.evidenceHash===p.evidenceHash);
+    if(job.status==='succeeded'&&!reviewed)receipt.status='review_required';
+    if(receipt.status==='review_required')receipt.diagnostics.push({code:'VISUAL_REVIEW_REQUIRED',message:kind==='keyframe'?'One generated still exists. Inspect its exact image before recording an operator decision; animation has not been approved by technical verification.':'The generated motion clip still requires visual review. An upscaled delivery is not native 1080p or 4K generation.'});
+    if(kind==='keyframe'&&reviewed){receipt.metadata.nextTool='animate_original_keyframe';receipt.metadata.animationStarted=!!state.motionJob;}
+  }
+  if(job.error)receipt.diagnostics.push({code:'ORIGINAL_JOB_ERROR',message:job.error});
+  return receipt;
+}
+async function dispatchOriginalTool(name,args,api,receipt){
+  for(const key of ['projectId','jobId','keyframeJobId'])if(args[key]!==undefined&&!isOriginalId(args[key]))throw new ToolError('INVALID_INPUT',`${key} must be a saved local identifier.`);
+  for(const key of ['brief','negativePrompt','notes'])if(args[key]!==undefined&&!args[key].trim())throw new ToolError('INVALID_INPUT',`${key} must contain non-whitespace text.`);
+  if(args.expectedOutputHash!==undefined&&!isOriginalHash(args.expectedOutputHash))throw new ToolError('INVALID_INPUT','expectedOutputHash must be the exact lowercase SHA-256 image hash.');
+  const projectPath=`/api/projects/${args.projectId}`,statePath=`${projectPath}/original-generation`;
+  const checkRevision=project=>{if(project?.id!==args.projectId||!Number.isSafeInteger(project.revision))originalMismatch('Project identity or revision is missing.');if(args.expectedRevision!==undefined&&project.revision!==args.expectedRevision)throw new ToolError('REVISION_CONFLICT','The saved project changed. Inspect it before continuing.',{currentRevision:project.revision});};
+  const admitted=(value,kind,revision,jobId)=>{const state=checkOriginalState(value,args.projectId),job=checkOriginalJob(state.job,args.projectId,kind);if(!['queued','running','validating'].includes(job.status)||state.project.revision!==revision||job.revision!==revision||jobId&&job.id!==jobId)originalMismatch('No matching pending stage was admitted at this project revision.');if(name==='animate_original_keyframe'&&(job.motionEngine??'wan')!==(args.motionEngine??'wan'))originalMismatch('The admitted motion engine differs from the requested engine.');return originalReceipt(receipt,state);};
+  if(name==='generate_original_keyframe'){
+    checkRevision(await api(projectPath));const {projectId,...body}=args;
+    return admitted(await api(statePath,'POST',body),'keyframe',args.expectedRevision+1);
+  }
+  const before=checkOriginalState(await api(statePath),args.projectId);
+  if(name==='inspect_original_generation')return originalReceipt(receipt,before);
+  checkRevision(before.project);
+  const id=args.jobId||args.keyframeJobId,target=[before.keyframeJob,before.motionJob].find(job=>job?.id===id);
+  if(!target)throw new ToolError('ORIGINAL_JOB_NOT_FOUND','The job is not a current original-generation stage in this project.');
+  const action=name==='review_original_keyframe'?'review':name==='animate_original_keyframe'?'animate':name==='retry_original_generation'?'retry':'cancel';
+  const {jobId,keyframeJobId,...body}=args;
+  const value=await api(`/api/original-generation/${id}/${action}`,'POST',action==='cancel'?{}:body);
+  if(action==='cancel'){const cancelled=checkOriginalJob(value?.job,args.projectId,target.stageKind);if(cancelled.id!==id)originalMismatch('Cancellation returned a different job.');return originalReceipt(receipt,before,cancelled);}
+  if(action==='retry')return admitted(value,target.stageKind,args.expectedRevision,id);
+  if(action==='animate')return admitted(value,'motion',args.expectedRevision+1);
+  const after=checkOriginalState(value,args.projectId),reviewed=after.keyframeJob,review=reviewed?.output?.review;
+  if(reviewed?.id!==id||after.project.revision!==args.expectedRevision+1||reviewed.status!==(args.verdict==='passed'?'succeeded':'rejected')||review?.verdict!==args.verdict||review.outputHash!==args.expectedOutputHash||reviewed.output?.provenance?.outputHash!==args.expectedOutputHash||review.notes!==args.notes.trim()||review.mediaKind!=='image'||review.reviewer!=='operator-visual-review'||review.evidenceHash!==reviewed.output?.provenance?.evidenceHash)originalMismatch('The persisted operator decision does not match this exact still, hash, verdict and notes.');
+  return originalReceipt(receipt,after,reviewed);
+}
 export async function dispatchTool(name, args = {}, { api = createLocalApi(), root = ROOT, env = process.env, verify = verifyMedia } = {}) {
   const receipt = { status: 'failed', outputPaths: [], metadata: {}, diagnostics: [], reproducibility: { tool: name, adapterVersion: 'automation-v1.1', inputHash: createHash('sha256').update(JSON.stringify(canonical(args))).digest('hex') }, verification: { status: 'not-run', kind: 'none' } };
   const done = (metadata, kind) => Object.assign(receipt, { status: 'succeeded', metadata, verification: { status: 'passed', kind } });
   try {
     const definition = TOOL_DEFINITIONS.find(tool => tool.name === name); if (!definition) throw new ToolError('UNKNOWN_TOOL', `Unknown VYREALM tool ${name}`); validateInput(definition.inputSchema, args);
+    if(ORIGINAL_TOOLS.includes(name))return await dispatchOriginalTool(name,args,api,receipt);
     if (BLOCKED[name]) { receipt.status = 'blocked'; receipt.diagnostics.push({ code: BLOCKED[name], message: blockedDescriptions[BLOCKED[name]] }); return receipt; }
     const path = `/api/projects/${encodeURIComponent(args.projectId || '')}`;
     const project = async () => { const value = await api(path); receipt.reproducibility.projectId = value.id; receipt.reproducibility.revision = value.revision; if (args.expectedRevision && value.revision !== args.expectedRevision) throw new ToolError('REVISION_CONFLICT', 'Project changed; inspect it again before editing.', { currentRevision: value.revision }); return value; };
     const save = async patch => { const result = await api(path, 'PATCH', { expectedRevision: args.expectedRevision, patch }); const value = await api(path); if (result.revision !== value.revision || Object.keys(patch).some(key => JSON.stringify(value[key]) !== JSON.stringify(patch[key]))) throw new ToolError('SAVE_VERIFICATION_FAILED', 'Saved project did not match requested change'); receipt.reproducibility.revision = value.revision; return done({ project: value }, 'sqlite-read-after-write'); };
+    if (['research_topic','prepare_creator_pack','create_thumbnail'].includes(name)) {
+      if(!/^[a-zA-Z0-9-]+$/.test(args.projectId))throw new ToolError('INVALID_INPUT','Use a saved project identifier.');
+      if(name==='research_topic'){
+        if(!args.query.trim()||args.sourceUrls?.length===0)throw new ToolError('INVALID_INPUT','Provide a nonempty query and optionally one to three public source URLs.');
+        for(const source of args.sourceUrls||[]){let url;try{url=new URL(source);}catch{throw new ToolError('INVALID_INPUT','Invalid source URL.');}if(!['http:','https:'].includes(url.protocol)||url.username||url.password)throw new ToolError('INVALID_INPUT','Use public HTTP(S) source URLs without credentials.');}
+      }
+      await project();
+      if(name==='research_topic'){
+        const job=await api(`${path}/research`,'POST',{expectedRevision:args.expectedRevision,query:args.query,...(args.sourceUrls?{sourceUrls:args.sourceUrls}:{}),onlineAuthorized:true});
+        if(!job?.id||job.projectId!==args.projectId||job.revision!==args.expectedRevision||job.type!=='research'||!['queued','running'].includes(job.status))throw new ToolError('JOB_ADMISSION_FAILED','No matching durable research job was admitted.');
+        receipt.status=job.status;receipt.metadata={job,nextTool:'inspect_job',onlineAuthorized:true};return receipt;
+      }
+      const state=await api(`${path}/creator-pack`,'POST',{expectedRevision:args.expectedRevision}),pack=state?.pack;
+      if(state?.project?.id!==args.projectId||state?.job?.projectId!==args.projectId||state.job.type!=='creator-pack'||state.job.status!=='succeeded'||!pack?.jobId||pack.jobId!==state.job.id||pack.projectRevision!==args.expectedRevision||!pack.sourceAssetId||!pack.assets?.thumbnail||!/^[a-f0-9]{64}$/i.test(pack.source?.sha256||''))throw new ToolError('CREATOR_PACK_RECEIPT_MISMATCH','Creator pack response did not match the requested source revision.');
+      if(!pack.attached)receipt.diagnostics.push({code:'CREATOR_PACK_NOT_ATTACHED',message:'The project changed during preparation. Files exist, but the pack was not attached to the new revision.'});
+      return done({...state,sourceMethod:'rendered-frame-thumbnail-and-local-drafts',published:false},'local-creator-pack-receipt');
+    }
     if (name === 'create_project') { const created = await api('/api/projects', 'POST', { settings: { width: 1920, height: 1080, fps: 24 }, ...args }); const value = await api(`/api/projects/${encodeURIComponent(created.id)}`); if (value.name !== args.name || value.brief !== args.brief) throw new ToolError('SAVE_VERIFICATION_FAILED', 'Created project could not be read back'); receipt.reproducibility.projectId = value.id; receipt.reproducibility.revision = value.revision; return done({ project: value }, 'sqlite-read-after-write'); }
     if (name === 'inspect_project') return done({ project: await project() }, 'sqlite-read');
+    if (name === 'edit_uploaded_footage' || name === 'get_production_run') {
+      if (!/^[a-zA-Z0-9-]+$/.test(args.projectId) || name === 'edit_uploaded_footage' && !args.brief.trim()) throw new ToolError('INVALID_INPUT', 'Use a saved project identifier and a nonempty edit brief.');
+      if (name === 'edit_uploaded_footage') await project();
+      const state = name === 'edit_uploaded_footage'
+        ? await api(`${path}/production-run`, 'POST', { expectedRevision: args.expectedRevision, brief: args.brief, sourceMode: 'uploaded-media' })
+        : await api(`${path}/production-run`);
+      if (state?.project?.id !== args.projectId || state.job && state.job.projectId !== args.projectId) throw new ToolError('PRODUCTION_STATE_MISMATCH', 'The production response does not belong to the requested project.');
+      const job = state.job;
+      if (name === 'edit_uploaded_footage' && (!job?.id || !job.status || job.type !== 'raw-footage-edit')) throw new ToolError('JOB_ADMISSION_FAILED', 'No durable uploaded-footage edit job was returned.');
+      receipt.status = job?.status || 'not_started';
+      receipt.metadata = { ...state, provenance: job?.output?.provenance || null, nextTool: 'get_production_run' };
+      receipt.reproducibility.projectId = args.projectId;
+      receipt.reproducibility.revision = state.project.revision;
+      receipt.outputPaths = Object.values(job?.output?.outputs || {}).filter(value => typeof value === 'string');
+      const verification = job?.output?.verification;
+      if (verification) receipt.verification = { status: verification.ok ? 'passed' : 'failed', kind: 'worker-media-verification', visualRealismEvaluated: false, result: verification };
+      if (!job) receipt.diagnostics.push({ code: 'NO_PRODUCTION_RUN', message: 'This project has no product-owned production run.' });
+      if (job?.status === 'review_required') receipt.diagnostics.push({ code: 'VISUAL_REVIEW_REQUIRED', message: 'Inspect the actual picture, sound and captions in VYREALM before approving this output.' });
+      if (job?.error) receipt.diagnostics.push({ code: 'JOB_ERROR', message: job.error });
+      if (state.conversationDiagnostic) receipt.diagnostics.push({ code: state.conversationDiagnostic, message: 'Production was admitted, but its conversation turn could not be saved.' });
+      if (receipt.status === 'succeeded' && receipt.verification.status === 'failed') receipt.status = 'failed';
+      return receipt;
+    }
     if (name === 'list_projects') { const state = await api('/api/state'); const rows = (state.projects || []).filter(row => args.includeDemos !== false || !(row.demo || row.isDemo)).slice(0, args.limit || 100).map(({ id, name, revision, updatedAt, latestOutput, demo, isDemo }) => ({ id, name, revision, updatedAt, latestOutput, demo: Boolean(demo || isDemo) })); return done({ projects: rows }, 'sqlite-read'); }
     if (name === 'inspect_hardware') return done({ hardware: await api('/api/hardware') }, 'hardware-inspection');
     if (name === 'list_models') return done(await api('/api/providers'), 'provider-inventory-only');

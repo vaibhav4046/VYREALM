@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
-const source=readFileSync(new URL('../app.js',import.meta.url),'utf8').replace(/\ninit\(\);\s*$/,'\n');
+const source=readFileSync(new URL('../app.js',import.meta.url),'utf8').replace(/^import[^\n]*\r?\n/gm,'').replace(/\ninit\(\);\s*$/,'\n');
 function fixture(){
  const calls=[],current=[{id:'job',status:'running',progress:0.25}];
  const ctx=vm.createContext({document:{visibilityState:'visible',activeElement:null,addEventListener(){},querySelector(){return null},querySelectorAll(){return[]}},localStorage:{getItem(){return null}},calls,current,remote:{projects:[],assets:[],jobs:current,capabilities:[]}});

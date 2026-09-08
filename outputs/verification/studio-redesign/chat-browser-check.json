@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "date": "2026-09-08T02:09:48.222Z",
+  "observations": [
+    {
+      "name": "Default chat1440",
+      "width": 1440,
+      "scroll": 1425
+    },
+    {
+      "name": "Unsent chat draft preserved across navigation",
+      "passed": true
+    },
+    {
+      "name": "Mahabharata shots context",
+      "text": "01 · 01-the-field\nPhotorealistic Indian epic film still. At dawn on the dusty Kurukshetra plain, foreground weathered wooden chariot wheel with worn brass rim and detailed rope binding. Midground a white horse shoulder and a saffron cloth banner, distant ranks of warriors softly visible through atmospheric dust. Strong foreground, midground and background separation. Warm side light catches wood grain, a little airborne dust, authentic material texture, 35mm cinema lens, grounded natural contrast. No text.\n5.0s · low-wide-detail · needs-casting-revision\n02 · 02-the-cost\nPhotorealistic close portrait of the locked original Arjuna reference on his chariot at dawn. Medium-brown South Asian face, long black hair tied back, narrow gold headband, saffron shoulder cloth and restrained metal armor. Eyes moist with grief as he recognises kin in the distant army, natural skin pores and fine facial hair texture. A blurred rope edge in foreground, detailed face in midground, flags and dust in background. Warm light from camera-left, cool fill, shallow depth of field, 85mm cinema lens. No text.\n5.0s · close-portrait · needs-casting-revision\n03 · 03-the-hand\nPhotorealistic close insert of Arjuna's right hand with five natural fingers, the same worn arm guard and saffron sleeve edge, loosely holding the wrapped grip of Gandiva. Textured timber chariot floor behind the hand, a softly blurred brass rail in foreground and out-of-focus dusty plain behind. Detailed skin creases, leather grain and bow wrapping. The curved bow is physically coherent and unstrung action is not shown. Warm dawn key from camera-left, 75mm lens. No text.\n5.0s · hand-and-bow-insert · needs-casting-revision\n04 · 04-the-guide\nPhotorealistic devotional Indian epic cinema portrait of the locked original Krishna reference, charioteer at Kurukshetra dawn, traditionally blue-toned dark complexion with natural skin texture, black curled hair, yellow pitambara, restrained gold ornaments and compact crown with one small peacock feather. He looks compassionately toward Arjuna just offscreen, holding a rein. Foreground soft rein, detailed expressive face and woven yellow cloth, distant flags blurred behind. Same warm side light and cool fill. 85mm lens. No glowing aura, no text.\n5.0s · three-quarter-close-portrait · needs-casting-revision\n05 · 05-the-listening\nPhotorealistic over-shoulder shot from behind Krishna's softly blurred yellow-clothed shoulder toward the exact locked Arjuna face on the same timber chariot. Arjuna listens with quiet anguish, saffron cloth and gold headband unchanged. Layered shoulder foreground, face midground, banners and dawn dust in the background. Keep their established eyeline and warm light from camera-left. 65mm lens, natural depth of field, detailed skin and cloth. No text.\n5.0s · over-shoulder · needs-casting-revision\n06 · 06-the-choice\nPhotorealistic profile close-up of the same Arjuna reference on the chariot, looking toward the distant field. His expression is thoughtful resolve, not rage. Same tied black hair, narrow gold headband, saffron cloth and natural brown skin. A thin golden rim reaches the cheek and hair, foreground chariot rail out of focus, background flags and dust show depth. Controlled highlights, 85mm cinematic portrait, space low center for a later editorial title, no text in the generated frame.\n5.0s · profile-close-portrait · needs-casting-revision"
+    },
+    {
+      "name": "Mahabharata characters context",
+      "text": "Arjuna\nOriginal adult South Asian man, medium-brown skin with visible natural pores, brown eyes, long black hair tied back, short moustache and short chin beard matching the inspected original keyframe, narrow gold headband. Textured ochre wrap, saffron shoulder cloth, restrained fitted protective metalwork and simple right-hand leather arm guard. Natural proportions and detailed textiles.\nreplacement-required · visual review required\nEdit\nKrishna\nOriginal adult South Asian man with traditionally blue-toned dark complexion and natural facial detail, dark curled hair, yellow pitambara, restrained gold jewellery, compact crown with a small peacock feather. Compassionate and composed charioteer holding reins. Traditional visual interpretation, no halo effects.\nreplacement-required · visual review required\nEdit\nCharacter direction\nName\nAppearance, wardrobe & continuity\nOwned image reference\nNo image reference\nSave character\nSaved as a project revision. Existing shots are retained; this does not verify a generated face."
+    },
+    {
+      "name": "Project chat390",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "name": "Assets context390",
+      "width": 390,
+      "scroll": 390
+    },
+    {
+      "name": "Shift+Enter creates a line break without sending",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "remoteRequests": []
+}

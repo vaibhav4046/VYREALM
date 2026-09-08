@@ -51,7 +51,7 @@ const CATALOGUE = [
     id: 'wan22-5b',
     label: 'Wan2.2 TI2V-5B (Q4_K_M GGUF)',
     kind: 'video',
-    purpose: 'Higher-fidelity text/image-to-video. Slow on 6GB but the best-looking local video model installed.',
+    purpose: 'Local text/image-to-video. Review each shot; runtime depends on the selected graph and available memory.',
     sizeBytes: 3433116000,
     sizeBasis: 'MEASURED_ON_DISK',
     // umt5-xxl-encoder-Q4_K_S.gguf 3,497,596,768 + wan2.2_vae.safetensors
@@ -74,14 +74,14 @@ const CATALOGUE = [
     comfyNodeClasses: ['UnetLoaderGGUF', 'CLIPLoaderGGUF', 'VAELoader', 'Wan22ImageToVideoLatent', 'KSampler', 'VAEDecode'],
     impactScore: 6,
     measurementKey: 'wan22-5b',
-    whyItHelps: 'The fidelity ceiling for local video on this machine.',
+    whyItHelps: 'Produces source frames locally with recorded model and workflow provenance.',
     notes: 'Needs umt5-xxl-encoder-Q4_K_S.gguf (3,497,596,768 B) and wan2.2_vae.safetensors (1,409,400,960 B) alongside it; minDiskGb covers all three. Node classes verified present in the installed ComfyUI checkout.'
   },
   {
     id: 'ltxv-2b-distilled',
     label: 'LTX-Video 2B 0.9.8 distilled (Q8_0 GGUF)',
     kind: 'video',
-    purpose: 'FAST draft-to-final video. The working loop: iterate here, escalate to Wan only when a shot is locked.',
+    purpose: 'Candidate eight-step image-to-video route. The current owned-keyframe profiles require separate timing and visual qualification.',
     sizeBytes: 2173891072,
     sizeBasis: 'MEASURED_ON_DISK',
     // t5-v1_1-xxl-encoder-Q5_K_M.gguf 3,386,856,640 +
@@ -93,8 +93,8 @@ const CATALOGUE = [
     // 97 frames at 768x512 completed inside this 6 GB card (MEASUREMENTS).
     // No per-run VRAM peak was captured, so the floor is the card it ran on.
     requirementBasis: 'MEASURED_RUN',
-    license: 'LTXV Open Weights License (Lightricks)',
-    licenseBasis: 'UNVERIFIED',
+    license: 'LTXV Open Weights License 0.X — custom model terms',
+    licenseBasis: 'ON_DISK_LICENSE',
     sourceUrl: 'https://huggingface.co/Lightricks/LTX-Video',
     sha256: 'a0637b06a43fea8d71af2c7bf912c8c8a36d61654966054621f80f2c39e6faca',
     hashBasis: 'MEASURED_ON_DISK',
@@ -103,8 +103,8 @@ const CATALOGUE = [
     comfyNodeClasses: ['UnetLoaderGGUF', 'CLIPLoaderGGUF', 'VAELoader', 'EmptyLTXVLatentVideo', 'LTXVConditioning', 'ModelSamplingLTXV', 'LTXVScheduler', 'SamplerCustom', 'VAEDecode'],
     impactScore: 9,
     measurementKey: 'ltxv-2b-distilled',
-    whyItHelps: 'Turns video generation from an overnight job into an inner loop.',
-    notes: 'Needs t5-v1_1-xxl-encoder-Q5_K_M.gguf (3,386,856,640 B) and ltxv-0.9.8-2b-distilled-vae.safetensors (2,493,859,780 B). Licence text is not present in the install, so the licence line is the vendor claim and is UNVERIFIED here.'
+    whyItHelps: 'A smaller distilled model may reduce iteration time; a measured profile comparison must establish the tradeoff.',
+    notes: 'Needs t5-v1_1-xxl-encoder-Q5_K_M.gguf (3,386,856,640 B) and ltxv-0.9.8-2b-distilled-vae.safetensors (2,493,859,780 B). Model version 0.9.8 uses Open Weights 0.X, not the older 0.9.5 OpenRAIL terms. Upstream revision 8984fa25007f376c1a299016d0957a37a2f797bb requires a separate commercial licence at annual revenue of $10 million or more and includes downstream restrictions/notices. The exact licence and checksum are retained in runtime/notices/LTX-Video-Open-Weights-License-0.X.txt and LTX-Video-license-provenance.json. Historical 768x512 timing is not qualification of the current 512 or 1024 owned-keyframe profiles; see docs/ENGINE_RESEARCH_2026-09-08.md.'
   },
   {
     id: 'acestep-15-base',

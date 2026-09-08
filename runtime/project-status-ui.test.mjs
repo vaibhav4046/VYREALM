@@ -2,13 +2,15 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { jobProgressPercent } from '../cinematic-studio.js';
+import { createOriginalGenerationPanel } from '../original-generation.js';
 
 // Exercise the shipped rendering functions with inert DOM boundaries. No local
 // project, provider, browser recording or GPU job is changed by this fixture.
-const source=readFileSync(new URL('../app.js',import.meta.url),'utf8').replace(/\ninit\(\);\s*$/,'\n');
+const source=readFileSync(new URL('../app.js',import.meta.url),'utf8').replace(/^import[^\n]*\r?\n/gm,'').replace(/\ninit\(\);\s*$/,'\n');
 function fixture(){
  const content={innerHTML:'',querySelector:()=>null};
- const context=vm.createContext({document:{activeElement:null,addEventListener(){},querySelector:s=>s==='.content'?content:null,querySelectorAll:()=>[]}});
+ const context=vm.createContext({jobProgressPercent,createOriginalGenerationPanel,document:{activeElement:null,addEventListener(){},querySelector:s=>s==='.content'?content:null,querySelectorAll:()=>[]}});
  vm.runInContext(source,context);
  const run=code=>vm.runInContext(code,context);
  run(`store.active='Dashboard';store.state.projects=[{id:'film',name:'Between Two Armies',revision:5,timeline:[],latestOutput:{jobId:'retry',status:'blocked',reason:'Provider history timed out'}}];`);
@@ -35,6 +37,16 @@ test('production plan does not call blocked or still-running empty projects rend
  assert.match(f.run('cinema()'),/STATE<\/span><strong>RUNNING/);
  assert.doesNotMatch(f.run('cinema()'),/>Rendered</);
  f.jobs([job({status:'blocked'})]);assert.match(f.run('cinema()'),/STATE<\/span><strong>BLOCKED/);
+});
+
+test('cinematic shot plans are not treated as format recipes and appear in director and storyboard',()=>{
+ const f=fixture();f.run("store.project=store.state.projects[0];store.project.productionPlan={shots:[{id:'01-chariot',keyframePrompt:'A detailed timber chariot at dawn',durationSeconds:5,generationStatus:'needs-casting-revision'}]}");
+ assert.equal(f.run('recipePlanMarkup(store.project)'),'');
+ assert.match(f.run('cinema()'),/PLANNED SHOTS<\/span><strong>1/);
+ assert.match(f.run('cinema()'),/0 clips on the timeline/);
+ assert.match(f.run('storyboard()'),/A detailed timber chariot at dawn/);
+ assert.match(f.run('storyboard()'),/needs-casting-revision/);
+ assert.doesNotMatch(f.run('storyboard()'),/No storyboard yet|RENDERED/);
 });
 
 test('job selection uses retry update times and ignores other projects',()=>{

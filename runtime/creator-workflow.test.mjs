@@ -2,7 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { spawn } from 'node:child_process';
+import { createServer } from 'node:net';
 import { DatabaseSync } from 'node:sqlite';
 import { buildCreatorWorkflowPlan, saveCreatorWorkflowPlan, inspectCreatorWorkflows, validateCreatorWorkflowInput } from './creator-workflow.mjs';
 
@@ -10,6 +13,7 @@ const input = { projectId:'project-1', expectedRevision:3, workflowId:'tutorial'
 const project = { id:'project-1', revision:3, name:'Repair tutorial', brief:'Existing brief', settings:{fps:24}, timeline:[], latestOutput:null };
 const assets = [{id:'video-1',projectId:'project-1',mime:'video/mp4',name:'My recorded demonstration.mp4',available:true}];
 const capabilities = [{id:'timeline',implementation:'implemented',status:'configured'}, {id:'transcription',implementation:'implemented',status:'missing-runtime'}, {id:'generation',implementation:'implemented',status:'preflight-required'}];
+async function removeTestDirectory(path){const target=resolve(path);assert.equal(dirname(target),resolve(tmpdir()));assert.ok(target.includes('vyrealm-creator-'));await rm(target,{recursive:true,force:true});}
 
 test('uploaded footage receives actionable offline planning without a neural gate',()=>{
  const plan=buildCreatorWorkflowPlan({input,project,assets,capabilities});
@@ -47,6 +51,16 @@ test('unknown fields, foreign assets, invalid bounds and invalid choices fail cl
  assert.throws(()=>buildCreatorWorkflowPlan({input,project,assets:[{...assets[0],available:false}],capabilities}),{code:'CREATOR_ASSET_INVALID'});
 });
 
+test('chat form fields map to the saved plan and non-media receipt assets must be excluded',()=>{
+ const fields={workflowId:'talking-head',sourceMode:'uploaded-media',durationSeconds:'30',researchNotes:'My recording; keep the original speaker.',scriptText:'Here is the repair demonstration.'};
+ const request={...fields,projectId:project.id,expectedRevision:project.revision,brief:project.brief,durationSeconds:Number(fields.durationSeconds),narrationMode:'none',captionsEnabled:true,assetIds:['video-1']};
+ const plan=buildCreatorWorkflowPlan({input:request,project,assets,capabilities});
+ assert.equal(plan.workflowId,fields.workflowId);assert.equal(plan.sourceMode,fields.sourceMode);assert.equal(plan.research.notes,fields.researchNotes);assert.equal(plan.script.text,fields.scriptText);
+ assert.ok(Array.isArray(plan.shots));assert.ok(plan.shots.every(s=>s.id&&s.description&&s.durationSeconds));assert.ok(plan.stages.every(s=>s.id&&s.label&&s.status));
+ assert.throws(()=>buildCreatorWorkflowPlan({input:{...request,assetIds:['video-1','quality-json']},project,assets:[...assets,{id:'quality-json',projectId:project.id,mime:'application/json',available:true}],capabilities}),{code:'CREATOR_ASSET_INVALID'});
+ for(const workflowId of ['talking-head','social-recut','tutorial'])assert.throws(()=>validateCreatorWorkflowInput({...request,workflowId,sourceMode:'local-generation'}),{code:'CREATOR_INPUT_INVALID'});
+});
+
 test('saving and reopening uses existing SQLite revisions without changing media or outputs',async()=>{
  const root=await mkdtemp(join(tmpdir(),'vyrealm-creator-'));const file=join(root,'source.mp4');await writeFile(file,'owned fixture media metadata; no render claimed');
  const db=new DatabaseSync(join(root,'projects.sqlite'));
@@ -62,7 +76,7 @@ test('saving and reopening uses existing SQLite revisions without changing media
   assert.deepEqual(reopened.creatorWorkflow,result.plan);assert.equal(db.prepare('SELECT count(*) AS n FROM project_revisions').get().n,2);
   assert.throws(()=>saveCreatorWorkflowPlan({db,input,capabilities}),{code:'CREATOR_REVISION_CONFLICT'});
   assert.equal(db.prepare('SELECT count(*) AS n FROM assets').get().n,1);
- }finally{db.close();await rm(root,{recursive:true,force:true});}
+ }finally{db.close();await removeTestDirectory(root);}
 });
 
 test('runtime discovery reports configuration rather than inventing media capabilities',async()=>{
@@ -74,5 +88,31 @@ test('runtime discovery reports configuration rather than inventing media capabi
   await mkdir(join(root,'workers','tools'),{recursive:true});await writeFile(join(root,'workers','timeline.mjs'),'// fixture');await writeFile(join(root,'workers','tools',process.platform==='win32'?'ffmpeg.exe':'ffmpeg'),'fixture');await writeFile(join(root,'workers','tools',process.platform==='win32'?'ffprobe.exe':'ffprobe'),'fixture');
   const installed=await inspectCreatorWorkflows({root,runtimeDirectory:join(root,'runtime')});assert.equal(installed.capabilities.find(c=>c.id==='timeline').status,'configured');
   assert.equal(installed.capabilities.find(c=>c.id==='timeline').verifiedExecution,false);
- }finally{await rm(root,{recursive:true,force:true});}
+ }finally{await removeTestDirectory(root);}
+});
+
+test('actual local HTTP journey plans uploaded media, reopens it and rejects a stale retry',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'vyrealm-creator-http-')),repo=fileURLToPath(new URL('..',import.meta.url));
+ const reservation=createServer();await new Promise(resolve=>reservation.listen(0,'127.0.0.1',resolve));const port=reservation.address().port;await new Promise(resolve=>reservation.close(resolve));
+ const child=spawn(process.execPath,['server.js'],{cwd:repo,env:{...process.env,PORT:String(port),VYRELUM_DATA_DIR:join(root,'data'),VYRELUM_RUNTIME_DIR:join(root,'runtime'),OLLAMA_HOST:'http://127.0.0.1:1'},windowsHide:true,stdio:['ignore','pipe','pipe','ipc']});
+ let output='';child.stdout.on('data',b=>{output+=b;});child.stderr.on('data',b=>{output+=b;});const closed=new Promise(resolve=>child.once('close',resolve));
+ const base=`http://127.0.0.1:${port}`;let session;
+ try{
+  for(let attempt=0;attempt<80;attempt++){try{session=await(await fetch(`${base}/api/session`,{signal:AbortSignal.timeout(500)})).json();break;}catch{if(child.exitCode!==null)throw new Error(output);await new Promise(resolve=>setTimeout(resolve,100));}}
+  assert.ok(session?.token,output);const headers={'X-Vyrelum-Token':session.token,'content-type':'application/json'};
+  const api=async(path,method='GET',body)=>{const response=await fetch(base+path,{method,headers,...(body===undefined?{}:{body:JSON.stringify(body)}),signal:AbortSignal.timeout(5000)});return {status:response.status,data:await response.json()};};
+  const catalogue=await api('/api/creator/workflows');assert.equal(catalogue.status,200);assert.equal(catalogue.data.workflows.length,6);assert.equal(catalogue.data.inspection.networkAccess,false);
+  const created=await api('/api/projects','POST',{name:'Uploaded workflow HTTP test',brief:'My original recorded demonstration',mode:'cinematic',timeline:[]});assert.equal(created.status,201);
+  const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+a0S0AAAAASUVORK5CYII=','base64');
+  const uploaded=await fetch(base+'/api/assets',{method:'POST',headers:{'X-Vyrelum-Token':session.token,'content-type':'image/png','x-filename':'owned-original-test.png','x-project-id':created.data.id},body:png});assert.equal(uploaded.status,201);const asset=await uploaded.json();
+  const request={...input,projectId:created.data.id,expectedRevision:created.data.revision,assetIds:[asset.id]};
+  const saved=await api('/api/creator/workflows/plan','POST',request);assert.equal(saved.status,201);assert.equal(saved.data.project.revision,2);assert.equal(saved.data.plan.mediaGenerated,false);
+  const reopened=await api(`/api/projects/${created.data.id}`);assert.deepEqual(reopened.data.creatorWorkflow,saved.data.plan);assert.deepEqual(reopened.data.timeline,[]);assert.equal(reopened.data.latestOutput,null);
+  assert.equal((await api('/api/jobs')).data.length,0);assert.equal((await api('/api/creator/workflows/plan','POST',request)).status,409);
+ }finally{
+  if(child.exitCode===null)child.send({type:'shutdown'});
+  const timeout=Symbol('timeout');let timer;const result=await Promise.race([closed,new Promise(resolve=>{timer=setTimeout(()=>resolve(timeout),5000);})]);clearTimeout(timer);
+  if(result===timeout){child.kill();await closed;}
+  await removeTestDirectory(root);
+ }
 });

@@ -1,0 +1,8 @@
+{
+  "text": "Direction received for “Bow workshop”. Open the suggested workspace to turn this direction into a saved production step.\n\n0 timeline clips · output: none. No media job was started by this message.",
+  "actions": [
+    "assets"
+  ],
+  "source": "local-workflow-guide",
+  "diagnostic": "Local model exceeded the response time limit"
+}

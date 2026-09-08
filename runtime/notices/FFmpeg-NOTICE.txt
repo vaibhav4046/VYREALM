@@ -1,0 +1,30 @@
+FFmpeg and FFprobe binary notice
+
+Distributed executables: workers/tools/ffmpeg.exe and workers/tools/ffprobe.exe
+Reported build: 8.1.1-full_build-www.gyan.dev
+Copyright: FFmpeg developers (FFmpeg reports 2000-2026; FFprobe 2007-2026).
+
+The executables report GNU General Public License version 3 or later.
+The unmodified GPL version 3 text is in FFmpeg-GPL-3.0.txt alongside this notice.
+They are external media tools; the MIT license for original VYREALM source
+is not a license for these tools or their linked libraries.
+
+Original binary release:
+https://github.com/GyanD/codexffmpeg/releases/tag/8.1.1
+
+The binary publisher identifies FFmpeg source commit 239f2c733d:
+https://github.com/FFmpeg/FFmpeg/commit/239f2c733d
+FFmpeg release source tree:
+https://github.com/FFmpeg/FFmpeg/tree/n8.1.1
+Publisher build information and linked-library list:
+https://www.gyan.dev/ffmpeg/builds/
+
+SHA-256 of the exact executables inventoried for VYREALM:
+ffmpeg.exe  09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73
+ffprobe.exe a6618e99bb58869ded3c6f37b53aa1a8d701c3591dbb7b5b317d47369c112be2
+
+Build configuration is recorded in FFmpeg-build-configuration.txt.
+The release publisher must retain the applicable third-party notices and
+source-access arrangements for the actual binaries it distributes. This
+notice records upstream links; it does not claim that a complete archive
+of every linked dependency's corresponding source is bundled here.

@@ -9,11 +9,11 @@ import {buildCaptionFilter} from '../runtime/format-captions.mjs';
 import {DEFAULT_CAPTION_FONT} from '../runtime/format-render.mjs';
 import {prepareTimedCaptions} from '../runtime/timed-captions.mjs';
 
-const CACHE_VERSION='timeline-base-v1';
+const CACHE_VERSION='timeline-base-v3-colour-continuity';
 const MEDIA_EXT=new Set(['.mp4','.mov','.m4v','.mkv','.webm','.avi','.gif','.png','.jpg','.jpeg','.webp','.bmp','.tif','.tiff','.wav','.mp3','.flac','.ogg','.m4a','.aac','.opus']);
 const finite=(x,n)=>typeof x==='number'&&Number.isFinite(x)&&x>=0&&(!n||x<=n);
 const localPath=(value,label)=>{if(typeof value!=='string'||!value.trim()||value.includes('\0')||/^[a-z][a-z0-9+.-]*:/i.test(value)&&!/^[a-z]:[\\/]/i.test(value)||/^[/\\]{2}/.test(value)) throw new Error(`${label} must be a local file path`); const p=resolve(value); if(!MEDIA_EXT.has(extname(p).toLowerCase())) throw new Error(`${label} has unsupported media extension`); return p;};
-const run=(cmd,args,{timeout=120000,maxLog=6000,captureStderr=false}={})=>new Promise((ok,bad)=>{const p=spawn(cmd,args,{stdio:['ignore','pipe','pipe'],windowsHide:true});let out='',err='',done=false; const finish=(fn,v)=>{if(done)return;done=true;clearTimeout(timer);fn(v)};p.stdout.on('data',d=>{out+=d.toString();if(out.length>maxLog)out=out.slice(-maxLog)});p.stderr.on('data',d=>{err+=d.toString();if(err.length>maxLog)err=err.slice(-maxLog)});p.on('error',e=>finish(bad,e));p.on('close',c=>c?finish(bad,new Error(`${basename(cmd)} exited ${c}: ${err.slice(-1800)}`)):finish(ok,captureStderr?{stdout:out,stderr:err}:out));const timer=setTimeout(()=>{p.kill('SIGKILL');finish(bad,new Error(`${basename(cmd)} timed out`))},timeout);});
+const run=(cmd,args,{timeout=120000,maxLog=6000,captureStderr=false}={})=>new Promise((ok,bad)=>{const bounded=basename(cmd).toLowerCase().startsWith('ffmpeg')?['-filter_threads','2','-filter_complex_threads','2',...args.flatMap(value=>value==='-i'?['-threads','1','-i']:[value])]:args;const p=spawn(cmd,bounded,{stdio:['ignore','pipe','pipe'],windowsHide:true});let out='',err='',done=false; const finish=(fn,v)=>{if(done)return;done=true;clearTimeout(timer);fn(v)};p.stdout.on('data',d=>{out+=d.toString();if(out.length>maxLog)out=out.slice(-maxLog)});p.stderr.on('data',d=>{err+=d.toString();if(err.length>maxLog)err=err.slice(-maxLog)});p.on('error',e=>finish(bad,e));p.on('close',c=>c?finish(bad,new Error(`${basename(cmd)} exited ${c}: ${err.slice(-1800)}`)):finish(ok,captureStderr?{stdout:out,stderr:err}:out));const timer=setTimeout(()=>{p.kill('SIGKILL');finish(bad,new Error(`${basename(cmd)} timed out`))},timeout);});
 const fileHash=async p=>{const h=createHash('sha256'); for await (const chunk of createReadStream(p)) h.update(chunk); return h.digest('hex');};
 const probe=async (ffprobe,p)=>JSON.parse(await run(ffprobe,['-v','error','-print_format','json','-show_streams','-show_format',p]));
 const escSrt=s=>String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\r','').replaceAll('\n','\n');
@@ -42,6 +42,8 @@ export async function renderTimeline(request,{output,ffmpeg,ffprobe,cacheDir,onP
   for (let i=0;i<clips.length;i++) {
     const c=clips[i]||{};
     const p=localPath(c.path,`clip ${i} path`);
+    const clipFraming=c.framing||framing;if(!['fit','crop-left','crop-right','crop-center','crop-custom'].includes(clipFraming))throw new Error('Invalid clip framing');
+    const framingFilter=rawFramingFilter(width,height,clipFraming,c.cropPosition);
     if(c.kind!=='video'&&c.kind!=='image') throw new Error(`clip ${i} kind must be video or image`);
     const duration=Number(c.duration), trim=Number(c.trimStart||0);
     if(!finite(duration,3600)||duration<=0||!finite(trim,3600)) throw new Error(`clip ${i} duration/trimStart invalid`);
@@ -49,23 +51,31 @@ export async function renderTimeline(request,{output,ffmpeg,ffprobe,cacheDir,onP
     const sourceHash=await fileHash(p); let sourceProbe=null;
     if(c.kind==='video') { sourceProbe=await probe(ffprobe,p); const d=Number(sourceProbe.format?.duration||0); if(!d||trim>=d||trim+duration>d+0.08) throw new Error(`clip ${i} trim exceeds source duration`); }
     const frames=Math.max(1,Math.round(duration*fps)), actual=frames/fps;
-    const key=createHash('sha256').update(JSON.stringify({v:CACHE_VERSION,sourceHash,kind:c.kind,trim,duration:actual,width,height,fps,framing})).digest('hex');
+    const key=createHash('sha256').update(JSON.stringify({v:CACHE_VERSION,sourceHash,kind:c.kind,trim,duration:actual,width,height,fps,framing:clipFraming,cropPosition:c.cropPosition??null})).digest('hex');
     const base=join(cache,`${key}.mkv`), manifest=join(cache,`${key}.json`); let hit=false;
-    if(existsSync(base)&&existsSync(manifest)) { try { const m=JSON.parse(await readFile(manifest,'utf8')); hit=m.key===key&&(await stat(base)).size>1000; } catch { hit=false; } }
+    if(existsSync(base)&&existsSync(manifest)) { try { const m=JSON.parse(await readFile(manifest,'utf8')); hit=m.key===key&&m.verification?.frames===frames&&m.verification?.width===width&&m.verification?.height===height&&(await stat(base)).size>1000&&m.outputHash===await fileHash(base); } catch { hit=false; } }
     if(!hit) {
       const tmp=join(cache,`${key}.${process.pid}.${Date.now()}.tmp.mkv`), args=['-y','-protocol_whitelist','file,pipe'];
-      if(c.kind==='image') args.push('-loop','1','-framerate',String(fps),'-i',p); else args.push('-ss',String(trim),'-i',p);
+      // Edited recordings can change colour-range metadata between H.264 segments.
+      // Reinitializing fps/setpts then resets their state and silently drops frames.
+      if(c.kind==='image') args.push('-loop','1','-framerate',String(fps),'-i',p); else args.push('-ss',String(trim),'-reinit_filter','0','-i',p);
       const hasAudio=sourceProbe?.streams?.some(s=>s.codec_type==='audio'); if(!hasAudio) args.push('-f','lavfi','-i','anullsrc=channel_layout=stereo:sample_rate=48000'); const ai=hasAudio?0:1;
-      args.push('-filter:v',`${rawFramingFilter(width,height,framing).replace('force_original_aspect_ratio=increase','force_original_aspect_ratio=increase:force_divisible_by=2').replace('force_original_aspect_ratio=decrease','force_original_aspect_ratio=decrease:force_divisible_by=2')},setsar=1,fps=${fps},trim=duration=${actual},setpts=PTS-STARTPTS`,'-map','0:v:0','-map',`${ai}:a:0`,'-t',String(actual),'-frames:v',String(frames),'-c:v','libx264','-preset','veryfast','-pix_fmt','yuv420p','-c:a','pcm_s16le','-ar','48000','-ac','2',tmp);
-      await run(ffmpeg,args); try { await rename(tmp,base); } catch { await rm(tmp,{force:true}); } await writeFile(manifest,JSON.stringify({key,sourceHash}));
+      args.push('-filter:v',`${framingFilter.replace('force_original_aspect_ratio=increase','force_original_aspect_ratio=increase:force_divisible_by=2').replace('force_original_aspect_ratio=decrease','force_original_aspect_ratio=decrease:force_divisible_by=2')},setsar=1,fps=${fps},trim=duration=${actual},setpts=PTS-STARTPTS`,'-map','0:v:0','-map',`${ai}:a:0`,'-t',String(actual),'-frames:v',String(frames),'-c:v','libx264','-preset','veryfast','-pix_fmt','yuv420p','-c:a','pcm_s16le','-ar','48000','-ac','2','-threads','2',tmp);
+      await run(ffmpeg,args);
+      const counted=JSON.parse(await run(ffprobe,['-v','error','-count_frames','-show_streams','-show_format','-of','json',tmp]));
+      const stream=counted.streams?.find(s=>s.codec_type==='video');
+      if(Number(stream?.nb_read_frames)!==frames||stream?.width!==width||stream?.height!==height||Math.abs(Number(counted.format?.duration)-actual)>.1)throw new Error('TIMELINE_BASE_VERIFICATION_FAILED: Intermediate dimensions, frame count or duration changed');
+      const outputHash=await fileHash(tmp),verification={frames,width,height,durationSeconds:actual};
+      await rename(tmp,base);
+      await writeFile(manifest,JSON.stringify({key,sourceHash,outputHash,verification}));
     }
-    bases.push(base); receiptClips.push({id:c.id??String(i),assetId:c.assetId??null,sourceHash,cacheKey:key,cacheHit:hit,duration:actual,requestedDuration:duration,trimStart:trim}); onProgress?.({stage:'base',index:i,cacheHit:hit});
+    bases.push(base); receiptClips.push({id:c.id??String(i),assetId:c.assetId??null,sourceHash,cacheKey:key,cacheHit:hit,duration:actual,requestedDuration:duration,trimStart:trim,framing:clipFraming,cropPosition:c.cropPosition??null}); onProgress?.({stage:'base',index:i,cacheHit:hit});
   }
   let cursor=0;const clipCaptions=clips.flatMap((clip,i)=>{const start=cursor;cursor+=receiptClips[i].duration;return String(clip.caption||'').trim()?[{start,end:cursor,text:clip.caption}]:[];});
   const captionRows=prepareTimedCaptions(request.timeline.captions??clipCaptions,cursor);
   const captions=captionRows.map((caption,i)=>`${i+1}\n${stamp(caption.start)} --> ${stamp(caption.end)}\n${escSrt(caption.text)}\n`);
   const captionsFile=join(out,'captions.srt'); await writeFile(captionsFile,captions.join('\n'),'utf8');
-  const inputs=[], vlabels=[], alabels=[]; clips.forEach((c,i)=>{inputs.push('-i',bases[i]);vlabels.push(`[${i}:v]setpts=PTS-STARTPTS[v${i}]`);const g=c.muted?0:(finite(Number(c.gain),8)?Number(c.gain):1);alabels.push(`[${i}:a]asetpts=PTS-STARTPTS,volume=${g}[a${i}]`);});
+  const inputs=[], vlabels=[], alabels=[]; clips.forEach((c,i)=>{inputs.push('-reinit_filter','0','-i',bases[i]);vlabels.push(`[${i}:v]setpts=PTS-STARTPTS[v${i}]`);const g=c.muted?0:(finite(Number(c.gain),8)?Number(c.gain):1);alabels.push(`[${i}:a]asetpts=PTS-STARTPTS,volume=${g}[a${i}]`);});
   const vf=vlabels.join(';')+`;${clips.map((_,i)=>`[v${i}]`).join('')}concat=n=${clips.length}:v=1:a=0[vcat]`;
   const af=alabels.join(';')+`;${clips.map((_,i)=>`[a${i}]`).join('')}concat=n=${clips.length}:v=0:a=1[acat]`;
   let fc=`${vf};${af}`,audio='[acat]';
@@ -86,11 +96,11 @@ export async function renderTimeline(request,{output,ffmpeg,ffprobe,cacheDir,onP
   const loudness=JSON.parse(loudnessJson[0]),measured=['input_i','input_tp','input_lra','input_thresh','target_offset'].every(key=>Number.isFinite(Number(loudness[key])));
   const audioNormalization={method:measured?'two-pass-loudnorm':'silent-source',targetLufs:audioTargetLUFS,truePeakCeilingDb:-2,analysis:loudness};
   const normalize=measured?`loudnorm=I=${audioTargetLUFS}:TP=-2:LRA=11:measured_I=${Number(loudness.input_i)}:measured_TP=${Number(loudness.input_tp)}:measured_LRA=${Number(loudness.input_lra)}:measured_thresh=${Number(loudness.input_thresh)}:offset=${Number(loudness.target_offset)}:linear=true`:'anull';
-  fc+=`;${audio}${normalize}[aout]`;audio='[aout]';
+  fc+=`;${audio}${normalize},aresample=48000,apad=whole_len=${Math.round(cursor*48000)},atrim=end_sample=${Math.round(cursor*48000)},asetpts=PTS-STARTPTS[aout]`;audio='[aout]';
   // Short, transient-heavy edits may miss the target even after two-pass
   // loudnorm. Correct the PCM master in bounded passes before video encoding.
   let master=join(out,'audio-master-0.wav');
-  await run(ffmpeg,['-y',...inputs,'-filter_complex',fc+';[vcat]nullsink','-map',audio,'-t',String(cursor),'-c:a','pcm_f32le','-ar','48000','-ac','2',master],{timeout:300000});
+  await run(ffmpeg,['-y',...inputs,'-filter_complex',fc+';[vcat]nullsink','-map',audio,'-c:a','pcm_f32le','-ar','48000','-ac','2',master],{timeout:300000});
   const measureAudio=async path=>{
     const {stderr}=await run(ffmpeg,['-hide_banner','-nostats','-i',path,'-vn','-af',`loudnorm=I=${audioTargetLUFS}:TP=-3:LRA=11:print_format=json`,'-f','null','-'],{captureStderr:true,timeout:300000});
     const match=stderr.match(/\{\s*"input_i"\s*:[\s\S]*?\}/);if(!match)throw new Error('AUDIO_LOUDNESS_MEASUREMENT_FAILED');return JSON.parse(match[0]);

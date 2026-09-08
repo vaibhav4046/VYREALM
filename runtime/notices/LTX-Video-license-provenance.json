@@ -1,0 +1,7 @@
+{
+  "source": "https://huggingface.co/Lightricks/LTX-Video/raw/8984fa25007f376c1a299016d0957a37a2f797bb/LTX-Video-Open-Weights-License-0.X.txt",
+  "sha256": "30eabbcc090dd3bd70cffaa14338142df82f348f7bd91b2f63f0c6099ccf50e0",
+  "checkedAt": "2026-09-08T06:21:14.009Z",
+  "appliesTo": "LTX-Video0.9.8 model weights; separate from repository code",
+  "bundlesModelWeights": false
+}

@@ -53,8 +53,11 @@ export function planRawPrompt(request,sources){
  return {schemaVersion:1,mode:ranges.length?'explicit-ranges':'chronological',ranges,durationSeconds,aspect,framing,captionsEnabled,applied,diagnostics};
 }
 
-export function rawFramingFilter(width,height,framing){
+export function rawFramingFilter(width,height,framing,cropPosition){
+ if(cropPosition!==undefined&&(!cropPosition||typeof cropPosition!=='object'||Array.isArray(cropPosition)||['x','y'].some(axis=>typeof cropPosition[axis]!=='number'||!Number.isFinite(cropPosition[axis])||cropPosition[axis]<0||cropPosition[axis]>1)))throw new Error('Crop position must contain x and y numbers between 0 and 1.');
+ if(framing==='crop-custom'&&!cropPosition)throw new Error('Custom framing requires a crop position.');
  if(framing==='fit')return `scale=${width}:${height}:force_original_aspect_ratio=decrease,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2:black`;
- const x=framing==='crop-left'?'0':framing==='crop-right'?'iw-ow':'(iw-ow)/2';
- return `scale=${width}:${height}:force_original_aspect_ratio=increase,crop=${width}:${height}:${x}:(ih-oh)/2`;
+ const x=framing==='crop-custom'?`(iw-ow)*${cropPosition.x}`:framing==='crop-left'?'0':framing==='crop-right'?'iw-ow':'(iw-ow)/2';
+ const y=framing==='crop-custom'?`(ih-oh)*${cropPosition.y}`:'(ih-oh)/2';
+ return `scale=${width}:${height}:force_original_aspect_ratio=increase,crop=${width}:${height}:${x}:${y}`;
 }

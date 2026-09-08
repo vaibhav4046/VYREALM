@@ -4,6 +4,7 @@ import { readFile, writeFile, mkdir, realpath } from 'node:fs/promises';
 import { resolve, join, relative, isAbsolute } from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { planRawPrompt, rawFramingFilter } from './raw-footage-plan.mjs';
 import { verifyMedia } from './media-verifier.mjs';
 import { buildCaptionFilter } from './format-captions.mjs';
 import { DEFAULT_CAPTION_FONT } from './format-render.mjs';
@@ -33,9 +34,15 @@ export function planRawRanges(sources,durationSeconds){
   return ranges;
 }
 
+export function buildRawEditPlan({sources,...request}){
+  const plan=planRawPrompt(request,sources);
+  return {...plan,ranges:plan.mode==='explicit-ranges'?plan.ranges:planRawRanges(sources,plan.durationSeconds),editMethod:plan.mode,
+    captionsEnabled:request.captionsEnabled??true,captionStyle:'minimal-lower',audioTargetLUFS:-16,audioMethod:'retain-original',fps:24};
+}
+
 export async function editRawFootage(request,{ffmpeg,ffprobe,onProgress=()=>{}}={}){
-  const started=Date.now(), {projectId,revision,brief,durationSeconds=20,aspect='9:16',captionsEnabled=true,audioConfigPath}=request;
-  if(!projectId||!Number.isSafeInteger(revision)||revision<1||typeof brief!=='string'||!brief.trim()||!['9:16','16:9'].includes(aspect)||typeof captionsEnabled!=='boolean')fail('RAW_REQUEST','A saved project, brief, aspect and caption choice are required');
+  const started=Date.now(), {projectId,revision,brief,captionsEnabled=true,audioConfigPath}=request;
+  if(!projectId||!Number.isSafeInteger(revision)||revision<1||typeof brief!=='string'||!brief.trim()||typeof captionsEnabled!=='boolean')fail('RAW_REQUEST','A saved project, brief, aspect and caption choice are required');
   if(!Array.isArray(request.sourceAssets)||!request.sourceAssets.length||request.sourceAssets.length>12)fail('RAW_ASSETS','Select up to twelve uploaded video assets');
   const outputDir=resolve(request.outputDir);await mkdir(outputDir,{recursive:true});const outputRoot=await realpath(outputDir),inventory=[],seen=new Set();
   for(const asset of request.sourceAssets){
@@ -47,13 +54,18 @@ export async function editRawFootage(request,{ffmpeg,ffprobe,onProgress=()=>{}}=
     const sourceHash=sha(await readFile(path));if(asset.sha256&&asset.sha256!==sourceHash)fail('RAW_SOURCE_HASH','The registered source hash no longer matches its bytes');
     inventory.push({id:asset.id,path,sourceHash,durationSeconds:Number(probe.format?.duration),hasAudio:probe.streams.some(stream=>stream.codec_type==='audio')});
   }
-  const ranges=planRawRanges(inventory,durationSeconds),width=aspect==='9:16'?1080:1920,height=aspect==='9:16'?1920:1080;
+  const promptPlan=buildRawEditPlan({...request,sources:inventory});
+  // Compare the complete saved contract against this version's validated plan.
+  // A changed plan or changed defaults must fail rather than silently alter output.
+  if(request.editPlan&&JSON.stringify(request.editPlan)!==JSON.stringify(promptPlan))fail('RAW_PLAN_MISMATCH','Saved edit plan differs from the validated request; create a new job.');
+  const {durationSeconds,aspect,framing,ranges}=request.editPlan||promptPlan;
+  const width=aspect==='9:16'?1080:1920,height=aspect==='9:16'?1920:1080;
   const segments=[];let hasAudio=false;onProgress({stage:'Editing uploaded footage',progress:0.1});const editStarted=Date.now();
   for(const [index,range]of ranges.entries()){
     const source=inventory.find(source=>source.id===range.assetId),file=join(outputDir,`segment-${index}.mp4`);hasAudio ||= source.hasAudio;
     const args=['-y','-v','error','-ss',String(range.start),'-i',source.path];
     if(!source.hasAudio)args.push('-f','lavfi','-i','anullsrc=r=48000:cl=stereo');
-    args.push('-map','0:v:0','-map',source.hasAudio?'0:a:0':'1:a:0','-t',String(range.duration),'-vf',`fps=24,scale=${width}:${height}:force_original_aspect_ratio=increase,crop=${width}:${height},setsar=1,format=yuv420p`,'-af','aresample=48000,apad','-c:v','libx264','-preset','veryfast','-crf','18','-c:a','aac','-ar','48000','-ac','2','-b:a','192k',file);
+    args.push('-map','0:v:0','-map',source.hasAudio?'0:a:0':'1:a:0','-t',String(range.duration),'-vf',`fps=24,${rawFramingFilter(width,height,framing)},setsar=1,format=yuv420p`,'-af','aresample=48000,apad','-c:v','libx264','-preset','veryfast','-crf','18','-c:a','aac','-ar','48000','-ac','2','-b:a','192k',file);
     await run(ffmpeg,args);segments.push(file);onProgress({stage:'Editing uploaded footage',progress:0.1+0.45*(index+1)/ranges.length});
   }
   const list=join(outputDir,'segments.txt');await writeFile(list,segments.map(file=>`file '${file.replaceAll('\\','/').replaceAll("'","'\\''")}'`).join('\n'));
@@ -61,7 +73,7 @@ export async function editRawFootage(request,{ffmpeg,ffprobe,onProgress=()=>{}}=
   const sourceAudioLevels=hasAudio?await audioLevels(cut,ffmpeg):null;
   const silentSource=hasAudio&&sourceAudioLevels.peakDbFS!==null&&sourceAudioLevels.peakDbFS<=-80;
   const audioStatus=!hasAudio?'no-audio':silentSource?'silent-source':'original-audio';
-  const editMs=Date.now()-editStarted,asrStarted=Date.now();let captionStatus=captionsEnabled?(hasAudio?(silentSource?'no-speech':'pending'):'no-audio'):'disabled',cues=[],asr=null,config=null;const diagnostics=[];
+  const editMs=Date.now()-editStarted,asrStarted=Date.now();let captionStatus=captionsEnabled?(hasAudio?(silentSource?'no-speech':'pending'):'no-audio'):'disabled',cues=[],asr=null,config=null;const diagnostics=[...promptPlan.diagnostics];
   if(silentSource)diagnostics.push({code:'RAW_SOURCE_SILENT',message:'The selected source audio is silent or below -80 dBFS. No replacement sound was added. Add an audio track if sound is wanted.'});
   if(captionsEnabled&&hasAudio&&!silentSource){try{if(!audioConfigPath)throw new Error('No audio configuration supplied');config=JSON.parse(await readFile(audioConfigPath,'utf8'));}catch(error){captionStatus='unavailable';diagnostics.push({code:'RAW_CAPTION_RUNTIME_UNAVAILABLE',message:error.message});}}
   if(captionsEnabled&&hasAudio&&!silentSource&&config){
@@ -92,7 +104,7 @@ export async function editRawFootage(request,{ffmpeg,ffprobe,onProgress=()=>{}}=
     timeline:ranges.map((range,index)=>({id:`raw-${index+1}`,assetId:range.assetId,kind:'video',trimStart:range.start,duration:range.duration,muted:false})),
     outputs:{video:'edited.mp4',poster:'poster.png',captions},verification,audioStatus,audioNormalization,sourceAudioLevels,outputAudioLevels,captionStatus,captionsStatus:captionStatus,captionsAvailable:captionStatus==='transcribed',segments:cues,
     provenance:{generationStatus:'edited',sourceMethod:'uploaded-real-footage',neuralVideoGenerated:false,outputHash:sha(await readFile(final)),sources:inventory.map(source=>({assetId:source.id,sourceHash:source.sourceHash,durationSeconds:source.durationSeconds,ranges:ranges.filter(range=>range.assetId===source.id)})),
-      selectionMethod:'chronological evenly spaced ranges up to five seconds; not semantic highlight detection',audioMethod:silentSource?'silent original source audio; no replacement added':hasAudio?'original audio retained and normalized':'no source audio; no replacement narration or music',captions:asr?.provenance||null,timings:{totalMs:Date.now()-started,editMs,transcriptionMs,finishingMs,sourceGenerationMs:null}},
+      promptPlan,selectionMethod:promptPlan.mode==='explicit-ranges'?'validated explicit ranges in written order':'chronological evenly spaced ranges up to five seconds; not semantic highlight detection',audioMethod:silentSource?'silent original source audio; no replacement added':hasAudio?'original audio retained and normalized':'no source audio; no replacement narration or music',captions:asr?.provenance||null,timings:{totalMs:Date.now()-started,editMs,transcriptionMs,finishingMs,sourceGenerationMs:null}},
     diagnostics:[...diagnostics,{code:'RAW_REVIEW_REQUIRED',message:'Review framing, cut continuity and any machine-transcribed words. The brief is retained as user intent; this deterministic edit does not claim to understand its visual semantics.'}]};
   await writeFile(join(outputDir,'result.json'),JSON.stringify(result,null,2));onProgress({stage:'Edited video ready for review',progress:1});return result;
 }

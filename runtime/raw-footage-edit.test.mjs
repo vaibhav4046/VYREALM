@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { editRawFootage, planRawRanges } from './raw-footage-edit.mjs';
+import { editRawFootage, planRawRanges, buildRawEditPlan } from './raw-footage-edit.mjs';
 test('chronological real ranges preserve total duration without overlaps',()=>{
   const ranges=planRawRanges([{id:'source',durationSeconds:22.883}],20);
   assert.equal(ranges.length,4);assert.equal(ranges.reduce((sum,r)=>sum+r.duration,0),20);
@@ -16,6 +16,28 @@ test('chronological real ranges preserve total duration without overlaps',()=>{
   assert.equal(planRawRanges([{id:'one',durationSeconds:1.5}],1)[0].duration,1);
 });
 const ffmpeg=process.env.VYRELUM_FFMPEG,ffprobe=process.env.VYRELUM_FFPROBE,audioConfigPath=process.env.VYRELUM_AUDIO_CONFIG;
+test('explicit saved plan renders reversed sources and letterbox pixels',{skip:![ffmpeg,ffprobe].every(p=>p&&existsSync(p)),timeout:180000},async()=>{
+ const exec=promisify(execFile),dir=await mkdtemp(join(tmpdir(),'raw-plan-'));
+ try{
+  const assets=[];
+  for(const color of ['red','blue']){
+   const path=join(dir,`${color}.mp4`);
+   await exec(ffmpeg,['-v','error','-f','lavfi','-i',`color=${color}:s=320x180:r=24:d=3`,'-c:v','libx264',path],{windowsHide:true});
+   assets.push({id:color,path,mime:'video/mp4'});
+  }
+  const request={projectId:'p',revision:1,brief:'source 2 from 1s to 2s; then source 1 from 0s to 1s; portrait; fit',durationSeconds:20,aspect:'16:9',captionsEnabled:false,sourceAssets:assets,outputDir:join(dir,'job')};
+  request.editPlan=buildRawEditPlan({...request,sources:assets.map(a=>({id:a.id,durationSeconds:3}))});
+  const result=await editRawFootage(request,{ffmpeg,ffprobe});
+  assert.equal(result.durationSeconds,2);assert.equal(result.width,1080);assert.equal(result.height,1920);
+  assert.deepEqual(result.timeline.map(r=>r.assetId),['blue','red']);assert.deepEqual(result.timeline.map(r=>r.trimStart),[1,0]);
+  const pixel=async(t,x,y)=>{
+   const {stdout}=await exec(ffmpeg,['-v','error','-ss',String(t),'-i',join(request.outputDir,'edited.mp4'),'-vf',`crop=2:2:${x}:${y},format=rgb24`,'-frames:v','1','-f','rawvideo','-'],{encoding:'buffer',windowsHide:true});return [...stdout.subarray(0,3)];
+  };
+  const blue=await pixel(.5,500,900),red=await pixel(1.5,500,900),black=await pixel(.5,10,10);
+  assert.ok(blue[2]>200&&blue[0]<20,JSON.stringify(blue));assert.ok(red[0]>200&&red[2]<20,JSON.stringify(red));assert.ok(black.every(n=>n<10));
+  await assert.rejects(()=>editRawFootage({...request,editPlan:{...request.editPlan,framing:'crop-left'}},{ffmpeg,ffprobe}),e=>e.code==='RAW_PLAN_MISMATCH');
+ }finally{await rm(dir,{recursive:true,force:true});}
+});
 test('real raw edit preserves source lineage and natural noise without hallucinated captions',{skip:![ffmpeg,ffprobe,audioConfigPath].every(p=>p&&existsSync(p)),timeout:180000},async()=>{
   const exec=promisify(execFile),dir=await mkdtemp(join(tmpdir(),'raw-edit-'));
   try{

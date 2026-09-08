@@ -6,6 +6,14 @@ Source repository: [vaibhav4046/VYREALM](https://github.com/vaibhav4046/VYREALM)
 
 VYREALM is an early Windows application. The editing and export workflow has been exercised end to end, including an installed 1.0.8 Windows application. Local cinematic generation, publishing and newer releases have separate qualification requirements.
 
+## How it works
+
+[![VYREALM 1.0.8 architecture: Studio, templates and MCP share a local API and SQLite projects; validated edits run in owned jobs, produce reviewable media and optional creator materials. Models, research and YouTube require separate setup.](docs/media/vyrealm-architecture.gif)](docs/media/vyrealm-architecture-poster.png)
+
+[Open the full-resolution diagram](docs/media/vyrealm-architecture-poster.png) · [Vector poster](docs/media/vyrealm-architecture-poster.svg) · [Higher-quality video](docs/media/vyrealm-architecture.mp4) · [Architecture notes](docs/ARCHITECTURE.md)
+
+The diagram describes public **1.0.8**. Studio controls and the optional MCP bridge use the same local API and project store. Edits remain revisioned and reviewable. Optional models and online connections need configuration; live YouTube channel/analytics checks do not establish live upload success.
+
 ## Start the basic studio
 
 Download or clone this repository, then open PowerShell in its folder. Install **Node.js 24** first; version **24.12.0** was tested.

@@ -123,6 +123,11 @@
       "sha256": "7d2660c3b76768426c79c4e808f76669fc19df8bdedda83bcfa09128dae4fc19"
     },
     {
+      "file": "docs/ARCHITECTURE.md",
+      "bytes": 4978,
+      "sha256": "5ff948387f38dd59e28268446ff5f077843962b207808ecabce65e9d17aba432"
+    },
+    {
       "file": "docs/EMBERFORGE_TROUBLESHOOTING.md",
       "bytes": 6717,
       "sha256": "99032ce76ba14c77312d9a4589b854baac1491a09e76d29b92b53b28523b7324"
@@ -131,6 +136,26 @@
       "file": "docs/HACKATHON_VERIFICATION.md",
       "bytes": 5936,
       "sha256": "54d6d9923530278834feba1b8a7a73ad439b64a26510494c546e97401fba06ae"
+    },
+    {
+      "file": "docs/media/vyrealm-architecture-poster.png",
+      "bytes": 256961,
+      "sha256": "e02cb0bb39e8f6e0e46f5d349e062601c8ae79f3eb01f91cc4c4d0921e2bae7c"
+    },
+    {
+      "file": "docs/media/vyrealm-architecture-poster.svg",
+      "bytes": 39153,
+      "sha256": "9f543f1e1a6849b0c50b9dabf9a6c2e32941e75c008a4a739df8475c1746c4de"
+    },
+    {
+      "file": "docs/media/vyrealm-architecture.gif",
+      "bytes": 3042500,
+      "sha256": "7415a01c667fdafb24beddae00323e10f88b754234b56b8db013a609f8ad2cec"
+    },
+    {
+      "file": "docs/media/vyrealm-architecture.mp4",
+      "bytes": 677668,
+      "sha256": "1c3378bbacf775840fa720b6b078905d3381c1333db7d3d70f188daa30c87938"
     },
     {
       "file": "docs/PUBLICATION_CHECKLIST.md",
@@ -269,8 +294,8 @@
     },
     {
       "file": "README.md",
-      "bytes": 21035,
-      "sha256": "dc7945e862c4c922e1eca4b0a2244df05cf18f7451daef41f3c0d3007883669d"
+      "bytes": 21937,
+      "sha256": "5b29ca692e15d832c112d4ea2d4613b38cfeb719a41647f335626ad15fdd8f8d"
     },
     {
       "file": "runtime/apply-generated-shot.mjs",

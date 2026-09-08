@@ -42,7 +42,7 @@ export async function editRawFootage(request,{ffmpeg,ffprobe,onProgress=()=>{}}=
     const sourceHash=sha(await readFile(path));if(asset.sha256&&asset.sha256!==sourceHash)fail('RAW_SOURCE_HASH','The registered source hash no longer matches its bytes');
     inventory.push({id:asset.id,path,sourceHash,durationSeconds:Number(probe.format?.duration),hasAudio:probe.streams.some(stream=>stream.codec_type==='audio')});
   }
-  const ranges=planRawRanges(inventory,durationSeconds),width=aspect==='9:16'?720:1280,height=aspect==='9:16'?1280:720;
+  const ranges=planRawRanges(inventory,durationSeconds),width=aspect==='9:16'?1080:1920,height=aspect==='9:16'?1920:1080;
   const segments=[];let hasAudio=false;onProgress({stage:'Editing uploaded footage',progress:0.1});const editStarted=Date.now();
   for(const [index,range]of ranges.entries()){
     const source=inventory.find(source=>source.id===range.assetId),file=join(outputDir,`segment-${index}.mp4`);hasAudio ||= source.hasAudio;

@@ -25,6 +25,7 @@ test('real raw edit preserves source lineage and natural noise without hallucina
     const result=await editRawFootage(request,{ffmpeg,ffprobe});
     assert.equal(result.verification.ok,true);assert.equal(result.captionStatus,'no-speech');assert.equal(result.outputs.captions,null);assert.equal(result.timeline.length,2);assert.ok(result.timeline.every(clip=>clip.assetId==='original'));assert.equal(result.provenance.sources[0].sourceHash,sourceHash);
     assert.equal(result.provenance.neuralVideoGenerated,false);assert.equal(result.provenance.captions.vadEnabled,true);
+    assert.equal(result.width,1920);assert.equal(result.height,1080);
     await assert.rejects(()=>editRawFootage({...request,sourceAssets:[{...request.sourceAssets[0],sha256:'0'.repeat(64)}]},{ffmpeg,ffprobe}),error=>error.code==='RAW_SOURCE_HASH');
     console.log(JSON.stringify({rawCpuIntegration:result.provenance.timings,captionStatus:result.captionStatus}));
   }finally{await rm(dir,{recursive:true,force:true});}

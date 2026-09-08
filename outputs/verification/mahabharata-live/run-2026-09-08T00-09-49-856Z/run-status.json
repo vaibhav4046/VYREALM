@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 2,
+  "state": "stopped",
+  "pid": 21264,
+  "startedAt": "2026-09-08T00:09:49.856Z",
+  "updatedAt": "2026-09-08T00:16:03.255Z",
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "firstJobId": "a707a1a2-66da-415d-9051-c8ff805cb915",
+  "origin": "http://127.0.0.1:4173",
+  "viewport": {
+    "width": 1920,
+    "height": 1080
+  },
+  "startedAfterFirstKeyframe": true,
+  "recordedSurface": "real local VYREALM browser UI only",
+  "audioCapture": "Playwright records browser pixels only; final film audio must be inspected separately",
+  "timing": "original unretimed segments, individually duration-validated; all gaps and interruptions retained",
+  "maxSeconds": 14400,
+  "chunkSeconds": 300,
+  "currentSegment": null,
+  "completedSegments": [
+    {
+      "index": 1,
+      "state": "incomplete",
+      "file": null,
+      "startedAt": "2026-09-08T00:10:04.215Z",
+      "stoppedObservingAt": "2026-09-08T00:10:36.337Z",
+      "finalizedAt": "2026-09-08T00:11:06.729Z",
+      "realElapsedSeconds": 32.122,
+      "bytes": 0,
+      "sha256": null,
+      "probe": null,
+      "validation": {
+        "state": "incomplete",
+        "reasons": [
+          "VIDEO_DURATION_UNVERIFIED",
+          "OBSERVATION_INTERRUPTED"
+        ],
+        "wallSeconds": 32.122,
+        "capturedSeconds": null,
+        "durationDeltaSeconds": null,
+        "toleranceSeconds": 2,
+        "missingSeconds": null,
+        "timing": "original unretimed recording; incomplete evidence"
+      },
+      "interruptionReason": "APP_UNAVAILABLE",
+      "timing": "original unretimed recording; incomplete evidence"
+    },
+    {
+      "index": 2,
+      "state": "incomplete",
+      "file": null,
+      "startedAt": "2026-09-08T00:11:52.026Z",
+      "stoppedObservingAt": "2026-09-08T00:12:44.661Z",
+      "finalizedAt": "2026-09-08T00:13:15.561Z",
+      "realElapsedSeconds": 52.635,
+      "bytes": 0,
+      "sha256": null,
+      "probe": null,
+      "validation": {
+        "state": "incomplete",
+        "reasons": [
+          "VIDEO_DURATION_UNVERIFIED",
+          "OBSERVATION_INTERRUPTED"
+        ],
+        "wallSeconds": 52.635,
+        "capturedSeconds": null,
+        "durationDeltaSeconds": null,
+        "toleranceSeconds": 2,
+        "missingSeconds": null,
+        "timing": "original unretimed recording; incomplete evidence"
+      },
+      "interruptionReason": "APP_UNAVAILABLE",
+      "timing": "original unretimed recording; incomplete evidence"
+    },
+    {
+      "index": 3,
+      "state": "incomplete",
+      "file": null,
+      "startedAt": "2026-09-08T00:14:05.382Z",
+      "stoppedObservingAt": "2026-09-08T00:14:57.360Z",
+      "finalizedAt": "2026-09-08T00:15:27.983Z",
+      "realElapsedSeconds": 51.978,
+      "bytes": 0,
+      "sha256": null,
+      "probe": null,
+      "validation": {
+        "state": "incomplete",
+        "reasons": [
+          "VIDEO_DURATION_UNVERIFIED",
+          "OBSERVATION_INTERRUPTED"
+        ],
+        "wallSeconds": 51.978,
+        "capturedSeconds": null,
+        "durationDeltaSeconds": null,
+        "toleranceSeconds": 2,
+        "missingSeconds": null,
+        "timing": "original unretimed recording; incomplete evidence"
+      },
+      "interruptionReason": "CONTEXT_CLOSE_TIMEOUT",
+      "timing": "original unretimed recording; incomplete evidence"
+    }
+  ],
+  "captureGap": {
+    "startedAt": "2026-09-08T00:14:57.360Z",
+    "reason": "CONTEXT_CLOSE_TIMEOUT"
+  },
+  "lastSnapshot": {
+    "file": "snapshot-2026-09-08T00-14-51-935Z.json",
+    "at": "2026-09-08T00:14:51.935Z",
+    "sha256": "7f1ce1ca662e53949e5f50f2d9a685a7f117371ffe932a2536e609c7c5b37c30"
+  },
+  "currentView": "Jobs",
+  "controlPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-09-49-856Z\\capture-command.json",
+  "stopPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-09-49-856Z\\STOP",
+  "stopReason": "stop-file"
+}

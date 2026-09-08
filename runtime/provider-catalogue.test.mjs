@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { PROVIDERS, MEASUREMENTS, recommendProviders, planInstall, verifyInstall, catalogueEvidence, getProvider } from './provider-catalogue.mjs';
+import { PROVIDERS, MEASUREMENTS, recommendProviders, planInstall, verifyInstall, catalogueEvidence, getProvider, downloadBytesOf } from './provider-catalogue.mjs';
 
 const GB = 1024 ** 3;
 // The machine these numbers were measured on.
@@ -47,7 +47,7 @@ test('planInstall refuses without an explicit approval', () => {
 });
 
 test('planInstall refuses a short disk and names the shortfall including the 5GB headroom', () => {
-  const size = byId('ltxv-13b-distilled').sizeBytes;
+  const size = downloadBytesOf('ltxv-13b-distilled');
   const free = 8 * GB;
   let error;
   try { planInstall(['ltxv-13b-distilled'], { freeDiskBytes: free, approved: true }); } catch (thrown) { error = thrown; }
@@ -73,7 +73,104 @@ test('planInstall blocks unknown sizes, already-installed entries, and flags unp
   const elsewhere = planInstall(['wan22-5b'], { freeDiskBytes: 100 * GB, approved: true, installed: [] });
   assert.deepEqual(elsewhere.blocked, []);
   assert.equal(elsewhere.steps[0].requiresChecksumPin, false);
-  assert.equal(elsewhere.totalBytes, byId('wan22-5b').sizeBytes);
+  // The plan reserves for the encoder and VAE too, not just the headline file.
+  assert.equal(elsewhere.totalBytes, 3433116000 + 4906997728);
+  assert.equal(elsewhere.steps[0].weightBytes, byId('wan22-5b').sizeBytes);
+});
+
+// --- adversarial: each of these produced a plan before the guard was fixed ---
+
+test('the disk guard cannot be skipped by omitting, blanking or corrupting the reading', () => {
+  const attack = free => planInstall(['ltxv-13b-distilled'], { approved: true, freeDiskBytes: free });
+  // Omitting it entirely used to hand back a 20 GB download with no check at all.
+  throws(() => planInstall(['ltxv-13b-distilled'], { approved: true }), 'FREE_DISK_UNKNOWN');
+  // '' and [] coerce to 0, which would have read as a full disk rather than an
+  // unmeasured one; only an actual finite number is a disk reading.
+  for (const free of [null, undefined, NaN, 'lots', '', {}, [], Infinity, -Infinity, String(500 * GB)]) {
+    throws(() => attack(free), 'FREE_DISK_UNKNOWN');
+  }
+  const need = downloadBytesOf('ltxv-13b-distilled') + 5 * GB;
+  assert.equal(planInstall(['ltxv-13b-distilled'], { approved: true, freeDiskBytes: need }).freeDiskBytes, need);
+  throws(() => attack(need - 1), 'INSUFFICIENT_DISK');
+  throws(() => attack(0), 'INSUFFICIENT_DISK');
+  throws(() => attack(-1), 'INSUFFICIENT_DISK');
+});
+
+test('a plan reserves for the encoder and VAE a model cannot run without', () => {
+  // The measured LTXV set is 2,173,891,072 unet + 3,386,856,640 t5 encoder
+  // + 2,493,859,780 VAE. Reserving only the unet under-counts by 5.5 GB, which
+  // is more than the whole 5 GB headroom, so "it fits" was a lie by 0.5 GB.
+  const unetOnly = byId('ltxv-2b-distilled').sizeBytes;
+  assert.equal(downloadBytesOf('ltxv-2b-distilled'), unetOnly + 3386856640 + 2493859780);
+  throws(() => planInstall(['ltxv-2b-distilled'], { approved: true, installed: [], freeDiskBytes: unetOnly + 5 * GB }), 'INSUFFICIENT_DISK');
+  const plan = planInstall(['ltxv-2b-distilled'], { approved: true, installed: [], freeDiskBytes: downloadBytesOf('ltxv-2b-distilled') + 5 * GB });
+  assert.equal(plan.steps[0].companionBytes, 3386856640 + 2493859780);
+  // Every plannable entry's companion weight is itself basis-labelled.
+  for (const p of PROVIDERS) {
+    if (downloadBytesOf(p.id) === null) { assert.equal(p.companionBytes, null); assert.equal(p.companionBasis, 'UNVERIFIED'); continue; }
+    assert.ok(['MEASURED_ON_DISK', 'RUNTIME_LOCK_FILE', 'EXTRAPOLATED'].includes(p.companionBasis), `${p.id} companionBasis`);
+  }
+});
+
+test('an all-blocked plan does not invent a disk problem, and duplicates are not double-counted', () => {
+  // Everything requested is already here: nothing downloads, so a full disk is
+  // not an error. This used to throw INSUFFICIENT_DISK for 0 GB of downloads.
+  const nothing = planInstall(['wan22-5b', 'wan22-5b'], { approved: true, freeDiskBytes: 1 });
+  assert.deepEqual(nothing.steps, []);
+  assert.equal(nothing.totalBytes, 0);
+  assert.deepEqual(nothing.blocked.map(b => b.code), ['ALREADY_INSTALLED']);
+  // The same id twice is one download, not two.
+  const once = planInstall(['wan22-5b', 'wan22-5b'], { approved: true, installed: [], freeDiskBytes: 100 * GB });
+  assert.equal(once.steps.length, 1);
+  assert.equal(once.totalBytes, downloadBytesOf('wan22-5b'));
+});
+
+test('no unpinned download can ever be accepted, however it is planned', () => {
+  // planInstall may hand back an unpinned step, but it must be flagged and
+  // verifyInstall must refuse it whatever bytes and digest turn up afterwards.
+  const plan = planInstall(['ltxv-13b-distilled'], { approved: true, freeDiskBytes: 100 * GB });
+  assert.equal(plan.steps[0].requiresChecksumPin, true);
+  for (const attempt of [{ actualBytes: plan.steps[0].weightBytes, actualSha256: 'a'.repeat(64) }, { actualBytes: 0, actualSha256: '' }, {}]) {
+    const result = verifyInstall('ltxv-13b-distilled', attempt);
+    assert.equal(result.ok, false, 'an unpinned provider must never verify');
+    assert.ok(result.mismatches.some(m => m.code === 'EXPECTED_SHA256_NOT_PINNED'));
+  }
+  // And every step that is NOT flagged really does carry a usable digest.
+  const pinned = planInstall(['wan22-5b'], { approved: true, installed: [], freeDiskBytes: 100 * GB }).steps[0];
+  assert.equal(pinned.requiresChecksumPin, false);
+  assert.match(pinned.sha256, /^[a-f0-9]{64}$/);
+});
+
+test('every threshold that decides what gets offered carries its provenance', () => {
+  for (const p of PROVIDERS) {
+    assert.ok(['MEASURED_RUN', 'EXTRAPOLATED', 'UNVERIFIED'].includes(p.requirementBasis), `${p.id} requirementBasis`);
+    assert.equal(Number.isFinite(p.minVramGb) && p.minVramGb >= 0, true, `${p.id} minVramGb`);
+    assert.equal(Number.isFinite(p.minRamGb) && p.minRamGb >= 0, true, `${p.id} minRamGb`);
+    // minDiskGb was an unused, unlabelled number and it was wrong: it claimed
+    // 6 GB for an LTXV set that measures 7.5 GiB. downloadBytesOf replaced it.
+    assert.equal('minDiskGb' in p, false, `${p.id} still carries the unbacked minDiskGb`);
+  }
+  // Only the two models with a recorded run may claim a measured requirement.
+  assert.deepEqual(PROVIDERS.filter(p => p.requirementBasis === 'MEASURED_RUN').map(p => p.id), ['wan22-5b', 'ltxv-2b-distilled']);
+  for (const p of PROVIDERS) if (p.requirementBasis === 'MEASURED_RUN') assert.ok(MEASUREMENTS[p.measurementKey], `${p.id} claims MEASURED_RUN with no run`);
+  // An unmeasured requirement must say so wherever it is shown to a user.
+  const { recommended } = recommendProviders({ vramGb: 24, ramGb: 64 }, null, { installed: [] });
+  for (const r of recommended) {
+    const basis = getProvider(r.id).requirementBasis;
+    const entry = getProvider(r.id);
+    if (basis === 'MEASURED_RUN') assert.doesNotMatch(r.reason, /not measured here/);
+    else assert.match(r.reason, new RegExp(`Those floors \\(${entry.minVramGb} GB VRAM, ${entry.minRamGb} GB RAM\\) are ${basis}, not measured here`));
+  }
+});
+
+test('a nonsense hardware reading is treated as no reading, not as negative silicon', () => {
+  for (const bad of [-5, NaN, 'plenty', null, undefined, Infinity]) {
+    const { machine, recommended } = recommendProviders({ vramGb: bad, ramGb: 15.7 }, null, { installed: [] });
+    assert.equal(machine.vramGb, 0, `vramGb ${String(bad)} must clamp to 0`);
+    // CPU providers survive; nothing claims the machine has negative VRAM.
+    assert.ok(recommended.some(r => r.id === 'piper-ljspeech'));
+    for (const r of recommended) assert.doesNotMatch(r.reason, /-\d/);
+  }
 });
 
 test('recommendProviders never recommends something whose minVram exceeds the machine', () => {

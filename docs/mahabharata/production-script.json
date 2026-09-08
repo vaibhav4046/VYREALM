@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "revision": 4,
+  "revision": 5,
   "continuityRevision": {
     "change": "Adopt the inspected original keyframe's short moustache and chin beard for Arjuna, replacing the initial clean-shaven art direction.",
     "keyframeSha256": "957efafb8aa68c96a6efd2417fdc4137e0b0d481a000986a1aa485d58561e75b",
@@ -17,7 +17,7 @@
   },
   "language": "en",
   "captionsRequested": false,
-  "narration": "At Kurukshetra, Krishna halts the chariot. Across the field stand his kin and teachers. His breath catches. His bow slips. Krishna counsels action without attachment to reward. The weight of kinship remains. Arjuna lifts his gaze, listening. Between the armies, he must understand what duty demands.",
+  "narration": "At Kurukshetra, Krishna halts the chariot. Arjuna sees his kin and teachers. His breath catches. His bow slips. Krishna counsels action without attachment to reward. The weight of kinship remains. Arjuna lifts his gaze, listening. Between the armies, he must understand what duty demands.",
   "narrationType": "original-poetic-exposition-not-scripture-quotation",
   "planningProvenance": {
     "research": "primary-source-web-research-by-development-assistant",
@@ -128,7 +128,7 @@
       "shotType": "close-portrait",
       "keyframePrompt": "Photorealistic close portrait of the locked original Arjuna reference on his chariot at dawn. Medium-brown South Asian face, long black hair tied back, narrow gold headband, saffron shoulder cloth and restrained metal armor. Eyes moist with grief as he recognises kin in the distant army, natural skin pores and fine facial hair texture. A blurred rope edge in foreground, detailed face in midground, flags and dust in background. Warm light from camera-left, cool fill, shallow depth of field, 85mm cinema lens. No text.",
       "motionPrompt": "Arjuna's breath catches softly. His eyes move a little toward the distant army and then lower. Two loose hair strands move in the wind. Camera makes a subtle slow push-in. Preserve the face, headband, clothing and anatomy; restrained human performance.",
-      "narrationCue": "Across the field stand his kin and teachers.",
+      "narrationCue": "Arjuna sees his kin and teachers.",
       "sound": [
         "low-wind",
         "soft-breath",
@@ -278,5 +278,5 @@
       "copied-reference-media"
     ]
   },
-  "timingRevision": "Piper measured opening narration at 5.28 seconds for a 5-second shot. Shortened only that cue; the failure was retained in the pilot log. Other cue timings still require synthesis validation."
+  "timingRevision": "Piper measured the original opening at 5.28s for a 5s shot. Shortened that cue and named Arjuna in the second cue to remove an ambiguous pronoun. Pilot v2 fit all six slots; final text requires a fresh owned narration job."
 }

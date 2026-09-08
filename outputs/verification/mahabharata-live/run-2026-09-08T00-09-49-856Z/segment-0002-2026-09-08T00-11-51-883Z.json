@@ -1,0 +1,27 @@
+{
+  "index": 2,
+  "state": "incomplete",
+  "file": null,
+  "startedAt": "2026-09-08T00:11:52.026Z",
+  "stoppedObservingAt": "2026-09-08T00:12:44.661Z",
+  "finalizedAt": "2026-09-08T00:13:15.561Z",
+  "realElapsedSeconds": 52.635,
+  "bytes": 0,
+  "sha256": null,
+  "probe": null,
+  "validation": {
+    "state": "incomplete",
+    "reasons": [
+      "VIDEO_DURATION_UNVERIFIED",
+      "OBSERVATION_INTERRUPTED"
+    ],
+    "wallSeconds": 52.635,
+    "capturedSeconds": null,
+    "durationDeltaSeconds": null,
+    "toleranceSeconds": 2,
+    "missingSeconds": null,
+    "timing": "original unretimed recording; incomplete evidence"
+  },
+  "interruptionReason": "APP_UNAVAILABLE",
+  "timing": "original unretimed recording; incomplete evidence"
+}

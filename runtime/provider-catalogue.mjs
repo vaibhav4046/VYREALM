@@ -418,7 +418,7 @@ function reasonFor(provider, machine, installedIds) {
   else if (provider.sizeBasis === 'EXTRAPOLATED' || provider.companionBasis === 'EXTRAPOLATED') parts.push(`Download size ~${gb(download)} GB is EXTRAPOLATED, not measured.`);
   else parts.push(`${gb(download)} GB download${provider.companionBytes > 0 ? `, of which ${gb(provider.companionBytes)} GB is the text encoder and VAE it cannot run without` : ''}.`);
   parts.push(`Needs ${provider.minVramGb} GB VRAM, you have ${machine.vramGb}.`);
-  if (provider.requirementBasis !== 'MEASURED_RUN') parts.push(`That requirement is ${provider.requirementBasis}, not a measurement taken here.`);
+  if (provider.requirementBasis !== 'MEASURED_RUN') parts.push(`Those floors (${provider.minVramGb} GB VRAM, ${provider.minRamGb} GB RAM) are ${provider.requirementBasis}, not measured here.`);
   return parts.join(' ');
 }
 
@@ -436,7 +436,7 @@ export function recommendProviders(hardware = {}, tier = null, { installed = nul
   const installedSet = new Set(installedIds);
   const recommended = [], unsupported = [], alreadyInstalled = [];
   for (const provider of PROVIDERS) {
-    const summary = { id: provider.id, label: provider.label, kind: provider.kind, sizeBytes: provider.sizeBytes, sizeBasis: provider.sizeBasis, minVramGb: provider.minVramGb, license: provider.license, installState: provider.installState };
+    const summary = { id: provider.id, label: provider.label, kind: provider.kind, sizeBytes: provider.sizeBytes, sizeBasis: provider.sizeBasis, downloadBytes: downloadBytesOf(provider), minVramGb: provider.minVramGb, requirementBasis: provider.requirementBasis, license: provider.license, installState: provider.installState };
     if (installedSet.has(provider.id)) { alreadyInstalled.push({ ...summary, reason: 'Already installed on this machine.' }); continue; }
     // The tier's route budget is a GPU budget. A provider that needs no VRAM
     // (Piper, whisper.cpp-class models) is not GPU work and is not gated by it,
@@ -452,7 +452,7 @@ export function recommendProviders(hardware = {}, tier = null, { installed = nul
     if (blockedByTier && !measured) { unsupported.push({ ...summary, code: tierId === 'RENDER_ONLY' ? 'NO_DISCRETE_GPU' : 'INSUFFICIENT_HARDWARE_PROFILE', reason: `The ${profile.label} tier blocks the "${route}" route: ${profile.reason}` }); continue; }
     // Never suggest something planInstall would refuse: with no size there is
     // no way to check free disk before downloading, so it is not installable.
-    if (!Number.isSafeInteger(provider.sizeBytes)) { unsupported.push({ ...summary, code: 'DOWNLOAD_SIZE_UNKNOWN', reason: `${provider.label} has no verified or extrapolated download size (sizeBasis ${provider.sizeBasis}), so free disk cannot be checked before downloading. Pin a size before offering this.` }); continue; }
+    if (downloadBytesOf(provider) === null) { unsupported.push({ ...summary, code: 'DOWNLOAD_SIZE_UNKNOWN', reason: `${provider.label} has no verified or extrapolated download size (sizeBasis ${provider.sizeBasis}, companionBasis ${provider.companionBasis}), so free disk cannot be checked before downloading. Pin a size before offering this.` }); continue; }
     const tierOverride = blockedByTier ? ` The ${profile.label} tier blocks "${route}", overridden here by a recorded run on hardware meeting this provider's own minimums.` : '';
     recommended.push({ ...summary, impactPerGb: Number(impactPerGb(provider).toFixed(4)), tierOverridden: Boolean(tierOverride), reason: reasonFor(provider, machine, installedIds) + tierOverride });
   }
@@ -477,10 +477,14 @@ export function planInstall(providerIds, { freeDiskBytes = null, approved = fals
   for (const id of ids) {
     const provider = getProvider(id);
     if (installedSet.has(id)) { blocked.push({ id, code: 'ALREADY_INSTALLED', reason: `${provider.label} is already installed${provider.installedPath ? ` at ${provider.installedPath}` : ''}.` }); continue; }
-    if (!Number.isSafeInteger(provider.sizeBytes) || provider.sizeBytes <= 0) { blocked.push({ id, code: 'DOWNLOAD_SIZE_UNKNOWN', reason: `${provider.label} has no verified or extrapolated download size, so free disk cannot be checked before downloading.` }); continue; }
+    const downloadBytes = downloadBytesOf(provider);
+    if (downloadBytes === null) { blocked.push({ id, code: 'DOWNLOAD_SIZE_UNKNOWN', reason: `${provider.label} has no verified or extrapolated download size, so free disk cannot be checked before downloading.` }); continue; }
     steps.push({
       id, label: provider.label, url: provider.sourceUrl,
-      bytes: provider.sizeBytes, sizeBasis: provider.sizeBasis,
+      // `bytes` is what the disk has to take: weights plus the encoder and VAE.
+      // `weightBytes` is the single file verifyInstall hashes.
+      bytes: downloadBytes, weightBytes: provider.sizeBytes, companionBytes: provider.companionBytes,
+      sizeBasis: provider.sizeBasis, companionBasis: provider.companionBasis,
       sha256: provider.sha256, hashBasis: provider.hashBasis,
       // verified-download.mjs cannot run without a pinned digest, by design.
       requiresChecksumPin: !HASH.test(provider.sha256 || ''),
@@ -489,11 +493,20 @@ export function planInstall(providerIds, { freeDiskBytes = null, approved = fals
   }
   const totalBytes = steps.reduce((sum, step) => sum + step.bytes, 0);
   const requiredBytes = totalBytes + HEADROOM_BYTES;
-  if (freeDiskBytes !== null && Number(freeDiskBytes) < requiredBytes) {
-    const shortfall = requiredBytes - Number(freeDiskBytes);
-    fail('INSUFFICIENT_DISK', `${gb(totalBytes)} GB of downloads plus ${gb(HEADROOM_BYTES)} GB working headroom needs ${gb(requiredBytes)} GB free, but only ${gb(Number(freeDiskBytes))} GB is free. Short by ${gb(shortfall)} GB.`);
+  // Nothing to download means nothing to reserve; an all-blocked plan must not
+  // report a disk problem it does not have.
+  if (steps.length) {
+    // The old contract let the check be skipped by omitting freeDiskBytes, and
+    // NaN slipped through it silently because every comparison against NaN is
+    // false. A download planned without a disk reading is an unguarded download.
+    // Only a real number counts: '' and [] both coerce to 0, which would read
+    // as "the disk is full" rather than "nobody measured the disk".
+    if (typeof freeDiskBytes !== 'number' || !Number.isFinite(freeDiskBytes)) {
+      fail('FREE_DISK_UNKNOWN', `Pass freeDiskBytes as a finite number. ${gb(totalBytes)} GB of downloads cannot be approved against an unknown disk (got ${typeof freeDiskBytes} ${JSON.stringify(freeDiskBytes) ?? String(freeDiskBytes)}).`);
+    }
+    if (freeDiskBytes < requiredBytes) fail('INSUFFICIENT_DISK', `${gb(totalBytes)} GB of downloads plus ${gb(HEADROOM_BYTES)} GB working headroom needs ${gb(requiredBytes)} GB free, but only ${gb(freeDiskBytes)} GB is free. Short by ${gb(requiredBytes - freeDiskBytes)} GB.`);
   }
-  return { steps, totalBytes, requiredBytes, headroomBytes: HEADROOM_BYTES, freeDiskBytes: freeDiskBytes === null ? null : Number(freeDiskBytes), blocked };
+  return { steps, totalBytes, requiredBytes, headroomBytes: HEADROOM_BYTES, freeDiskBytes: typeof freeDiskBytes === 'number' && Number.isFinite(freeDiskBytes) ? freeDiskBytes : null, blocked };
 }
 
 /** Post-download check. A provider with no pinned digest can never pass. */
@@ -514,12 +527,18 @@ export function catalogueEvidence({ hardware = {}, tier = null, installed = null
     tier: recommendation.tier,
     machine: recommendation.machine,
     benchmarkMachine: MEASUREMENTS.machine,
-    catalogue: PROVIDERS.map(p => ({ id: p.id, kind: p.kind, installState: p.installState, sizeBytes: p.sizeBytes, sizeBasis: p.sizeBasis, sha256: p.sha256, hashBasis: p.hashBasis, license: p.license, licenseBasis: p.licenseBasis })),
+    catalogue: PROVIDERS.map(p => ({ id: p.id, kind: p.kind, installState: p.installState, sizeBytes: p.sizeBytes, sizeBasis: p.sizeBasis, companionBytes: p.companionBytes, companionBasis: p.companionBasis, downloadBytes: downloadBytesOf(p), minVramGb: p.minVramGb, minRamGb: p.minRamGb, requirementBasis: p.requirementBasis, sha256: p.sha256, hashBasis: p.hashBasis, license: p.license, licenseBasis: p.licenseBasis })),
     recommended: recommendation.recommended.map(r => ({ id: r.id, impactPerGb: r.impactPerGb, reason: r.reason })),
     unsupported: recommendation.unsupported.map(u => ({ id: u.id, code: u.code, reason: u.reason })),
     alreadyInstalled: recommendation.alreadyInstalled.map(a => a.id),
-    plan: plan ? { totalBytes: plan.totalBytes, requiredBytes: plan.requiredBytes, headroomBytes: plan.headroomBytes, steps: plan.steps.map(s => ({ id: s.id, bytes: s.bytes, sizeBasis: s.sizeBasis, requiresChecksumPin: s.requiresChecksumPin })), blocked: plan.blocked } : null,
+    plan: plan ? { totalBytes: plan.totalBytes, requiredBytes: plan.requiredBytes, headroomBytes: plan.headroomBytes, steps: plan.steps.map(s => ({ id: s.id, bytes: s.bytes, weightBytes: s.weightBytes, companionBytes: s.companionBytes, sizeBasis: s.sizeBasis, companionBasis: s.companionBasis, requiresChecksumPin: s.requiresChecksumPin })), blocked: plan.blocked } : null,
     // Stated so a reader never mistakes this catalogue for a benchmark suite.
-    unmeasured: ['ACE-Step generation time on this machine', 'Real-ESRGAN qualification (enhancement.lock.json records not-yet-run)', 'every not-installed provider: size, digest, licence text and speed']
+    unmeasured: [
+      'ACE-Step generation time on this machine',
+      'Real-ESRGAN qualification (enhancement.lock.json records not-yet-run)',
+      'RIFE interpolation time on this machine',
+      'every not-installed provider: size, digest, licence text and speed',
+      `minVramGb/minRamGb for every entry whose requirementBasis is not MEASURED_RUN: ${PROVIDERS.filter(p => p.requirementBasis !== 'MEASURED_RUN').map(p => p.id).join(', ')}`
+    ]
   };
 }

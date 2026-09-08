@@ -1,10 +1,11 @@
 import { chromium } from '@playwright/test';
-import { mkdir, readFile, writeFile, appendFile, rename, stat, open, unlink } from 'node:fs/promises';
+import { mkdir, readFile, writeFile, appendFile, stat, open, unlink } from 'node:fs/promises';
 import { existsSync, createReadStream } from 'node:fs';
 import { join, resolve, basename } from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { validateCaptureSegment } from '../runtime/capture-integrity.mjs';
 
 // Observe the real local application. Never submit production/review commands,
 // inject a replacement UI, alter captured frames, accelerate time, or record
@@ -13,7 +14,8 @@ const args = Object.fromEntries(process.argv.slice(2).map(arg => { const i = arg
 const root = resolve('.'), base = resolve(args['output-dir'] || 'outputs/verification/mahabharata-live');
 const projectId = 'e92789c9-ef27-44fc-b29d-aa01d3eea25b', firstJobId = 'a707a1a2-66da-415d-9051-c8ff805cb915';
 const origin = 'http://127.0.0.1:4173', startedAt = new Date().toISOString(), stamp = value => value.replace(/[:.]/g, '-');
-const maxSeconds = Math.max(10, Math.min(10800, Number(args['max-seconds']) || 10800));
+const viewport = { width:1280, height:720 };
+const maxSeconds = Math.max(10, Math.min(14400, Number(args['max-seconds']) || 14400));
 const chunkSeconds = Math.max(10, Math.min(300, Number(args['chunk-seconds']) || 300));
 const snapshotSeconds = Math.max(10, Math.min(60, Number(args['snapshot-seconds']) || 15));
 const runDir = join(base, `run-${stamp(startedAt)}`), controlPath = join(runDir, 'capture-command.json'), stopPath = join(runDir, 'STOP');
@@ -21,11 +23,17 @@ const journalPath = join(runDir, 'journal.jsonl'), statusPath = join(runDir, 'ru
 const digest = value => createHash('sha256').update(value).digest('hex');
 const shaFile = path => new Promise((ok, bad) => { const h = createHash('sha256'), stream = createReadStream(path); stream.on('data', b => h.update(b)); stream.on('error', bad); stream.on('end', () => ok(h.digest('hex'))); });
 const sleep = ms => new Promise(resolveSleep => setTimeout(resolveSleep, ms));
+async function bounded(promise, milliseconds, code) {
+  let timer;
+  try { return await Promise.race([promise, new Promise((_, reject) => { timer = setTimeout(() => reject(Object.assign(new Error(code), { code })), milliseconds); })]); }
+  finally { clearTimeout(timer); }
+}
 const exec = promisify(execFile), views = ['Jobs', 'Create', 'Production plan', 'Create', 'Export'];
 const allowedViews = new Set(['Dashboard','Create','Production plan','Storyboard','Timeline','Assets','Jobs','Export','Catalog','Settings']);
-let stopped = false, writer = Promise.resolve(), previousEventHash = null, sequence = 0, browser, currentContext;
+let stopped = false, writer = Promise.resolve(), previousEventHash = null, sequence = 0, browser, browserServer, currentContext;
 let completedSegments = [], lastSnapshot = null, lastCommand = null, currentSegment = null, lastRuntimeSnapshot = null;
 let stopReason = null, currentView = 'Jobs', overrideViewUntil = 0;
+let captureGap = null;
 
 await mkdir(base, { recursive: true });
 if (existsSync(lockPath)) {
@@ -48,11 +56,23 @@ function event(type, data = {}) {
   return writer;
 }
 async function status(state = 'recording') {
-  await writeFile(statusPath, JSON.stringify({ schemaVersion: 1, state, pid: process.pid, startedAt, updatedAt: new Date().toISOString(), projectId, firstJobId, origin, viewport: { width: 1920, height: 1080 }, startedAfterFirstKeyframe: true, recordedSurface: 'real local VYREALM browser UI only', audioCapture: 'Playwright records browser pixels only; final film audio must be inspected separately', timing: 'real elapsed browser video; no retiming or replacement frames; inter-segment gaps are recorded in UTC', maxSeconds, chunkSeconds, currentSegment, completedSegments, lastSnapshot, currentView, controlPath, stopPath, stopReason }, null, 2));
+  await writeFile(statusPath, JSON.stringify({ schemaVersion: 2, state, pid: process.pid, startedAt, updatedAt: new Date().toISOString(), projectId, firstJobId, origin, viewport, startedAfterFirstKeyframe: true, recordedSurface: 'real local VYREALM browser UI only', audioCapture: 'Playwright records browser pixels only; final film audio must be inspected separately', timing: 'original unretimed segments, individually duration-validated; all gaps and interruptions retained', maxSeconds, chunkSeconds, currentSegment, completedSegments, captureGap, lastSnapshot, currentView, controlPath, stopPath, stopReason }, null, 2));
 }
 const errorCode = error => String(error?.code || error?.name || 'OBSERVATION_FAILED').slice(0, 80);
 const safeText = value => typeof value === 'string' ? value.replace(/(?:token|authorization|api[_-]?key)\s*[:=]\s*\S+/ig, '[redacted]').slice(0, 1200) : value;
 const provenance = value => value ? Object.fromEntries(['generationStatus','sourceMethod','providerId','modelId','workflowHash','evidenceHash','outputHash','sourceHash','deliveryHash','seed','resolution','deliveryResolution','fps','sourceFps','targetFps','fourKMethod','vramPeakGb','renderTimeMs','semanticQuality'].filter(key => value[key] != null).map(key => [key, value[key]])) : null;
+async function closeOwnedBrowser() {
+  if (!browserServer) { await bounded(browser?.close().catch(() => {}),10000,'BROWSER_CLOSE_TIMEOUT').catch(() => {}); browser = null; return; }
+  const ownedProcess = browserServer.process();
+  await bounded(browser?.close().catch(() => {}),10000,'BROWSER_CLOSE_TIMEOUT').catch(() => {});
+  try { await bounded(browserServer.close(),10000,'BROWSER_SERVER_CLOSE_TIMEOUT'); }
+  catch { await event('owned_browser_force_close', { pid:ownedProcess.pid }); await bounded(browserServer.kill(),15000,'OWNED_BROWSER_KILL_TIMEOUT'); }
+  if (ownedProcess.exitCode === null && ownedProcess.signalCode === null) {
+    await bounded(new Promise(resolveExit => ownedProcess.once('exit',resolveExit)),15000,'OWNED_BROWSER_STILL_RUNNING');
+  }
+  await event('owned_browser_closed', { pid:ownedProcess.pid });
+  browser = null; browserServer = null;
+}
 
 async function getJson(page, path) {
   let response = await page.request.get(`${origin}/api${path}`, { timeout: 8000 });
@@ -115,65 +135,112 @@ async function controls(page) {
 
 process.on('SIGINT', () => { stopped = true; stopReason = 'SIGINT'; });
 process.on('SIGTERM', () => { stopped = true; stopReason = 'SIGTERM'; });
-await event('capture_started', { pid: process.pid, projectId, firstJobId, origin, startedAfterFirstKeyframe: true, viewport: { width: 1920, height: 1080 }, readOnly: true, timing: 'real time; no retiming', maxSeconds, chunkSeconds });
+await event('capture_started', { pid: process.pid, projectId, firstJobId, origin, startedAfterFirstKeyframe: true, viewport, readOnly: true, timing: 'real time; no retiming', maxSeconds, chunkSeconds });
 await status();
 console.log(JSON.stringify({ state: 'starting', pid: process.pid, runDir, controlPath, stopPath }));
 
 try {
-  browser = await chromium.launch({ headless: true, args: ['--disable-gpu', '--disable-accelerated-video-decode'] });
   const deadline = Date.now() + maxSeconds * 1000;
-  let segmentNumber = 0, navigationIndex = 0;
+  let segmentNumber = 0, navigationIndex = 0, consecutiveBrowserFailures = 0;
   while (!stopped && Date.now() < deadline) {
-    const segmentStart = new Date().toISOString(), index = ++segmentNumber, name = `segment-${String(index).padStart(4, '0')}-${stamp(segmentStart)}`;
+    if (existsSync(stopPath)) { stopped = true; stopReason = 'stop-file'; break; }
+    try {
+      if (!browser?.isConnected()) {
+        if (browserServer) await closeOwnedBrowser();
+        await event('browser_starting', { recovery: Boolean(browser) });
+        browserServer = await chromium.launchServer({ headless:true, timeout:30000, args:['--disable-gpu','--disable-accelerated-video-decode'] });
+        await event('owned_browser_started', { pid:browserServer.process().pid });
+        browser = await chromium.connect(browserServer.wsEndpoint(), { timeout:30000 });
+      }
+    } catch (error) {
+      await event('browser_recovery_failed', { attempt: ++consecutiveBrowserFailures, code: errorCode(error) });
+      if (consecutiveBrowserFailures >= 5) throw Object.assign(new Error('Recovery exhausted'), { code:'BROWSER_RECOVERY_EXHAUSTED' });
+      await sleep(Math.min(30000, consecutiveBrowserFailures * 5000)); continue;
+    }
+    const index = ++segmentNumber, name = `segment-${String(index).padStart(4, '0')}-${stamp(new Date().toISOString())}`;
     const segmentDir = join(runDir, name); await mkdir(segmentDir, { recursive: true });
-    currentContext = await browser.newContext({ viewport: { width: 1920, height: 1080 }, recordVideo: { dir: segmentDir, size: { width: 1920, height: 1080 } }, acceptDownloads: false });
+    try { currentContext = await browser.newContext({ viewport, recordVideo: { dir: segmentDir, size:viewport }, acceptDownloads: false }); }
+    catch (error) {
+      await event('context_recovery_failed', { index, code: errorCode(error), attempt: ++consecutiveBrowserFailures });
+      await closeOwnedBrowser();
+      if (consecutiveBrowserFailures >= 5) throw error;
+      await sleep(5000); continue;
+    }
     await currentContext.addInitScript(({ projectId }) => { if (location.origin === 'http://127.0.0.1:4173') localStorage.setItem('vyrelum:selectedProject', projectId); }, { projectId });
     await currentContext.route('**/*', async route => {
       const request = route.request(), url = new URL(request.url());
       if (url.origin !== origin || !['GET','HEAD'].includes(request.method())) { await event('request_blocked', { method: request.method(), path: url.origin === origin ? url.pathname : 'external-origin' }); return route.abort(); }
       return route.continue();
     });
-    const page = await currentContext.newPage();
+    const segmentStart = new Date().toISOString();
+    let page;
+    try { page = await bounded(currentContext.newPage(),30000,'PAGE_OPEN_TIMEOUT'); }
+    catch (error) {
+      await event('page_recovery_failed', { index, code:errorCode(error), attempt:++consecutiveBrowserFailures });
+      await closeOwnedBrowser(); currentContext = null;
+      if (consecutiveBrowserFailures >= 5) throw error;
+      await sleep(5000); continue;
+    }
+    let interrupted = false, interruptionReason = null;
+    page.on('crash', () => { interrupted = true; interruptionReason = 'PAGE_CRASH'; void event('page_crashed', { index }); });
+    const disconnected = () => { interrupted = true; interruptionReason = 'BROWSER_DISCONNECTED'; void event('browser_disconnected', { index }); };
+    browser.on('disconnected', disconnected);
     page.on('popup', popup => { void popup.close(); void event('popup_blocked'); });
     page.on('pageerror', error => { void event('ui_error', { code: errorCode(error) }); });
     const video = page.video(); currentSegment = { index, name, startedAt: segmentStart, state: 'recording' };
+    if (captureGap) { await event('capture_gap_ended', { ...captureGap, endedAt:segmentStart, seconds:(Date.parse(segmentStart)-Date.parse(captureGap.startedAt))/1000 }); captureGap = null; }
     await event('segment_started', currentSegment); await status();
-    let lastNavigate = 0, lastSnapshotAt = 0, lastRecovery = 0, initiallyCaptured = false;
+    let lastNavigate = 0, lastSnapshotAt = 0, lastRecovery = 0, initiallyCaptured = false, unavailableCount = 0;
     const segmentDeadline = Math.min(deadline, Date.now() + chunkSeconds * 1000);
     try {
-      while (!stopped && Date.now() < segmentDeadline) {
+      while (!stopped && !interrupted && Date.now() < segmentDeadline) {
         await controls(page); if (stopped) break;
         const hasApp = page.url().startsWith(origin) && await page.locator('[data-nav="Jobs"]').count().catch(() => 0);
         if (!hasApp && Date.now() - lastRecovery > 10000) {
           lastRecovery = Date.now();
-          try { await page.goto(origin, { waitUntil: 'domcontentloaded', timeout: 8000 }); await page.locator('[data-nav="Jobs"]').waitFor({ timeout: 8000 }); await event('app_connected'); }
-          catch (error) { await event('app_unavailable', { code: errorCode(error) }); }
+          try { await page.goto(origin, { waitUntil: 'domcontentloaded', timeout: 20000 }); await page.locator('[data-nav="Jobs"]').waitFor({ timeout: 15000 }); await event('app_connected'); }
+          catch (error) { await event('app_unavailable', { code: errorCode(error) }); unavailableCount++; }
         }
         if (Date.now() - lastNavigate >= 30000 && Date.now() >= overrideViewUntil) { await navigate(page, views[navigationIndex++ % views.length]); lastNavigate = Date.now(); }
         if (Date.now() - lastSnapshotAt >= snapshotSeconds * 1000) {
           const available = await snapshot(page); lastSnapshotAt = Date.now();
+          unavailableCount = available ? 0 : unavailableCount + 1;
           if (available && !initiallyCaptured) { await screenshot(page, 'segment-start-real-ui'); initiallyCaptured = true; }
           if (!available && Date.now() - lastRecovery > 10000) { lastRecovery = Date.now(); try { await page.reload({ waitUntil: 'domcontentloaded', timeout: 8000 }); } catch {} }
         }
+        if (unavailableCount >= 2 || page.isClosed()) { interrupted = true; interruptionReason = page.isClosed() ? 'PAGE_CLOSED' : 'APP_UNAVAILABLE'; break; }
         await sleep(1000);
       }
-      await screenshot(page, 'segment-end-real-ui');
-    } catch (error) { await event('segment_observation_error', { code: errorCode(error) }); }
+      if (!interrupted) await screenshot(page, 'segment-end-real-ui');
+    } catch (error) { interrupted = true; interruptionReason = errorCode(error); await event('segment_observation_error', { code: interruptionReason }); }
     finally {
       const stoppedObservingAt = new Date().toISOString();
-      await currentContext.close(); currentContext = null;
-      const recordedPath = await video.path(), finalPath = join(runDir, `${name}.webm`); await rename(recordedPath, finalPath);
+      browser.off('disconnected', disconnected);
+      try { await bounded(currentContext.close(), 30000, 'CONTEXT_CLOSE_TIMEOUT'); } catch (error) { interrupted = true; interruptionReason ||= errorCode(error); }
+      currentContext = null;
+      const finalPath = join(runDir, `${name}.webm`);
+      try { await bounded(video.saveAs(finalPath),30000,'VIDEO_FINALIZATION_TIMEOUT'); }
+      catch (error) { interrupted = true; interruptionReason ||= errorCode(error); await event('video_finalize_failed', { index, code:errorCode(error) }); }
       let probe = null;
       try { const { stdout } = await exec(join(root, 'workers/tools/ffprobe.exe'), ['-v','error','-show_entries','format=duration:stream=codec_type,width,height,avg_frame_rate','-of','json',finalPath], { windowsHide: true, timeout: 15000, maxBuffer: 1_000_000 }); probe = JSON.parse(stdout); } catch (error) { await event('segment_probe_unavailable', { code: errorCode(error) }); }
-      const segment = { index, file: basename(finalPath), startedAt: segmentStart, stoppedObservingAt, finalizedAt: new Date().toISOString(), realElapsedSeconds: (Date.parse(stoppedObservingAt) - Date.parse(segmentStart)) / 1000, bytes: (await stat(finalPath)).size, sha256: await shaFile(finalPath), probe, timing: 'unaltered real-time browser recording' };
+      const realElapsedSeconds = (Date.parse(stoppedObservingAt) - Date.parse(segmentStart)) / 1000;
+      const validation = validateCaptureSegment({ wallSeconds:realElapsedSeconds, capturedSeconds:Number(probe?.format?.duration), probeAvailable:Boolean(probe), interrupted });
+      const hasVideo = existsSync(finalPath);
+      const segment = { index, state:validation.state, file:hasVideo ? basename(finalPath) : null, startedAt: segmentStart, stoppedObservingAt, finalizedAt: new Date().toISOString(), realElapsedSeconds, bytes: hasVideo ? (await stat(finalPath)).size : 0, sha256: hasVideo ? await shaFile(finalPath) : null, probe, validation, interruptionReason, timing:validation.timing };
       await writeFile(join(runDir, `${name}.json`), JSON.stringify(segment, null, 2)); completedSegments.push(segment); currentSegment = null;
-      await event('segment_finalized', segment); await status();
+      captureGap = { startedAt: stoppedObservingAt, reason: interrupted ? interruptionReason : 'SEGMENT_FINALIZATION_AND_PAGE_RELOAD' };
+      await event('segment_finalized', segment); await event('capture_gap_started', captureGap); await status();
+      if (interrupted || validation.state !== 'complete') {
+        await closeOwnedBrowser();
+        await sleep(5000);
+      } else consecutiveBrowserFailures = 0;
     }
   }
   if (!stopReason) stopReason = 'duration-limit';
 } catch (error) { stopReason = `recorder-error:${errorCode(error)}`; await event('capture_error', { code: errorCode(error) }); process.exitCode = 1; }
 finally {
-  await currentContext?.close().catch(() => {}); await browser?.close().catch(() => {});
+  await bounded(currentContext?.close().catch(() => {}),10000,'FINAL_CONTEXT_CLOSE_TIMEOUT').catch(() => {});
+  await closeOwnedBrowser().catch(async error => { await event('final_browser_cleanup_failed', { code:errorCode(error) }); });
   await event('capture_stopped', { stopReason, completedSegments: completedSegments.length }); await status('stopped'); await writer;
   await unlink(lockPath).catch(() => {});
   console.log(JSON.stringify({ state: 'stopped', runDir, stopReason, completedSegments: completedSegments.length }));

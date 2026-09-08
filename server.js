@@ -26,6 +26,7 @@ import { validateAllPresets } from './runtime/format-presets.mjs';
 import { initializeFlagshipCatalogue, selectFlagship, listFlagships, removeFlagship } from './runtime/flagship-catalogue.mjs';
 import { applyGeneratedShot } from './runtime/apply-generated-shot.mjs';
 import { validateNarrationCues } from './runtime/narration-cues.mjs';
+import { verifyReviewTarget } from './runtime/verify-review-target.mjs';
 
 // Desktop builds keep immutable application files separate from writable
 // per-user data. Development defaults remain rooted at the current project.
@@ -257,11 +258,14 @@ async function runJob(id){
    const x=json(await readBody(req)),job=typeof x.jobId==='string'&&db.prepare('SELECT * FROM jobs WHERE id=?').get(x.jobId);
    if(!job||!job.output)return send(res,404,{error:'Rendered job not found'});
    if(!['review_required','rejected','succeeded'].includes(job.status)||!['passed','rejected'].includes(x.verdict)||typeof x.notes!=='string'||!x.notes.trim()||x.notes.length>4000)return send(res,400,{error:'A completed render, review verdict and inspection notes are required'});
-   const output=json(Buffer.from(job.output));if(!output.outputs?.video||!output.provenance?.outputHash)return send(res,409,{error:'This job has no hashed video to review'});
+   let output=json(Buffer.from(job.output));if(!output.outputs?.video||!output.provenance?.outputHash)return send(res,409,{error:'This job has no hashed video to review'});
+   let checked;
+   try{checked=await verifyReviewTarget({db,jobsDir,mediaDir,job,output,expectedOutputHash:x.expectedOutputHash,ffmpeg:join(root,'workers/tools/ffmpeg.exe'),ffprobe:join(root,'workers/tools/ffprobe.exe')});output=checked.output;}
+   catch(error){return send(res,409,{error:error.message,code:error.code||'REVIEW_TARGET_FAILED'});}
    const review={verdict:x.verdict,notes:x.notes,reviewer:'operator-visual-review',reviewedAt:now(),outputHash:output.provenance.outputHash,scope:'visual inspection; no automated realism score'};
    output.review=review;output.provenance.semanticQuality=x.verdict==='passed'?'operator-reviewed':'rejected';output.status=x.verdict==='passed'?'reviewed':'rejected';
    await writeFile(join(jobsDir,job.id,'visual-review.json'),JSON.stringify(review,null,2));
-   const receiptPath=join(jobsDir,job.id,'result.json'),receipt=json(await readFile(receiptPath));receipt.review=review;receipt.provenance.semanticQuality=output.provenance.semanticQuality;await writeFile(receiptPath,JSON.stringify(receipt,null,2));
+   const receiptPath=join(jobsDir,job.id,'result.json'),receipt=checked.receipt;receipt.review=review;receipt.provenance=output.provenance;await writeFile(receiptPath,JSON.stringify(receipt,null,2));
    const pr=job.project_id&&db.prepare('SELECT * FROM projects WHERE id=?').get(job.project_id),d=pr?json(Buffer.from(pr.document)):null,t=now();
    db.exec('BEGIN IMMEDIATE');try{db.prepare('UPDATE jobs SET status=?,stage=?,output=?,updated_at=? WHERE id=?').run(x.verdict==='passed'?'succeeded':'rejected',x.verdict==='passed'?'operator review recorded':'visual review rejected',JSON.stringify(output),t,job.id);if(d?.latestOutput?.jobId===job.id){d.latestOutput={...d.latestOutput,status:output.status,provenance:output.provenance,review};const next=pr.revision+1,document=JSON.stringify(d);db.prepare('UPDATE projects SET revision=?,document=?,updated_at=? WHERE id=?').run(next,document,t,pr.id);db.prepare('INSERT INTO project_revisions VALUES (?,?,?,?)').run(pr.id,next,document,t);}db.exec('COMMIT');}catch(e){db.exec('ROLLBACK');throw e;}
    return send(res,200,{review,jobId:job.id});

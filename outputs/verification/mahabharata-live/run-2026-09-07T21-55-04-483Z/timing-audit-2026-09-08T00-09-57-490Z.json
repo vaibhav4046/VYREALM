@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-09-08T00:09:57.490Z",
+  "type": "append-only-recording-correction",
+  "runDir": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-07T21-55-04-483Z",
+  "originalJournalSha256": "f38e930ea7ea1163670d4eef9fd3347a00adb6dd9b436f5e45a328a6d8a89d51",
+  "previousEventHash": "a2a4b9d90b79343807ea70d8d63db542b3a6e7af8a48fa847da61c44764ad269",
+  "sourceStateSha256": "e2cb09a014f311d87f504afa92bb5feaa98637e9104a5735ca1ccfbe4506e0af",
+  "overallState": "partial-recording",
+  "reason": "Recording ended after a service/browser interruption; original finalization wording did not validate elapsed time. Prior evidence is preserved.",
+  "segments": [
+    {
+      "index": 1,
+      "file": "segment-0001-2026-09-07T21-55-05-657Z.webm",
+      "originalRecord": "segment-0001-2026-09-07T21-55-05-657Z.json",
+      "originalRecordSha256": "b5bb35892aefd095f7c26ac69ff3c56bf0e9594c4cc3c24d6dbc171f8bae003c",
+      "videoSha256": "f3d04ef701e2a6fdfc649fde07bb3501b981328820a2e20587647a5fce67986f",
+      "originalHashMatches": true,
+      "state": "complete",
+      "reasons": [],
+      "wallSeconds": 303.104,
+      "capturedSeconds": 303.4,
+      "durationDeltaSeconds": 0.29599999999999227,
+      "toleranceSeconds": 2,
+      "missingSeconds": 0,
+      "timing": "original unretimed recording; wall-clock duration verified"
+    },
+    {
+      "index": 2,
+      "file": "segment-0002-2026-09-07T22-00-33-029Z.webm",
+      "originalRecord": "segment-0002-2026-09-07T22-00-33-029Z.json",
+      "originalRecordSha256": "be208f08ed3a5fb3d71f244f6649ad99c873cc6b73bdf09f79321ece83ad0c54",
+      "videoSha256": "e54cf2624b2691a9f7dfab462173581bd4f88578061da2519891fa9b1e718a39",
+      "originalHashMatches": true,
+      "state": "complete",
+      "reasons": [],
+      "wallSeconds": 301.939,
+      "capturedSeconds": 301.68,
+      "durationDeltaSeconds": -0.25900000000001455,
+      "toleranceSeconds": 2,
+      "missingSeconds": 0.25900000000001455,
+      "timing": "original unretimed recording; wall-clock duration verified"
+    },
+    {
+      "index": 3,
+      "file": "segment-0003-2026-09-07T22-05-50-654Z.webm",
+      "originalRecord": "segment-0003-2026-09-07T22-05-50-654Z.json",
+      "originalRecordSha256": "d86b6510ee1e216c9524e20d642e9e9ce238e7eaafa1ed0519a43a546c0dd275",
+      "videoSha256": "6f1f8609156cb013a4e4c271107653b513a9dfec750d883584c8de24793cdeaa",
+      "originalHashMatches": true,
+      "state": "incomplete",
+      "reasons": [
+        "VIDEO_WALL_CLOCK_MISMATCH"
+      ],
+      "wallSeconds": 300.48,
+      "capturedSeconds": 109.8,
+      "durationDeltaSeconds": -190.68,
+      "toleranceSeconds": 2,
+      "missingSeconds": 190.68,
+      "timing": "original unretimed recording; incomplete evidence"
+    }
+  ],
+  "notes": [
+    "Complete means a segment matches wall-clock duration within 2 seconds. It does not prove the app was available for every frame or that the whole production was recorded.",
+    "Incomplete segments remain original unretimed bytes. Missing footage has not been reconstructed or concealed.",
+    "No audio was recorded by Playwright."
+  ]
+}

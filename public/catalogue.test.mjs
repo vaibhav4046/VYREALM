@@ -23,6 +23,20 @@ function attributeValues(name) {
   return [...HTML.matchAll(new RegExp(`\\b${name}\\s*=\\s*"([^"]*)"`, 'g'))].map(m => m[1]);
 }
 
+/**
+ * The source text of one top-level `function name(` in the page script, from its
+ * signature to the closing brace in column 0. Brittle if the file stops using
+ * top-level functions, which is why it asserts it found one.
+ */
+function functionSource(name) {
+  const start = [`\nfunction ${name}(`, `\nasync function ${name}(`]
+    .map(signature => HTML.indexOf(signature)).find(index => index !== -1) ?? -1;
+  assert.ok(start !== -1, `expected a top-level function ${name}() in the page script`);
+  const end = HTML.indexOf('\n}', start);
+  assert.ok(end !== -1, `function ${name}() is not closed at column 0`);
+  return HTML.slice(start, end + 2);
+}
+
 test('no external network references in src or href', () => {
   const values = [...attributeValues('src'), ...attributeValues('href')];
   assert.ok(values.length > 0, 'expected the page to reference at least one resource');
@@ -161,6 +175,62 @@ test('palette tokens are the ones defined in styles.css, not invented', async ()
     assert.ok(css.includes(token), `styles.css no longer defines ${token}; the catalogue palette has drifted`);
     assert.ok(HTML.includes(token), `catalogue.html does not reuse ${token}`);
   }
+});
+
+/*
+ * The three below are regression tests for bugs found by mounting the page twice
+ * in a real browser. mount() is not a one-shot: the "load an evidence file by
+ * hand" picker calls it again, and that picker is on screen both when the fetch
+ * fails and when a filter combination matches nothing.
+ */
+
+test('grid listeners are wired once, not re-added on every mount', () => {
+  // Observed before the fix: a second mount bound a second copy of the click
+  // handler, so one click toggled aria-expanded twice and the provenance panel
+  // never opened, and a card click called play() then pause() on the same film.
+  const body = functionSource('renderGrid');
+  assert.ok(!/addEventListener/.test(body),
+    'renderGrid() runs on every mount; wiring listeners there duplicates them');
+  for (const type of ['click', 'play', 'pause']) {
+    const bound = [...HTML.matchAll(new RegExp(`grid\\.addEventListener\\("${type}"`, 'g'))];
+    assert.equal(bound.length, 1, `#grid must bind exactly one ${type} handler, found ${bound.length}`);
+  }
+});
+
+test('a card whose master is gone from disk says so', () => {
+  // Seen for real: outputs/formats held 11 of the 129 masters its own
+  // BATCH_EVIDENCE.json describes. Without this the page shows 118 black
+  // rectangles with a transport, which is the stand-in it promises not to be.
+  const bound = [...HTML.matchAll(/grid\.addEventListener\("error"/g)];
+  assert.equal(bound.length, 1, 'exactly one media-error handler expected');
+  assert.match(HTML, /Master missing from disk/, 'the missing master must be named, not merely dimmed');
+  assert.match(HTML, /\.missing\s*\{/, 'the missing-master note needs a style of its own');
+});
+
+test('a re-mount starts from a clean filter state', () => {
+  // Observed before the fix: filters selected against the old evidence survived
+  // into the new one with every chip showing unpressed, so the page said
+  // "Showing 0 of 2 films" with nothing visibly switched on.
+  const body = functionSource('mount');
+  assert.match(body, /clearFilters\(\)/, 'mount() must reset the filters it is about to rebuild chips for');
+  assert.ok(body.indexOf('clearFilters()') < body.indexOf('buildFacets()'),
+    'the filters must be cleared before the new facets are built');
+  assert.match(HTML, /function clearFilters\(\)/, 'clearFilters() must be shared, not copy-pasted into #reset');
+});
+
+test('the "opened from disk" message is only shown when actually on file://', () => {
+  // A fetch also rejects when a localhost server dies. Blaming file:// then is a
+  // confident wrong answer, which is the one thing this page must not produce.
+  const body = functionSource('loadFirst');
+  assert.match(body, /location\.protocol === "file:"/,
+    'the file:// diagnosis must be gated on the real protocol');
+  assert.match(body, /EVIDENCE_FETCH_BLOCKED|EVIDENCE_NOT_FOUND/, 'both codes must still be reachable');
+});
+
+test('no protocol-relative URL hides in any quoted string', () => {
+  // "//host/thing" is a network fetch that the http:// scan above would miss.
+  const relative = [...HTML.matchAll(/"\s*\/\/[^"\s]+"/g)].map(m => m[0]);
+  assert.deepEqual(relative, [], `protocol-relative URL(s): ${relative.join(', ')}`);
 });
 
 test('the page is self contained: inline style and script, no build step', () => {

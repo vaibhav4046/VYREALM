@@ -160,6 +160,10 @@ legend{float:left;font:500 var(--f-mono)/1.9 var(--mono);letter-spacing:.13em;te
 .prov dd.quote{color:var(--lilac);font-style:italic;line-height:1.5}
 .prov .sub{margin-top:10px;padding-top:9px;border-top:1px solid var(--line);font:500 10px/1.6 var(--mono);color:var(--muted)}
 .prov .sub b{display:block;color:var(--text);letter-spacing:.11em;text-transform:uppercase;margin-bottom:5px;font-weight:500}
+.film.gone{border-color:#5a2b38}
+.film.gone .frame{opacity:.45}
+.missing{font:500 10px/1.4 var(--mono);color:var(--danger);border:1px solid #5a2b38;border-radius:6px;padding:6px 8px;overflow-wrap:anywhere}
+
 .prov .warn{color:var(--danger)}
 .prov .absent{color:var(--muted);font-style:italic}
 .scores{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
@@ -300,8 +304,13 @@ async function loadFirst(paths) {
       if (res.ok) return { path, data: await res.json() };
     } catch (_) { blocked = true; }   // file:// forbids fetch; that is not a 404
   }
-  const error = new Error(blocked ? "evidence fetch blocked" : "evidence not found");
-  error.code = blocked ? "EVIDENCE_FETCH_BLOCKED" : "EVIDENCE_NOT_FOUND";
+  // Only claim "you opened this from disk" when that is literally true. A fetch
+  // can also reject because a localhost server died, and telling that user they
+  // are on file:// is exactly the kind of confident wrong answer this page exists
+  // to avoid; they get the plain not-found panel, which offers the same picker.
+  const fromDisk = blocked && location.protocol === "file:";
+  const error = new Error(fromDisk ? "evidence fetch blocked" : "evidence not found");
+  error.code = fromDisk ? "EVIDENCE_FETCH_BLOCKED" : "EVIDENCE_NOT_FOUND";
   throw error;
 }
 
@@ -413,6 +422,10 @@ function toFilm(receipt) {
 function mount(evidence) {
   if (!evidence || typeof evidence !== "object" || !Array.isArray(evidence.receipts)) return showState("BAD_SHAPE");
 
+  // New evidence, new facets. Keeping the old selections would filter the new
+  // films against chips that no longer exist: an empty grid with nothing
+  // visibly switched on, which reads as "no films" rather than "still filtered".
+  clearFilters();
   FILMS = evidence.receipts.map(toFilm);
   renderRail(evidence);
 
@@ -608,6 +621,14 @@ function renderGrid() {
     card.innerHTML = cardHTML(film, index);
     grid.appendChild(card);
   });
+}
+
+/* Wired once against the static #grid, NOT inside renderGrid(): the evidence
+   picker calls mount() again on the same document, and a second copy of these
+   handlers toggles the disclosure twice per click (so it never opens) and
+   starts then immediately pauses a film. */
+{
+  const grid = $("#grid");
 
   grid.addEventListener("click", event => {
     const toggle = event.target.closest(".disclose");
@@ -639,7 +660,24 @@ function renderGrid() {
     const card = event.target.closest(".film");
     if (card) card.classList.remove("playing");
   }, true);
+
+  /* An evidence file outlives the masters it describes: prune outputs/formats and
+     every receipt still claims a film. A black rectangle with a transport is
+     exactly the stand-in this page promises not to show, so say the file is gone.
+     Media errors do not bubble; the capture phase is how #grid hears them. */
+  grid.addEventListener("error", event => {
+    const video = event.target;
+    if (!video || video.tagName !== "VIDEO") return;
+    const card = video.closest(".film");
+    if (!card || card.querySelector(".missing")) return;
+    card.classList.add("gone");
+    const note = document.createElement("p");
+    note.className = "missing";
+    note.textContent = "Master missing from disk: " + basename(video.dataset.src || "");
+    card.querySelector(".body").prepend(note);
+  }, true);
 }
+
 
 function hydrate(video) {
   if (!video.src && video.dataset.src) video.src = video.dataset.src;
@@ -703,13 +741,17 @@ $("#q").addEventListener("input", event => {
   FILTER.q = event.target.value.trim().toLowerCase();
   applyFilters();
 });
-$("#reset").addEventListener("click", () => {
+function clearFilters() {
   FILTER.q = "";
   $("#q").value = "";
   FILTER.platform.clear();
   FILTER.niche.clear();
   FILTER.prov.clear();
   document.querySelectorAll(".chip").forEach(chip => chip.setAttribute("aria-pressed", "false"));
+}
+
+$("#reset").addEventListener("click", () => {
+  clearFilters();
   applyFilters();
   $("#q").focus();
 });

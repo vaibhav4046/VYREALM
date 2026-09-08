@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 2,
+  "state": "recording",
+  "pid": 25084,
+  "startedAt": "2026-09-08T00:17:46.349Z",
+  "updatedAt": "2026-09-08T00:20:28.002Z",
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "firstJobId": "a707a1a2-66da-415d-9051-c8ff805cb915",
+  "origin": "http://127.0.0.1:4173",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "startedAfterFirstKeyframe": true,
+  "recordedSurface": "real local VYREALM browser UI only",
+  "audioCapture": "Playwright records browser pixels only; final film audio must be inspected separately",
+  "timing": "original unretimed segments, individually duration-validated; all gaps and interruptions retained",
+  "maxSeconds": 14400,
+  "chunkSeconds": 300,
+  "currentSegment": {
+    "index": 1,
+    "name": "segment-0001-2026-09-08T00-17-49-600Z",
+    "startedAt": "2026-09-08T00:17:49.767Z",
+    "state": "recording"
+  },
+  "completedSegments": [],
+  "captureGap": null,
+  "lastSnapshot": {
+    "file": "snapshot-2026-09-08T00-20-24-736Z.json",
+    "at": "2026-09-08T00:20:24.736Z",
+    "sha256": "0bc104f773d9a223cdb6aea328f3471af1669802e17100da727de495352de9cc"
+  },
+  "currentView": "Production plan",
+  "controlPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-17-46-349Z\\capture-command.json",
+  "stopPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-17-46-349Z\\STOP",
+  "stopReason": null
+}

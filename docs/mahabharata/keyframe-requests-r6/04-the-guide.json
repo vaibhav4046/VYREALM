@@ -1,0 +1,10 @@
+{
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "expectedRevision": 6,
+  "prompt": "Photorealistic live-action Indian epic cinema portrait of Krishna as charioteer, in the same halted timber chariot at Kurukshetra dawn. An original adult Indian epic portrayal of Krishna, compassionate clean-shaven face, subtly blue-toned dark skin with real skin texture, shoulder-length dark curls, yellow pitambara dhoti and light yellow silk upper drape, restrained gold kundala earrings and necklace, a modest low gold crown with one small peacock feather. Charioteer holding leather reins, not a warrior brandishing a weapon; no radiant neon halo. Original fictional casting, no actor likeness. He looks compassionately toward Arjuna just offscreen, a relaxed hand holding the reins below chest level. A soft leather rein and carved wood rail in foreground; detailed thoughtful face, small peacock feather and rich yellow fabric midground; white horse mane, dusty plain and crimson cloth standard in softly focused background. Warm side light camera-left, cool sky fill, fine natural rim on curls, 75mm optical portrait lens, detailed skin, textile and metal patina. No flute, discus, fighting pose, armour, glowing aura, illustration, text or watermark.",
+  "seed": 730604,
+  "width": 1024,
+  "height": 576,
+  "steps": 20,
+  "queuePolicy": "fifo"
+}

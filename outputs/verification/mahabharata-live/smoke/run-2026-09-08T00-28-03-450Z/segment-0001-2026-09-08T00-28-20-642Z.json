@@ -1,0 +1,38 @@
+{
+  "index": 1,
+  "state": "complete",
+  "file": "segment-0001-2026-09-08T00-28-20-642Z.webm",
+  "startedAt": "2026-09-08T00:28:20.816Z",
+  "stoppedObservingAt": "2026-09-08T00:28:34.602Z",
+  "finalizedAt": "2026-09-08T00:28:56.359Z",
+  "realElapsedSeconds": 13.786,
+  "bytes": 557066,
+  "sha256": "6abc3c3c8a7d29b494a98ccf525eb34abca56b5ad32e2f8dc412f40c8c2ca243",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_type": "video",
+        "width": 1280,
+        "height": 720,
+        "avg_frame_rate": "25/1"
+      }
+    ],
+    "format": {
+      "duration": "13.880000"
+    }
+  },
+  "validation": {
+    "state": "complete",
+    "reasons": [],
+    "wallSeconds": 13.786,
+    "capturedSeconds": 13.88,
+    "durationDeltaSeconds": 0.0940000000000012,
+    "toleranceSeconds": 2,
+    "missingSeconds": 0,
+    "timing": "original unretimed recording; wall-clock duration verified"
+  },
+  "interruptionReason": null,
+  "timing": "original unretimed recording; wall-clock duration verified"
+}

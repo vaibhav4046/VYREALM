@@ -1,0 +1,10 @@
+{
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "expectedRevision": 6,
+  "prompt": "Photorealistic live-action Indian epic cinema, widescreen 16:9. Dawn at Kurukshetra. Low 35mm camera beside a weathered, large wooden spoked chariot wheel with visible carved hub and restrained brass rim; dry grass in the near foreground. A white horse with believable legs and leather harness stands in midground beside the low timber war chariot. Beyond, two distant ranks of human warriors and woven crimson and ochre standards recede into drifting ground dust. An atmospheric battlefield with real earth, wood grain, rope and metal patina, not decorative geometry. Warm sunrise from camera-left and cool sky fill, restrained contrast, fine film grain. The chariot is halted. No people close enough to require a new hero face. No generated text or watermark.",
+  "seed": 730601,
+  "width": 1024,
+  "height": 576,
+  "steps": 20,
+  "queuePolicy": "fifo"
+}

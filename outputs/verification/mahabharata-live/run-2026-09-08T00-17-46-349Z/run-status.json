@@ -1,9 +1,9 @@
 {
   "schemaVersion": 2,
-  "state": "recording",
+  "state": "stopped",
   "pid": 25084,
   "startedAt": "2026-09-08T00:17:46.349Z",
-  "updatedAt": "2026-09-08T00:20:28.002Z",
+  "updatedAt": "2026-09-08T00:24:49.169Z",
   "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
   "firstJobId": "a707a1a2-66da-415d-9051-c8ff805cb915",
   "origin": "http://127.0.0.1:4173",
@@ -17,21 +17,47 @@
   "timing": "original unretimed segments, individually duration-validated; all gaps and interruptions retained",
   "maxSeconds": 14400,
   "chunkSeconds": 300,
-  "currentSegment": {
-    "index": 1,
-    "name": "segment-0001-2026-09-08T00-17-49-600Z",
-    "startedAt": "2026-09-08T00:17:49.767Z",
-    "state": "recording"
+  "currentSegment": null,
+  "completedSegments": [
+    {
+      "index": 1,
+      "state": "incomplete",
+      "file": null,
+      "startedAt": "2026-09-08T00:17:49.767Z",
+      "stoppedObservingAt": "2026-09-08T00:22:55.055Z",
+      "finalizedAt": "2026-09-08T00:23:55.758Z",
+      "realElapsedSeconds": 305.288,
+      "bytes": 0,
+      "sha256": null,
+      "probe": null,
+      "validation": {
+        "state": "incomplete",
+        "reasons": [
+          "VIDEO_DURATION_UNVERIFIED",
+          "OBSERVATION_INTERRUPTED"
+        ],
+        "wallSeconds": 305.288,
+        "capturedSeconds": null,
+        "durationDeltaSeconds": null,
+        "toleranceSeconds": 2,
+        "missingSeconds": null,
+        "timing": "original unretimed recording; incomplete evidence"
+      },
+      "interruptionReason": "CONTEXT_CLOSE_TIMEOUT",
+      "timing": "original unretimed recording; incomplete evidence"
+    }
+  ],
+  "captureGap": {
+    "startedAt": "2026-09-08T00:22:55.055Z",
+    "reason": "CONTEXT_CLOSE_TIMEOUT"
   },
-  "completedSegments": [],
-  "captureGap": null,
   "lastSnapshot": {
-    "file": "snapshot-2026-09-08T00-20-24-736Z.json",
-    "at": "2026-09-08T00:20:24.736Z",
-    "sha256": "0bc104f773d9a223cdb6aea328f3471af1669802e17100da727de495352de9cc"
+    "file": "snapshot-2026-09-08T00-22-46-968Z.json",
+    "at": "2026-09-08T00:22:46.968Z",
+    "sha256": "01a50adced42f613c8f82a895dd0095e3a47561abc9e864781f71fc4e931bf0f"
   },
   "currentView": "Production plan",
   "controlPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-17-46-349Z\\capture-command.json",
   "stopPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-17-46-349Z\\STOP",
-  "stopReason": null
+  "stopReason": "recorder-error:OWNED_BROWSER_KILL_TIMEOUT"
 }

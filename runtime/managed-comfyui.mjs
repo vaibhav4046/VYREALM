@@ -4,8 +4,9 @@ import { readFile, mkdir, appendFile, stat } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { join, resolve, relative, isAbsolute } from 'node:path';
 import { createComfyUIProvider } from './providers/comfyui.mjs';
+import { totalmem } from 'node:os';
+import { comfyLaunchProfile } from './comfy-performance-profile.mjs';
 
-const START_ARGS = ['--listen', '127.0.0.1', '--port', '8188', '--lowvram', '--disable-dynamic-vram', '--disable-smart-memory', '--cache-none', '--disable-api-nodes', '--disable-all-custom-nodes', '--whitelist-custom-nodes', 'ComfyUI-GGUF', '--disable-auto-launch', '--reserve-vram', '1', '--disable-async-offload', '--use-pytorch-cross-attention'];
 let ownedProcess, pendingStart;
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 function within(root, target) { const r = relative(resolve(root), resolve(target)); return r && r !== '..' && !r.startsWith('..\\') && !r.startsWith('../') && !isAbsolute(r); }
@@ -39,8 +40,10 @@ export async function ensureManagedComfyUI({ runtimeDir = process.env.VYRELUM_RU
     await mkdir(join(runtimeDir, 'logs'), { recursive: true });
     const log = join(runtimeDir, 'logs', 'comfyui.log');
     const env = { ...process.env, HF_HUB_OFFLINE: '1', TRANSFORMERS_OFFLINE: '1', HF_HUB_DISABLE_TELEMETRY: '1', PYTHONUNBUFFERED: '1' };
+    const profile = comfyLaunchProfile({profile:config.performanceProfile,totalRamBytes:totalmem(),cliSource:config.performanceProfile && config.performanceProfile !== 'conservative' ? await readFile(join(runtimeRoot,'ComfyUI','comfy','cli_args.py'),'utf8') : undefined});
+    await appendFile(log, JSON.stringify({event:'local-performance-profile',profile:profile.id,qualification:profile.qualification,cacheArgs:profile.cacheArgs,memoryLimitClaim:false,measuredSpeedup:null})+'\n');
     // The desktop parent already strips hosted credentials from its environment.
-    ownedProcess = spawn(config.python, [entry, ...START_ARGS], { cwd: join(runtimeRoot, 'ComfyUI'), env, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
+    ownedProcess = spawn(config.python, [entry, ...profile.args], { cwd: join(runtimeRoot, 'ComfyUI'), env, windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
     const launched = ownedProcess;
     let startupError;
     launched.stdout.on('data', b => void appendFile(log, b));

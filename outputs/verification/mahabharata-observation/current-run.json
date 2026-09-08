@@ -1,0 +1,8 @@
+{
+  "pid": 37908,
+  "startedAt": "2026-09-08T00:42:44.301Z",
+  "runDir": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-observation\\run-2026-09-08T00-42-44-301Z",
+  "mode": "time-sampled-app-observation",
+  "stopPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-observation\\run-2026-09-08T00-42-44-301Z\\STOP",
+  "controlPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-observation\\run-2026-09-08T00-42-44-301Z\\capture-command.json"
+}

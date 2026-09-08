@@ -25,3 +25,7 @@ The narrowed request completed in **37.90 seconds**, using 269 prompt tokens and
 The draft was therefore structurally rejected as delivered, then shortened and corrected through an explicit editorial revision. The selected **49-word** narration is in `narration-approved.txt` and `production-script.json` revision 2. It preserves the local draft's concrete progression of chariot, kin, breath, slipping bow and counsel, while correcting agency and avoiding invented quoted scripture. The final text is **local-model-assisted, editorially revised**, not unmodified LLM output. Its writing provenance is separate from the still-pending visual-generation provenance.
 
 Repair response SHA-256: `c89ed6b2cae48342dc83afee5eda746782729bbf42b66a595ccb6ff1baca43b4`. The exact prompt, model digest, template hash, raw response and timing are in `local-llm-repair-evidence.json`. Both passes used CPU-only settings and unloaded the model after completion.
+
+## Narration timing revision 5
+
+The current approved text is 44 words. It replaces the earlier 49-word editorial revision after local Piper measured an opening cue at 5.28 seconds, longer than its five-second shot. The shorter pilot fit all six slots; the final revision also names Arjuna in the second cue to remove an ambiguous pronoun. Its exact final text still requires a fresh project-owned voiceover job. Pilot audio is verification material, not a completed film soundtrack. Editorial changes do not become model-generated writing through this timing check.

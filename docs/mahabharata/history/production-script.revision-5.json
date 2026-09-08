@@ -1,0 +1,282 @@
+{
+  "schemaVersion": 1,
+  "revision": 5,
+  "continuityRevision": {
+    "change": "Adopt the inspected original keyframe's short moustache and chin beard for Arjuna, replacing the initial clean-shaven art direction.",
+    "keyframeSha256": "957efafb8aa68c96a6efd2417fdc4137e0b0d481a000986a1aa485d58561e75b",
+    "reason": "Retain completed detailed character reference and explicitly lock its actual appearance. Motion remains unreviewed."
+  },
+  "title": "BETWEEN TWO ARMIES",
+  "subtitle": "An original Mahabharata teaser",
+  "status": "planned",
+  "durationSeconds": 30,
+  "fps": 24,
+  "canvas": {
+    "width": 1920,
+    "height": 1080
+  },
+  "language": "en",
+  "captionsRequested": false,
+  "narration": "At Kurukshetra, Krishna halts the chariot. Arjuna sees his kin and teachers. His breath catches. His bow slips. Krishna counsels action without attachment to reward. The weight of kinship remains. Arjuna lifts his gaze, listening. Between the armies, he must understand what duty demands.",
+  "narrationType": "original-poetic-exposition-not-scripture-quotation",
+  "planningProvenance": {
+    "research": "primary-source-web-research-by-development-assistant",
+    "finalNarrationAuthor": "local-model-draft-editorially-revised-by-development-assistant",
+    "narrationRevision": 5,
+    "localModelAttempted": "qwen3:4b-instruct",
+    "localModelDigest": "0edcdef34593eac1aa2be9c7d06c432dcf81945adca5eca2f27662c18f168ba0",
+    "localModelResult": "initial-draft-rejected-repair-draft-editorially-revised",
+    "localModelFailureReasons": [
+      "Two-word incomplete narration",
+      "Unsupported assertion that dawn is specified by the cited scripture"
+    ],
+    "repairDraftWordCount": 72,
+    "finalNarrationWordCount": 44,
+    "repairResponseSha256": "c89ed6b2cae48342dc83afee5eda746782729bbf42b66a595ccb6ff1baca43b4",
+    "editorialDecision": "shorten-repair-draft-and-correct-charioteer-action-and-scriptural-attribution",
+    "evidenceFile": "local-llm-evidence.json",
+    "repairEvidenceFile": "local-llm-repair-evidence.json",
+    "reviewFile": "LOCAL_LLM_REVIEW.md",
+    "finalNarrationIsLocalLlmGenerated": false
+  },
+  "narrationTargetSeconds": 28,
+  "sourceReferences": [
+    {
+      "work": "Mahabharata / Bhagavad Gita 1",
+      "url": "https://sacred-texts.com/hin/m06/m06025.htm"
+    },
+    {
+      "work": "Bhagavad Gita 1.21",
+      "url": "https://www.gitasupersite.iitk.ac.in/srimad?choose=1&etadi=1&etgb=1&etpurohit=1&etsiva=1&etssa=1&field_chapter_value=1&field_nsutra_value=21&language=dv&show_mool=1"
+    },
+    {
+      "work": "Bhagavad Gita 2.47",
+      "url": "https://www.gitasupersite.iitk.ac.in/srimad?ecsiva=1&etpurohit=1&field_chapter_value=2&field_nsutra_value=47&language=dv&show_purohit=1"
+    },
+    {
+      "work": "Mahabharata / Bhagavad Gita 18.73",
+      "url": "https://sacred-texts.com/hin/m06/m06042.htm"
+    }
+  ],
+  "referencePolicy": "Use the supplied YouTube reference only for comparative quality analysis; copy no footage, dialogue, music, watermark, actors or character design.",
+  "characterReferences": {
+    "arjuna": {
+      "description": "Original adult South Asian man, medium-brown skin with visible natural pores, brown eyes, long black hair tied back, short moustache and short chin beard matching the inspected original keyframe, narrow gold headband. Textured ochre wrap, saffron shoulder cloth, restrained fitted protective metalwork and simple right-hand leather arm guard. Natural proportions and detailed textiles.",
+      "referenceImagePath": "C:/Users/lalwa/AppData/Roaming/vyrelum/data/jobs/a707a1a2-66da-415d-9051-c8ff805cb915/keyframe/frames/00000.png",
+      "continuityLocks": [
+        "face",
+        "hairline",
+        "headband",
+        "saffron-cloth-position",
+        "right-arm-guard",
+        "bow-grip"
+      ],
+      "referenceSha256": "957efafb8aa68c96a6efd2417fdc4137e0b0d481a000986a1aa485d58561e75b"
+    },
+    "krishna": {
+      "description": "Original adult South Asian man with traditionally blue-toned dark complexion and natural facial detail, dark curled hair, yellow pitambara, restrained gold jewellery, compact crown with a small peacock feather. Compassionate and composed charioteer holding reins. Traditional visual interpretation, no halo effects.",
+      "referenceImagePath": null,
+      "continuityLocks": [
+        "face",
+        "blue-tone",
+        "hair",
+        "yellow-cloth",
+        "crown",
+        "reins"
+      ]
+    }
+  },
+  "environment": "Kurukshetra interpreted as a dry north Indian plain at dawn, textured brown soil, sparse drifting dust, a timber chariot with restrained metal trim, white horses, distant ranks and woven cloth banners. Warm key from camera-left, cool skylight fill, muted brass and saffron palette. No mountains or city architecture.",
+  "negativePrompt": "flat vector art, illustration, low poly, primitive, plastic mannequin, videogame render, toy, black empty background, rotating object, decorative glowing rings, neon, fantasy horns, European plate armor, Roman helmet, castles, guns, sci-fi, illegible writing, watermark, logo, generated text, duplicated limbs, extra fingers, warped hands, melting face, changing wardrobe, camera teleport, frantic shaking, unnecessary explosions",
+  "generation": {
+    "preferredMethod": "local-keyframe-to-video",
+    "parallelGpuJobs": 1,
+    "framesPerShot": 120,
+    "sourceResolution": "provider-qualified-low-memory-profile",
+    "note": "Only label generated after the VYREALM provider log and output hash are verified. Reuse approved character references. Render one simple action per shot. No geometry fallback."
+  },
+  "shots": [
+    {
+      "id": "01-the-field",
+      "startSeconds": 0,
+      "durationSeconds": 5,
+      "characters": [],
+      "shotType": "low-wide-detail",
+      "keyframePrompt": "Photorealistic Indian epic film still. At dawn on the dusty Kurukshetra plain, foreground weathered wooden chariot wheel with worn brass rim and detailed rope binding. Midground a white horse shoulder and a saffron cloth banner, distant ranks of warriors softly visible through atmospheric dust. Strong foreground, midground and background separation. Warm side light catches wood grain, a little airborne dust, authentic material texture, 35mm cinema lens, grounded natural contrast. No text.",
+      "motionPrompt": "Camera tracks slowly sideways past the stationary chariot wheel. Cloth stirs in a gentle breeze, a thin band of dust drifts across the ground, the white horse breathes. Preserve wheel geometry and distant figures, one uninterrupted shot.",
+      "narrationCue": "At Kurukshetra, Krishna halts the chariot.",
+      "sound": [
+        "dry-wind",
+        "distant-conch-like-call",
+        "subtle-tack-creak"
+      ],
+      "visualChecks": [
+        "textured-wheel",
+        "white-horse-anatomy",
+        "distant-army-not-geometric-bars",
+        "ground-depth"
+      ],
+      "generationStatus": "planned"
+    },
+    {
+      "id": "02-the-cost",
+      "startSeconds": 5,
+      "durationSeconds": 5,
+      "characters": [
+        "arjuna"
+      ],
+      "shotType": "close-portrait",
+      "keyframePrompt": "Photorealistic close portrait of the locked original Arjuna reference on his chariot at dawn. Medium-brown South Asian face, long black hair tied back, narrow gold headband, saffron shoulder cloth and restrained metal armor. Eyes moist with grief as he recognises kin in the distant army, natural skin pores and fine facial hair texture. A blurred rope edge in foreground, detailed face in midground, flags and dust in background. Warm light from camera-left, cool fill, shallow depth of field, 85mm cinema lens. No text.",
+      "motionPrompt": "Arjuna's breath catches softly. His eyes move a little toward the distant army and then lower. Two loose hair strands move in the wind. Camera makes a subtle slow push-in. Preserve the face, headband, clothing and anatomy; restrained human performance.",
+      "narrationCue": "Arjuna sees his kin and teachers.",
+      "sound": [
+        "low-wind",
+        "soft-breath",
+        "distant-muted-drum"
+      ],
+      "visualChecks": [
+        "arjuna-face-match",
+        "realistic-eyes",
+        "coherent-armor",
+        "subtle-expression-not-grimace"
+      ],
+      "generationStatus": "planned"
+    },
+    {
+      "id": "03-the-hand",
+      "startSeconds": 10,
+      "durationSeconds": 5,
+      "characters": [
+        "arjuna"
+      ],
+      "shotType": "hand-and-bow-insert",
+      "keyframePrompt": "Photorealistic close insert of Arjuna's right hand with five natural fingers, the same worn arm guard and saffron sleeve edge, loosely holding the wrapped grip of Gandiva. Textured timber chariot floor behind the hand, a softly blurred brass rail in foreground and out-of-focus dusty plain behind. Detailed skin creases, leather grain and bow wrapping. The curved bow is physically coherent and unstrung action is not shown. Warm dawn key from camera-left, 75mm lens. No text.",
+      "motionPrompt": "His hand trembles almost imperceptibly and the bow lowers only a few centimetres. The fingers stay around the grip with correct anatomy. Cloth shifts once in the breeze. Camera holds nearly still with a slight natural drift, no bow firing or bending.",
+      "narrationCue": "His breath catches. His bow slips.",
+      "sound": [
+        "close-leather-creak",
+        "cloth-rustle",
+        "music-drop"
+      ],
+      "visualChecks": [
+        "five-fingers",
+        "bow-shape-stable",
+        "same-bracer",
+        "no-clipping-through-floor"
+      ],
+      "generationStatus": "planned"
+    },
+    {
+      "id": "04-the-guide",
+      "startSeconds": 15,
+      "durationSeconds": 5,
+      "characters": [
+        "krishna"
+      ],
+      "shotType": "three-quarter-close-portrait",
+      "keyframePrompt": "Photorealistic devotional Indian epic cinema portrait of the locked original Krishna reference, charioteer at Kurukshetra dawn, traditionally blue-toned dark complexion with natural skin texture, black curled hair, yellow pitambara, restrained gold ornaments and compact crown with one small peacock feather. He looks compassionately toward Arjuna just offscreen, holding a rein. Foreground soft rein, detailed expressive face and woven yellow cloth, distant flags blurred behind. Same warm side light and cool fill. 85mm lens. No glowing aura, no text.",
+      "motionPrompt": "Krishna slowly turns his attentive gaze toward Arjuna and makes one small calm nod, breathing naturally. The yellow cloth and feather move gently in the breeze. Subtle controlled camera push. Lips remain at rest; this is offscreen narration, not lip-sync dialogue.",
+      "narrationCue": "Krishna counsels action without attachment to reward.",
+      "sound": [
+        "soft-wind",
+        "warm-sustained-tone",
+        "quiet-rein-movement"
+      ],
+      "visualChecks": [
+        "krishna-face-match",
+        "natural-skin-not-plastic",
+        "reins-not-weapon",
+        "no-unearned-lip-sync"
+      ],
+      "generationStatus": "planned"
+    },
+    {
+      "id": "05-the-listening",
+      "startSeconds": 20,
+      "durationSeconds": 5,
+      "characters": [
+        "arjuna",
+        "krishna-shoulder-only"
+      ],
+      "shotType": "over-shoulder",
+      "keyframePrompt": "Photorealistic over-shoulder shot from behind Krishna's softly blurred yellow-clothed shoulder toward the exact locked Arjuna face on the same timber chariot. Arjuna listens with quiet anguish, saffron cloth and gold headband unchanged. Layered shoulder foreground, face midground, banners and dawn dust in the background. Keep their established eyeline and warm light from camera-left. 65mm lens, natural depth of field, detailed skin and cloth. No text.",
+      "motionPrompt": "Arjuna steadies his breathing and lifts his eyes toward Krishna. Only one visible face. A tiny lateral camera move reveals more of the chariot rail; keep both bodies stable and distant flags moving gently. No dialogue mouth motion.",
+      "narrationCue": "The weight of kinship remains. Arjuna lifts his gaze, listening.",
+      "sound": [
+        "breath-settles",
+        "low-drum-returns",
+        "wind"
+      ],
+      "visualChecks": [
+        "arjuna-face-match",
+        "krishna-shoulder-colour",
+        "eyeline-continuity",
+        "same-light-direction"
+      ],
+      "generationStatus": "planned"
+    },
+    {
+      "id": "06-the-choice",
+      "startSeconds": 25,
+      "durationSeconds": 5,
+      "characters": [
+        "arjuna"
+      ],
+      "shotType": "profile-close-portrait",
+      "keyframePrompt": "Photorealistic profile close-up of the same Arjuna reference on the chariot, looking toward the distant field. His expression is thoughtful resolve, not rage. Same tied black hair, narrow gold headband, saffron cloth and natural brown skin. A thin golden rim reaches the cheek and hair, foreground chariot rail out of focus, background flags and dust show depth. Controlled highlights, 85mm cinematic portrait, space low center for a later editorial title, no text in the generated frame.",
+      "motionPrompt": "Arjuna raises his gaze slightly toward the field; his jaw relaxes and he takes one steady breath. The camera glides forward only a little. Hair and flags move in a soft wind; face and wardrobe remain unchanged. Hold the final composition, no arrow firing.",
+      "narrationCue": "Between the armies, he must understand what duty demands.",
+      "sound": [
+        "one-low-drum-impact",
+        "conch-like-tone-return",
+        "long-wind-tail"
+      ],
+      "visualChecks": [
+        "same-face-profile",
+        "restrained-performance",
+        "no-flicker",
+        "title-safe-space"
+      ],
+      "generationStatus": "planned"
+    }
+  ],
+  "editorialTitle": {
+    "text": "BETWEEN TWO ARMIES",
+    "startSeconds": 28,
+    "endSeconds": 30,
+    "style": "restrained-off-white-serif-no-glow",
+    "position": "lower-center-safe-area"
+  },
+  "soundDesign": {
+    "sourcePolicy": "local-synthesis-or-explicitly-licensed-assets",
+    "narrationChannel": "center",
+    "targetIntegratedLufs": -14,
+    "truePeakCeilingDbtp": -1,
+    "sampleRate": 48000,
+    "channels": 2,
+    "mixDirection": "Begin wide and atmospheric, move close at the bow insert, thin the music for counsel, allow one restrained low climax and a clean final tail. Do not use copied film music or chant."
+  },
+  "acceptance": {
+    "requiredFrames": 720,
+    "requiredDurationSeconds": 30,
+    "maxAudioVideoDifferenceSeconds": 0.1,
+    "extractFramesPerSecond": 1,
+    "mustInspectMotion": true,
+    "mustVerifyProviderOutput": true,
+    "mustVerifyFaceAndWardrobeContinuity": true,
+    "mustVerifySoundByListening": true,
+    "successStateBeforeRender": "not-generated",
+    "reject": [
+      "placeholder-geometry",
+      "flat-vector-art",
+      "still-image-only-labelled-as-performance",
+      "melting-face",
+      "extra-fingers",
+      "warped-bow",
+      "changing-character",
+      "unintelligible-narration",
+      "copied-reference-media"
+    ]
+  },
+  "timingRevision": "Piper measured the original opening at 5.28s for a 5s shot. Shortened that cue and named Arjuna in the second cue to remove an ambiguous pronoun. Pilot v2 fit all six slots; final text requires a fresh owned narration job."
+}

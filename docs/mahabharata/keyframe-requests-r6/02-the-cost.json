@@ -1,0 +1,10 @@
+{
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "expectedRevision": 6,
+  "prompt": "Photorealistic live-action Indian epic film still, chest-up three-quarter portrait of Arjuna on a halted timber chariot at Kurukshetra. An original adult Indian epic prince portraying Arjuna, approximately 30, clean-shaven, shoulder-length loose wavy black hair swept back from the face without a bun or topknot, warm medium-brown skin with natural pores, dark brown eyes, an attentive expressive face. Ivory cotton dhoti with a narrow woven gold border; deep saffron angavastra draped diagonally over one shoulder with visible silk-cotton weave; modest hammered-gold kundala earrings, a simple gold armlet and a low repoussé gold diadem. Bare upper arm, simple leather archery wrist guard, no segmented shoulder armour. Original fictional casting, no actor likeness. His expression shows the shock of recognising kin across the field, eyes attentive and grief-struck, mouth relaxed. Frame the whole head and both shoulders with room above the loose hair, do not crop the diadem. Soft carved wooden chariot rail crosses the near lower foreground; face and richly woven saffron cloth are crisply detailed in midground; behind him a readable dusty plain, white horse shoulder and a few woven standards fall softly out of focus. Warm dawn light from camera-left, soft cool fill, a thin natural rim on hair, 75mm lens, shallow optical depth of field, controlled highlights, finely detailed skin and draped cloth. No armour plates, no bun, no beard, no illustration, no text or watermark.",
+  "seed": 730602,
+  "width": 1024,
+  "height": 576,
+  "steps": 20,
+  "queuePolicy": "fifo"
+}

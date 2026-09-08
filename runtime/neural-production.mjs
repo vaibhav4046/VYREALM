@@ -15,16 +15,17 @@ export const WAN_MODELS = Object.freeze({ diffusion: 'Wan2.2-TI2V-5B-Q4_K_M.gguf
 export const SMOKE_PROMPT = 'An original adult woman with short dark wet hair, wearing a detailed charcoal rain jacket, stands beneath a warm stall lamp in a busy rain-soaked night market. Close cinematic portrait, her face clearly visible, fabric texture, market stalls in the middle distance, soft neon reflections behind her, shallow depth of field. She hears a sound, turns her head and looks over her shoulder, eyebrows rising, wet strands of hair move, rain falls continuously, distant people move naturally. Slow restrained handheld camera push in, realistic skin and materials, coherent lighting. No text or watermark.';
 const NEGATIVE = 'static frozen image, slideshow, vector art, cartoon, geometric primitives, text, subtitles, watermark, black empty background, distorted face, deformed hands, duplicated limbs, unstable geometry, oversaturated, low quality';
 
-export function wanWorkflow({ prompt = SMOKE_PROMPT, seed = 7092026, frames = 121, steps = 20, width = 512, height = 288, imageName, prefix }) {
+export function wanWorkflow({ prompt = SMOKE_PROMPT, seed = 7092026, frames = 121, steps = 20, width = 512, height = 288, imageName, prefix, negativePrompt }) {
   if (!/^[a-zA-Z0-9_/-]+$/.test(prefix || '')) throw new Error('INVALID_OUTPUT_PREFIX');
   if (![1, 33, 61, 121].includes(frames) || steps < 1 || steps > 30 || width % 32 || height % 32 || width * height > 1024 * 576) throw new Error('NEURAL_PROFILE_OUT_OF_BOUNDS');
+  if (negativePrompt !== undefined && (typeof negativePrompt !== 'string' || !negativePrompt.trim() || negativePrompt.length > 2000)) throw Object.assign(new Error('NEURAL_NEGATIVE_PROMPT: Additional exclusions must contain 1–2000 characters'), {code:'NEURAL_NEGATIVE_PROMPT'});
   const workflow = {
     '1': { class_type: 'UnetLoaderGGUF', inputs: { unet_name: WAN_MODELS.diffusion } },
     '2': { class_type: 'CLIPLoaderGGUF', inputs: { clip_name: WAN_MODELS.text, type: 'wan' } },
     '3': { class_type: 'VAELoader', inputs: { vae_name: WAN_MODELS.vae } },
     '4': { class_type: 'ModelSamplingSD3', inputs: { model: ['1', 0], shift: 8 } },
     '5': { class_type: 'CLIPTextEncode', inputs: { clip: ['2', 0], text: prompt } },
-    '6': { class_type: 'CLIPTextEncode', inputs: { clip: ['2', 0], text: NEGATIVE } },
+    '6': { class_type: 'CLIPTextEncode', inputs: { clip: ['2', 0], text: negativePrompt === undefined ? NEGATIVE : `${NEGATIVE}, ${negativePrompt.trim()}` } },
     '7': { class_type: 'Wan22ImageToVideoLatent', inputs: { vae: ['3', 0], width, height, length: frames, batch_size: 1, ...(imageName ? { start_image: ['11', 0] } : {}) } },
     '8': { class_type: 'KSampler', inputs: { model: ['4', 0], positive: ['5', 0], negative: ['6', 0], latent_image: ['7', 0], seed, steps, cfg: 5, sampler_name: 'uni_pc', scheduler: 'simple', denoise: 1 } },
     '9': { class_type: 'VAEDecode', inputs: { samples: ['8', 0], vae: ['3', 0] } },
@@ -104,8 +105,14 @@ async function recoverCompletedStage({ stageRoot, workflow, frames, submission, 
 
 // Only descriptors returned by this exact provider prompt are downloaded.
 // A user-supplied file or unrelated ComfyUI history is never accepted here.
-export async function executeWanStage({ provider, jobRoot, stage, workflow, frames, onProgress = () => {}, timeoutMs = 7200000, pollIntervalMs = 3000, waitForIdle = false }) {
-  if (!['keyframe', 'motion'].includes(stage)) throw failure('INVALID_STAGE', 'Unknown generation stage');
+export async function executeWanStage({ provider, jobRoot, stage, workflow, frames, width, height, requiredModels = Object.values(WAN_MODELS), onProgress = () => {}, timeoutMs = 7200000, pollIntervalMs = 3000, waitForIdle = false, queuePolicy = 'idle' }) {
+  if (!['keyframe', 'motion', 'decode'].includes(stage)) throw failure('INVALID_STAGE', 'Unknown generation stage');
+  if (stage === 'decode' || width !== undefined || height !== undefined) {
+    if (!Number.isInteger(width) || !Number.isInteger(height) || width < 64 || height < 64 || width % 32 || height % 32 || width * height > 1024 * 576) throw failure('STAGE_DIMENSIONS_OUT_OF_BOUNDS', 'Explicit stage dimensions must be bounded multiples of 32');
+  }
+  if (!Array.isArray(requiredModels) || !requiredModels.length || requiredModels.length > 16 || requiredModels.some(name => typeof name !== 'string' || !name || name.length > 256 || name.includes('://') || name.replaceAll('\\','/').split('/').includes('..'))) throw failure('INVALID_STAGE_MODELS', 'Stage model requirements must be explicit local model names');
+  if (!['idle','fifo'].includes(queuePolicy) || (queuePolicy === 'fifo' && (!Number.isFinite(timeoutMs) || timeoutMs < 1 || timeoutMs > 7200000))) throw failure('INVALID_QUEUE_POLICY', 'FIFO operations require a bounded two-hour maximum');
+  if (stage === 'decode' && Object.values(workflow).some(node => !['LoadLatent','VAELoader','VAEDecode','VAEDecodeTiled','SaveImage'].includes(node.class_type))) throw failure('DECODE_GRAPH_NOT_ISOLATED', 'Decode operations cannot contain sampling, generation or external nodes');
   const stageRoot = join(jobRoot, stage);
   await mkdir(join(stageRoot, 'frames'), { recursive: true });
   const workflowPath=join(stageRoot,'workflow.json');
@@ -129,6 +136,11 @@ export async function executeWanStage({ provider, jobRoot, stage, workflow, fram
         if(!waitForIdle||!(['TimeoutError','AbortError'].includes(error.name)||error instanceof TypeError))throw error;
         queue={queue_running:[['unknown']]};
       }
+      if(queuePolicy==='fifo'){
+        if(!Array.isArray(queue.queue_running)||!Array.isArray(queue.queue_pending))throw failure('PROVIDER_QUEUE_UNAVAILABLE','FIFO queue state must be confirmed before submission');
+        if(queue.queue_pending.length>=8)throw failure('PROVIDER_QUEUE_CAPACITY','Eight local prompts are already pending; this benchmark was not submitted');
+        onProgress({stage:`${stage}: submitting one owned graph to the local GPU FIFO`,queuePolicy,pendingAhead:queue.queue_pending.length});break;
+      }
       if(!queue.queue_running?.length&&!queue.queue_pending?.length)break;
       if(!waitForIdle)throw failure('PROVIDER_BUSY','Another ComfyUI job is active. VYREALM did not enqueue a competing GPU job.');
       if(Date.now()>=idleDeadline)throw failure('PROVIDER_BUSY_TIMEOUT','The local GPU remained busy. Retained stages can be resumed; no competing job was submitted.');
@@ -136,8 +148,8 @@ export async function executeWanStage({ provider, jobRoot, stage, workflow, fram
       await new Promise(r=>setTimeout(r,pollIntervalMs));
     }
   }
-  const submit=submission||await provider.generate_video({ workflow, requiredNodes: Object.values(workflow).map(n => n.class_type), requiredModels: Object.values(WAN_MODELS), frames, width: workflow['7'].inputs.width, height: workflow['7'].inputs.height, allowResourceWarnings: true });
-  if(!submission)await appendFile(logPath, JSON.stringify({ event: 'submitted', promptId: submit.promptId, workflowHash: hashJson(workflow), timestamp: new Date().toISOString() }) + '\n');
+  const submit=submission||await provider.generate_video({ workflow, requiredNodes: Object.values(workflow).map(n => n.class_type), requiredModels, frames, width: width ?? workflow['7'].inputs.width, height: height ?? workflow['7'].inputs.height, allowResourceWarnings: true });
+  if(!submission)await appendFile(logPath, JSON.stringify({ event: 'submitted', promptId: submit.promptId, workflowHash: hashJson(workflow), queuePolicy, timestamp: new Date().toISOString() }) + '\n');
   const deadline = Date.now() + timeoutMs;
   // Model loading can temporarily starve the local HTTP server. A missed
   // heartbeat does not mean the owned inference failed; never resubmit it.
@@ -173,7 +185,13 @@ export async function executeWanStage({ provider, jobRoot, stage, workflow, fram
       const queue = await pollJson(`${provider.baseUrl}/queue`, 'PROVIDER_QUEUE_UNAVAILABLE');
       if (![...(queue.queue_running || []), ...(queue.queue_pending || [])].some(entry => entry[1] === submit.promptId)) throw failure('PROVIDER_HISTORY_LOST', 'The provider restarted before this stage was retained. Earlier completed stages remain saved. Create a new shot to retry generation.');
     }
-    onProgress({ stage: `${stage}: sampling locally`, elapsedSeconds: Math.round((timeoutMs - (deadline - Date.now())) / 1000) });
+    const elapsedSeconds=Math.round((timeoutMs-(deadline-Date.now()))/1000);
+    if(queuePolicy==='fifo'){
+      const queue=await pollJson(`${provider.baseUrl}/queue`,'PROVIDER_QUEUE_UNAVAILABLE');
+      const position=(queue.queue_pending||[]).findIndex(entry=>entry[1]===submit.promptId);
+      const running=(queue.queue_running||[]).some(entry=>entry[1]===submit.promptId);
+      onProgress({stage:position>=0?`${stage}: queued in local GPU FIFO (position ${position+1})`:running?`${stage}: ${stage==='decode'?'decoding retained latent locally':'provider running (text encoding, sampling or decoding)'}`:`${stage}: awaiting owned provider history`,elapsedSeconds,providerState:position>=0?'queued':running?'running':'awaiting-history',queuePosition:position>=0?position+1:null});
+    }else onProgress({ stage: `${stage}: ${stage === 'decode' ? 'decoding retained latent locally' : 'provider processing (text encoding, sampling or decoding)'}`, elapsedSeconds });
     await new Promise(r => setTimeout(r, pollIntervalMs));
   }
   if (!history?.status?.completed) { await provider.cancel(submit.promptId); throw failure('NEURAL_TIMEOUT', 'Local generation exceeded the bounded job time'); }

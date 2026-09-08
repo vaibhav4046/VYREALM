@@ -9,9 +9,9 @@
 /* Palette lifted verbatim from ../styles.css (the production :root block).
    No new colours are invented here. */
 :root{
-  --bg:#08070D; --panel:#12101C; --panel-2:#14111d; --raised:#1B1629;
-  --violet:#8B5CF6; --lilac:#C4B5FD; --pink:#f37bd4; --orange:#ffb17a;
-  --text:#F5F3FA; --muted:#A7A2B5; --line:#2B243C;
+  --bg:#08070D; --panel:#14100e; --panel-2:#14111d; --raised:#1c1511;
+  --violet:#ff7a18; --lilac:#ffbd83; --pink:#ff9b4a; --orange:#ffb17a;
+  --text:#F5F3FA; --muted:#A7A2B5; --line:#3a2920;
   --green:#9DF3BB; --danger:#FF8A9B;
 
   /* One type scale, used everywhere. */
@@ -189,6 +189,83 @@ footer{border-top:1px solid var(--line);padding:22px 0 40px;color:var(--muted);f
   *,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}
   .film:hover{transform:none}
 }
+
+/* ---------- premium motion layer ---------------------------------------
+   Compositor-only properties (transform, opacity, filter) so this stays
+   smooth on the same laptop that is busy rendering video. All of it
+   collapses under prefers-reduced-motion.                                */
+
+/* Slow aurora behind the page: two drifting radial fields. Fixed and
+   pointer-events:none so it never intercepts a click. */
+body::before{
+  content:"";position:fixed;inset:-25vmax;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(38vmax 30vmax at 18% 12%, color-mix(in oklab,var(--violet) 26%,transparent), transparent 62%),
+    radial-gradient(32vmax 28vmax at 82% 78%, color-mix(in oklab,var(--pink) 16%,transparent), transparent 60%);
+  filter:blur(18px) saturate(120%);
+  animation:drift 42s ease-in-out infinite alternate;
+}
+@keyframes drift{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(2.5%,-2%,0) scale(1.06)}
+  100%{transform:translate3d(-2%,2.5%,0) scale(1.02)}
+}
+/* Fine grain so flat blacks read as film rather than as CSS. */
+body::after{
+  content:"";position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.045;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)'/></svg>");
+}
+main,header{position:relative;z-index:2}
+
+/* Cards rise into place once, as they enter. */
+.film{
+  opacity:0;transform:translate3d(0,18px,0);
+  transition:opacity .55s cubic-bezier(.16,1,.3,1),transform .55s cubic-bezier(.16,1,.3,1),
+             box-shadow .35s ease,border-color .35s ease;
+  will-change:transform,opacity;
+}
+.film.in{opacity:1;transform:none}
+.film:hover,.film:focus-within{
+  transform:translate3d(0,-6px,0);
+  border-color:color-mix(in oklab,var(--violet) 55%,var(--line));
+  box-shadow:0 22px 60px -28px color-mix(in oklab,var(--violet) 70%,transparent),
+             0 0 0 1px color-mix(in oklab,var(--violet) 22%,transparent);
+}
+.film .frame{position:relative;overflow:hidden}
+.film .frame video{transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.film:hover .frame video,.film:focus-within .frame video{transform:scale(1.035)}
+
+/* Hover preview affordances. The bar fills across the sample window so a
+   viewer can see this is a preview, not the whole film. */
+.film .scrub{
+  position:absolute;left:0;right:0;bottom:0;height:2px;z-index:3;
+  background:color-mix(in oklab,var(--text) 12%,transparent);
+  opacity:0;transition:opacity .25s ease;
+}
+.film .scrub i{
+  display:block;height:100%;width:0%;
+  background:linear-gradient(90deg,var(--violet),var(--lilac));
+  box-shadow:0 0 12px color-mix(in oklab,var(--violet) 80%,transparent);
+}
+.film.previewing .scrub{opacity:1}
+.film .peek{
+  position:absolute;top:10px;right:10px;z-index:3;
+  font:600 var(--f-mono)/1 var(--mono);letter-spacing:.14em;
+  padding:5px 8px;border-radius:999px;
+  background:color-mix(in oklab,var(--bg) 72%,transparent);
+  border:1px solid color-mix(in oklab,var(--violet) 45%,transparent);
+  color:var(--lilac);backdrop-filter:blur(6px);
+  opacity:0;transform:translateY(-4px);transition:opacity .25s ease,transform .25s ease;
+}
+.film.previewing .peek{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  body::before{animation:none}
+  .film{opacity:1;transform:none;transition:none}
+  .film:hover,.film:focus-within{transform:none}
+  .film .frame video{transition:none}
+  .film:hover .frame video{transform:none}
+}
 </style>
 </head>
 <body>
@@ -274,6 +351,11 @@ const PROV_LABELS = {
 
 /* Relative paths only. This page has to open from disk inside Electron with no server. */
 const EVIDENCE_CANDIDATES = [
+  // outputs/catalogue is where the batch writes now; outputs/formats is the
+  // older location. MEDIA_BASE is derived from whichever actually loaded, so
+  // masters resolve next to their own evidence rather than a guessed folder.
+  "../outputs/catalogue/BATCH_EVIDENCE.json",
+  "outputs/catalogue/BATCH_EVIDENCE.json",
   "../outputs/formats/BATCH_EVIDENCE.json",
   "outputs/formats/BATCH_EVIDENCE.json"
 ];
@@ -513,9 +595,11 @@ function cardHTML(film, position) {
 
   return '<div class="frame">'
     + '<span class="niche-tag">' + esc(film.niche) + "</span>"
-    + '<video preload="metadata" playsinline controls data-src="' + esc(MEDIA_BASE + film.file) + '"'
+    + '<video preload="metadata" playsinline controls muted data-src="' + esc(MEDIA_BASE + film.file) + '"'
       + ' aria-label="' + esc(videoLabel) + '"'
       + ' title="' + esc(film.title + " - " + film.platformLabel) + '"></video>'
+    + '<span class="scrub" aria-hidden="true"><i></i></span>'
+    + '<span class="peek" aria-hidden="true">PREVIEW</span>'
     + "</div>"
     + '<div class="body">'
       + '<div class="title-row"><h2>' + esc(film.title) + "</h2>"
@@ -757,6 +841,95 @@ $("#reset").addEventListener("click", () => {
 });
 
 boot();
+
+/* ---------- hover-to-preview -------------------------------------------
+   Loads a master only on intent, plays a muted sample, and resets on exit.
+   Nothing downloads until the pointer arrives, so a grid of a hundred films
+   costs nothing to scroll.                                                */
+(function () {
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var PREVIEW_SECONDS = 6;
+  var active = null;
+
+  function stop(card) {
+    if (!card) return;
+    var v = card.querySelector("video");
+    card.classList.remove("previewing");
+    if (!v) return;
+    try { v.pause(); v.currentTime = 0; } catch (e) { /* not seekable yet */ }
+    var bar = card.querySelector(".scrub i");
+    if (bar) bar.style.width = "0%";
+  }
+
+  function start(card) {
+    var v = card && card.querySelector("video");
+    if (!v || reduce) return;
+    /* If the viewer pressed play deliberately, do not hijack it. */
+    if (!v.paused && !card.classList.contains("previewing")) return;
+    if (active && active !== card) stop(active);
+    active = card;
+    if (!v.src && v.dataset.src) v.src = v.dataset.src;
+    if (v.currentTime < 0.05 && v.readyState > 0) { try { v.currentTime = 0; } catch (e) {} }
+    v.muted = true;
+    card.classList.add("previewing");
+    var p = v.play();
+    if (p && p.catch) p.catch(function () { card.classList.remove("previewing"); });
+  }
+
+  function progress(e) {
+    var v = e.target;
+    if (!v || !v.closest) return;
+    var card = v.closest(".film");
+    if (!card || !card.classList.contains("previewing")) return;
+    var bar = card.querySelector(".scrub i");
+    if (bar) bar.style.width = Math.min(100, (v.currentTime / PREVIEW_SECONDS) * 100) + "%";
+    if (v.currentTime >= PREVIEW_SECONDS) { try { v.currentTime = 0; } catch (err) { /* ignore */ } }
+  }
+
+  document.addEventListener("pointerenter", function (e) {
+    var card = e.target && e.target.closest && e.target.closest(".film");
+    if (card) start(card);
+  }, true);
+  document.addEventListener("pointerleave", function (e) {
+    var card = e.target && e.target.closest && e.target.closest(".film");
+    if (card) { stop(card); if (active === card) active = null; }
+  }, true);
+  /* Keyboard parity: focus previews too, so this is not mouse-only. */
+  document.addEventListener("focusin", function (e) {
+    var card = e.target && e.target.closest && e.target.closest(".film");
+    if (card) start(card);
+  });
+  document.addEventListener("focusout", function (e) {
+    var card = e.target && e.target.closest && e.target.closest(".film");
+    if (card && !card.contains(e.relatedTarget)) stop(card);
+  });
+  document.addEventListener("timeupdate", progress, true);
+
+  /* Reveal cards as they enter, then release the observer. */
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (!en.isIntersecting) return;
+      en.target.classList.add("in");
+      /* Load just enough to paint a still. Without this the grid is a wall of
+         black rectangles until the pointer arrives, because the master is only
+         attached on hover. The media fragment parks on an early frame. */
+      var vv = en.target.querySelector("video");
+      if (vv && !vv.src && vv.dataset.src) vv.src = vv.dataset.src + "#t=0.6";
+      io.unobserve(en.target);
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+
+  function observeAll() {
+    document.querySelectorAll(".film:not(.in)").forEach(function (c) {
+      if (reduce) { c.classList.add("in"); return; }
+      io.observe(c);
+    });
+  }
+  observeAll();
+  /* The grid re-renders on filter changes, so pick up new cards. */
+  var grid = document.querySelector("#grid");
+  if (grid) new MutationObserver(observeAll).observe(grid, { childList: true });
+})();
 </script>
 </body>
 </html>

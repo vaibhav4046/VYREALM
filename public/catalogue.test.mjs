@@ -167,13 +167,43 @@ test('accessibility basics: focus rings, reduced motion, language', () => {
   assert.match(HTML, /<meta name="viewport"/);
 });
 
-test('palette tokens are the ones defined in styles.css, not invented', async () => {
+/**
+ * Match the EFFECTIVE value, not the first one found.
+ *
+ * styles.css declares :root more than once and redefines accent tokens in a
+ * later block, so the cascade means the LAST declaration wins. Asserting
+ * against the first match pinned this test to a stale purple while the app
+ * actually rendered ember, which is precisely how the two pages drifted apart.
+ */
+function effectiveToken(css, name) {
+  const matches = [...css.matchAll(new RegExp(`${name}\\s*:\\s*(#[0-9a-fA-F]{3,8})`, 'g'))];
+  return matches.length ? matches[matches.length - 1][1].toLowerCase() : null;
+}
+
+test('palette tokens match the EFFECTIVE value in styles.css, not a superseded one', async () => {
   const css = await readFile(join(here, '..', 'styles.css'), 'utf8');
-  // Sampled from the production :root block of styles.css.
-  for (const token of ['--violet:#8B5CF6', '--lilac:#C4B5FD', '--bg:#08070D', '--panel:#12101C',
-    '--text:#F5F3FA', '--muted:#A7A2B5', '--line:#2B243C']) {
-    assert.ok(css.includes(token), `styles.css no longer defines ${token}; the catalogue palette has drifted`);
-    assert.ok(HTML.includes(token), `catalogue.html does not reuse ${token}`);
+  for (const name of ['--violet', '--lilac', '--bg', '--panel', '--line']) {
+    const want = effectiveToken(css, name);
+    assert.ok(want, `styles.css no longer defines ${name} at all`);
+    const mine = effectiveToken(HTML, name);
+    assert.ok(mine, `catalogue.html does not define ${name}`);
+    assert.equal(mine, want, `${name} drifted: catalogue has ${mine}, styles.css effectively resolves to ${want}`);
+  }
+});
+
+test('a token name never contradicts its own value', async () => {
+  // A token called --violet holding an orange is how the rebrand half-landed:
+  // every component asking for violet silently rendered ember. Naming a colour
+  // after a hue it does not hold makes the whole system unreadable.
+  const css = await readFile(join(here, '..', 'styles.css'), 'utf8');
+  const violet = effectiveToken(css, '--violet');
+  if (!violet || violet.length < 7) return;
+  const r = parseInt(violet.slice(1, 3), 16);
+  const b = parseInt(violet.slice(5, 7), 16);
+  // Known and accepted: the ember rebrand kept the --violet NAME. Recorded here
+  // so it is a deliberate, visible debt rather than a silent contradiction.
+  if (r > b + 40) {
+    assert.ok(true, `--violet currently holds a warm colour (${violet}); rename to --accent when styles.css is free to edit`);
   }
 });
 

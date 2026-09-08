@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "at": "2026-09-08T00:45:22.621Z",
+  "state": "recovered-duration-verified",
+  "originalRecord": "segment-0001-2026-09-08T00-30-15-340Z.json",
+  "originalRecordSha256": "559acfed83b39c543061fbe352374fe40a0c84644e03be60b43cfed52fd5f76b",
+  "originalJournalSha256": "ebf75db029f8eb72840c36f3789d48293638889a74b53f26658885607f438a43",
+  "priorRecordState": "incomplete",
+  "priorFinalizationError": "CONTEXT_CLOSE_TIMEOUT",
+  "sourceFile": "segment-0001-raw-interrupted.webm",
+  "sourceSha256": "0490d246995394dc7a547cede229ffa64acd778f6f421e738977f2f5b619b42e",
+  "recoveredFile": "segment-0001-recovered.webm",
+  "recoveredSha256": "c503ab3820ea6980af638acc144cb11be90c37d98755a092bb5439044a2912eb",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_type": "video",
+        "width": 1280,
+        "height": 720,
+        "avg_frame_rate": "25/1"
+      }
+    ],
+    "format": {
+      "duration": "302.480000"
+    }
+  },
+  "packetCount": 7562,
+  "encodedPacketsAndTimestampsIdentical": true,
+  "packetEvidenceSha256": "2ab06221f86fd3226fee93a73cd0dd646a63d2f38c46ca426164304da7ca211d",
+  "fullDecode": {
+    "command": "ffmpeg -v error -i recovered-video -f null -",
+    "exitCode": 0,
+    "stderr": ""
+  },
+  "validation": {
+    "state": "complete",
+    "reasons": [],
+    "wallSeconds": 302.832,
+    "capturedSeconds": 302.48,
+    "durationDeltaSeconds": -0.35199999999997544,
+    "toleranceSeconds": 2,
+    "missingSeconds": 0.35199999999997544,
+    "timing": "original unretimed recording; wall-clock duration verified"
+  },
+  "audioCaptured": false,
+  "notes": [
+    "The original video was saved in the owned Playwright temporary recording directory despite client/context cleanup failure.",
+    "The separately recovered container preserves every encoded packet and timestamp; no replacement frames or retiming.",
+    "This verifies this observation interval only. Earlier gaps and the post-submission start remain disclosed.",
+    "Comparative film quality and completed neural generation are not established by this capture."
+  ]
+}

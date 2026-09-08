@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "pid": 37908,
+  "state": "stopped",
+  "updatedAt": "2026-09-08T01:17:00.152Z",
+  "startedAt": "2026-09-08T00:42:44.301Z",
+  "origin": "http://127.0.0.1:4173",
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "mode": "time-sampled-app-observation",
+  "continuousRecording": false,
+  "audioCaptured": false,
+  "startedAfterGenerationSubmission": true,
+  "sampleIntervalSeconds": 15,
+  "windowSeconds": 300,
+  "maxSeconds": 14400,
+  "sampleCount": 125,
+  "lastSample": {
+    "file": "sample-00125-2026-09-08T01-16-49-974Z.png",
+    "requestedAt": "2026-09-08T01:16:49.974Z",
+    "capturedAt": "2026-09-08T01:16:50.049Z",
+    "captureOperationSeconds": 0.075,
+    "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+    "view": "Jobs",
+    "reason": "scheduled"
+  },
+  "currentWindow": 8,
+  "currentView": "Jobs",
+  "stopReason": "stop-file",
+  "controlPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-observation\\run-2026-09-08T00-42-44-301Z\\capture-command.json",
+  "stopPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-observation\\run-2026-09-08T00-42-44-301Z\\STOP"
+}

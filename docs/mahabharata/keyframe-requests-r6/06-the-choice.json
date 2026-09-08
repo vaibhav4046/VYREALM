@@ -1,0 +1,10 @@
+{
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "expectedRevision": 6,
+  "prompt": "Photorealistic live-action three-quarter profile close-up of the new approved Arjuna character, not the rejected portrait. An original adult Indian epic prince portraying Arjuna, approximately 30, clean-shaven, shoulder-length loose wavy black hair swept back from the face without a bun or topknot, warm medium-brown skin with natural pores, dark brown eyes, an attentive expressive face. Ivory cotton dhoti with a narrow woven gold border; deep saffron angavastra draped diagonally over one shoulder with visible silk-cotton weave; modest hammered-gold kundala earrings, a simple gold armlet and a low repoussé gold diadem. Bare upper arm, simple leather archery wrist guard, no segmented shoulder armour. Original fictional casting, no actor likeness. On the same halted wooden chariot he looks out over the dusty Kurukshetra plain with quiet attentive resolve rather than anger. Blurred wooden rail foreground, expressive face and woven saffron cloth midground, receding human ranks and crimson standards behind. Warm sun camera-left gently rims loose hair, cool sky fill, 85mm lens, detailed skin and fabric, controlled highlight rolloff. Reserve a quiet lower-center area for an editorial title added after generation. No rendered letters, illustration, facial hair, topknot or watermark.",
+  "seed": 730606,
+  "width": 1024,
+  "height": 576,
+  "steps": 20,
+  "queuePolicy": "fifo"
+}

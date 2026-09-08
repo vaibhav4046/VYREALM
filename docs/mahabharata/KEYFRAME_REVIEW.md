@@ -28,3 +28,7 @@ The eyes, nose and mouth are readable and broadly coherent in this frame. Skin h
 Inspect the actual five-second clip and extracted samples for stable eyes, nose, lips, ears and beard; stable headband placement, shoulder plates and cloth weave; believable eye movement and breathing; coherent loose-hair motion; stable banners and light direction; and camera movement that preserves the face and anatomy. Inspect between sampled frames as well as the contact sheet. Reject face melting, texture flicker, facial-hair changes, duplicated anatomy, unmotivated mouth movement or a frozen portrait presented as acting.
 
 Audio, lip-sync, sound-to-action alignment, frame-to-frame consistency, complete shot duration, output provenance and final export decoding were **not** evaluated in this still-image review. No numerical quality score has been assigned. No review API has been called, and no film or flagship catalogue entry has been approved by this document.
+
+## Superseding user decision — 8 September 2026
+
+**REJECTED_CASTING.** The user has rejected this character design for the intended Mahabharata portrayal. The earlier conditional candidate assessment is preserved for history and is no longer an approval to use this reference. Production-script revision 6 removes the image from the active Arjuna reference. See the user rejection amendment in `SHOT_02_REVIEW.md` for the decision and required replacement. No claim about the pictured subject's actual ethnicity is made.

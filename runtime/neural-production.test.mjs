@@ -7,6 +7,25 @@ import { tmpdir } from 'node:os';
 import { executeWanStage, wanWorkflow, ensureWanInput } from './neural-production.mjs';
 import { hashJson } from './generation-gate.mjs';
 
+test('optional bounded casting exclusions preserve the exact historical default graph',()=>{
+ const original=wanWorkflow({frames:1,prefix:'vyrealm/test/keyframe'});
+ assert.equal(hashJson(original),'598943df6bdef166a63a6103439369312c2571b739cc9361037040c4305ca124');
+ const custom=wanWorkflow({frames:1,prefix:'vyrealm/test/keyframe',negativePrompt:'beard, moustache, topknot, segmented armour'});
+ assert.equal(custom['6'].inputs.text,`${original['6'].inputs.text}, beard, moustache, topknot, segmented armour`);
+ assert.notEqual(hashJson(custom),hashJson(original));
+ for(const negativePrompt of ['',null,[],42,'x'.repeat(2001)])assert.throws(()=>wanWorkflow({frames:1,prefix:'vyrealm/test/keyframe',negativePrompt}),/NEURAL_NEGATIVE_PROMPT/);
+});
+
+test('provider queue progress does not claim a sampler node when only whole-graph running state is known',async()=>{
+ const jobRoot=await mkdtemp(join(tmpdir(),'vyrealm-stage-label-')),workflow=wanWorkflow({frames:1,prefix:'vyrealm/test/keyframe'}),updates=[];
+ const bytes=Buffer.alloc(256);Buffer.from([137,80,78,71,13,10,26,10]).copy(bytes);
+ const history={prompt:[0,'owned',workflow],status:{completed:true,status_str:'success'},outputs:{'10':{images:[{filename:'keyframe_00001_.png',subfolder:'vyrealm/test',type:'output'}]}}};let polls=0;
+ const provider={baseUrl:'http://127.0.0.1:8188',generate_video:async()=>({promptId:'owned'}),fetch:async url=>url.includes('/queue')?Response.json({queue_running:[[0,'owned']],queue_pending:[]}):url.includes('/history/')?Response.json(++polls===1?{}:{owned:history}):new Response(bytes)};
+ await executeWanStage({provider,jobRoot,stage:'keyframe',workflow,frames:1,queuePolicy:'fifo',pollIntervalMs:0,onProgress:p=>updates.push(p)});
+ assert.ok(updates.some(p=>p.providerState==='running' && p.stage.includes('text encoding, sampling or decoding')));
+ assert.ok(updates.every(p=>!p.stage.includes('sampling locally')));
+});
+
 test('Windows provider descriptors are owned, retained and reused without duplicate inference',async()=>{
   const root=await mkdtemp(join(tmpdir(),'vyrealm-stage-'));
   const workflow=wanWorkflow({frames:1,prefix:'vyrealm/test/keyframe'});
@@ -93,4 +112,38 @@ test('waiting at a GPU boundary neither interrupts nor submits behind another pr
  }};
  await executeWanStage({provider,jobRoot:root,stage:'keyframe',workflow,frames:1,pollIntervalMs:0,waitForIdle:true,onProgress:p=>updates.push(p)});
  assert.equal(posts,1);assert.equal(queues,2);assert.ok(updates.some(p=>p.stage.includes('waiting for the local GPU')));
+});
+
+test('decode accepts a VAE-only graph and explicit resources while preserving owned cache recovery',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'vyrealm-decode-stage-'));
+ const workflow={'3':{class_type:'VAELoader',inputs:{vae_name:'wan2.2_vae.safetensors'}},'7':{class_type:'LoadLatent',inputs:{latent:'owned.latent'}},'9':{class_type:'VAEDecodeTiled',inputs:{samples:['7',0],vae:['3',0]}},'10':{class_type:'SaveImage',inputs:{images:['9',0],filename_prefix:'vyrealm/test/decode'}}};
+ const bytes=Buffer.alloc(256);Buffer.from([137,80,78,71,13,10,26,10]).copy(bytes);
+ const history={prompt:[0,'decoded',workflow],status:{completed:true,status_str:'success'},outputs:{'10':{images:[{filename:'decode_00001_.png',subfolder:'vyrealm/test',type:'output'}]}}};let request;
+ const provider={baseUrl:'http://127.0.0.1:8188',generate_video:async value=>{request=value;return{promptId:'decoded'};},fetch:async url=>url.includes('/queue')?Response.json({queue_running:[],queue_pending:[]}):url.includes('/history/')?Response.json({decoded:history}):new Response(bytes)};
+ const options={provider,jobRoot:root,stage:'decode',workflow,frames:1,width:1024,height:576,requiredModels:['wan2.2_vae.safetensors']};
+ const result=await executeWanStage(options);assert.equal(result.ledger.length,1);assert.deepEqual(request.requiredModels,['wan2.2_vae.safetensors']);assert.equal(request.width,1024);assert.equal(request.height,576);
+ const cached=await executeWanStage({...options,provider:{generate_video:()=>assert.fail('must not repeat decode')}});assert.equal(cached.recovered,true);
+ await assert.rejects(executeWanStage({...options,width:4096}),e=>e.code==='STAGE_DIMENSIONS_OUT_OF_BOUNDS');
+ await assert.rejects(executeWanStage({...options,workflow:{...workflow,'8':{class_type:'KSampler',inputs:{}}}}),e=>e.code==='DECODE_GRAPH_NOT_ISOLATED');
+});
+
+test('opt-in FIFO joins behind existing work once and reports queued position truthfully',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'vyrealm-fifo-')),workflow=wanWorkflow({frames:1,prefix:'vyrealm/test/keyframe'}),updates=[];
+ const bytes=Buffer.alloc(256);Buffer.from([137,80,78,71,13,10,26,10]).copy(bytes);
+ const history={prompt:[0,'owned',workflow],status:{completed:true,status_str:'success'},outputs:{'10':{images:[{filename:'keyframe_00001_.png',subfolder:'vyrealm/test',type:'output'}]}}};let posts=0,polls=0;
+ const provider={baseUrl:'http://127.0.0.1:8188',generate_video:async()=>{posts++;return{promptId:'owned'};},fetch:async url=>{
+  if(url.includes('/queue'))return Response.json({queue_running:[[0,'other']],queue_pending:posts?[[0,'before'],[1,'owned']]:[[0,'before']]});
+  if(url.includes('/history/'))return Response.json(++polls===1?{}:{owned:history});
+  assert.ok(url.includes('/view?'),'must not interrupt or delete external jobs');return new Response(bytes);
+ }};
+ await executeWanStage({provider,jobRoot:root,stage:'keyframe',workflow,frames:1,queuePolicy:'fifo',pollIntervalMs:0,onProgress:p=>updates.push(p)});
+ assert.equal(posts,1);assert.ok(updates.some(p=>p.providerState==='queued'&&p.queuePosition===2));assert.ok(!updates.some(p=>p.providerState==='running'));
+});
+
+test('FIFO rejects excess queue and unbounded waits without submitting',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'vyrealm-fifo-cap-')),workflow=wanWorkflow({frames:1,prefix:'vyrealm/test/keyframe'});let posts=0;
+ const provider={baseUrl:'http://127.0.0.1:8188',generate_video:async()=>{posts++;},fetch:async()=>Response.json({queue_running:[[0,'other']],queue_pending:Array.from({length:8},(_,i)=>[i,`external${i}`])})};
+ const options={provider,jobRoot:root,stage:'keyframe',workflow,frames:1,queuePolicy:'fifo'};
+ await assert.rejects(executeWanStage(options),e=>e.code==='PROVIDER_QUEUE_CAPACITY');
+ await assert.rejects(executeWanStage({...options,timeoutMs:7200001}),e=>e.code==='INVALID_QUEUE_POLICY');assert.equal(posts,0);
 });

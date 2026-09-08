@@ -45,7 +45,7 @@ export const MEASURED = Object.freeze({
     steps: 8,
     cfg: 1.0,
     seconds: 196,
-    note: 'Fits entirely in 6 GB VRAM with no offload. 196 s for 97 frames is ~2.0 s/frame.'
+    note: 'Legacy 196 s timing anchor. The diffusion weights fit within 6 GB, but the complete pipeline can offload its text encoder and VAE. Later external local runs took 215–290 s; VYREALM ownership and visual quality require a separate test.'
   }),
   wan: Object.freeze({
     model: 'Wan2.2-TI2V-5B-Q4_K_M.gguf',

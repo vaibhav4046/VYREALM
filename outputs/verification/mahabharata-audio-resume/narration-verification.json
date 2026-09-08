@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-09-08T01:31:08.6505195Z",
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "jobId": "ffce69f3-2e26-44a3-a47a-52e4a1d1b61d",
+  "assetId": "dfa937b4-55e1-4e32-8c53-e7f253c41857",
+  "sourcePath": "C:\\Users\\lalwa\\AppData\\Roaming\\vyrelum\\data\\jobs\\ffce69f3-2e26-44a3-a47a-52e4a1d1b61d\\narration.wav",
+  "sourceMethod": "VYREALM-owned-Piper-local-CPU",
+  "outputHash": "b3de84faf3845208d800e482cca08f8a6b9e069f31ecc01eed9aa410afdd8fa7",
+  "receiptHashMatches": true,
+  "fullFfmpegDecode": "passed",
+  "durationSeconds": 30,
+  "sampleRate": 22050,
+  "channels": 1,
+  "samples": 661500,
+  "renderTimeMs": 10040,
+  "cueSpeechDurationsSeconds": [
+    3.378503401360544,
+    2.6006349206349206,
+    2.5309750566893423,
+    3.5062131519274375,
+    3.947392290249433,
+    4.167981859410431
+  ],
+  "allCuesWithinFiveSecondSlots": true,
+  "rawIntegratedLufs": -16.6,
+  "rawTruePeakDbtp": 0.4,
+  "fullScaleSamples": 8,
+  "finalMixNeedsLimiter": true,
+  "pronunciationListening": "not-performed",
+  "asrProxy": {
+    "purpose": "verification-only; not captions added to project",
+    "model": "tiny.en",
+    "provider": "faster-whisper-local-cpu",
+    "limitation": "ASR mismatches do not establish the spoken pronunciation and require listening review",
+    "suspectTranscriptions": {
+      "Arjuna": "Argener",
+      "kinship": "Krsna",
+      "slips": "slits",
+      "Kurukshetra": "Cura-chetra"
+    }
+  },
+  "approval": "review_required"
+}

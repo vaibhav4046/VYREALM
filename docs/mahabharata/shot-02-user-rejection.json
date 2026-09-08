@@ -1,0 +1,11 @@
+{
+  "review": {
+    "verdict": "rejected",
+    "notes": "REJECTED_CASTING by user: the depicted character design does not match the intended Arjuna in this Mahabharata trailer. Retain the technically valid clip as rejected history only. Do not apply it, promote it, or use its face, topknot, facial hair or segmented shoulder armor as the next character reference. Replace the casting/art direction using reviewed Indian epic references and inspect the new generated still before animation. Technical playback success does not override this creative rejection.",
+    "reviewer": "operator-visual-review",
+    "reviewedAt": "2026-09-08T01:30:35.722Z",
+    "outputHash": "2a46c05ae50b1ca041ce4f3968ca6a5a37c0fb6b4da8edae2559dbab2c65ce98",
+    "scope": "visual inspection; no automated realism score"
+  },
+  "jobId": "a707a1a2-66da-415d-9051-c8ff805cb915"
+}

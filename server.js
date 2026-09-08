@@ -27,19 +27,25 @@ import { initializeFlagshipCatalogue, selectFlagship, listFlagships, removeFlags
 import { applyGeneratedShot } from './runtime/apply-generated-shot.mjs';
 import { validateNarrationCues } from './runtime/narration-cues.mjs';
 import { verifyReviewTarget } from './runtime/verify-review-target.mjs';
+import { prepareNextShotInput } from './runtime/next-shot-request.mjs';
+import { projectStorePaths } from './runtime/project-store-paths.mjs';
+import { readCatalogueSelection, setCatalogueSelection } from './runtime/catalogue-selection.mjs';
+import { readConversation, sendConversation, saveCharacter } from './runtime/studio-conversation.mjs';
+import { prepareRecipeProject, createRecipeProject } from './runtime/recipe-project.mjs';
+import { inspectCreatorWorkflows, saveCreatorWorkflowPlan } from './runtime/creator-workflow.mjs';
 
 // Desktop builds keep immutable application files separate from writable
 // per-user data. Development defaults remain rooted at the current project.
-const root=process.env.VYRELUM_ROOT||process.cwd(), dataDir=process.env.VYRELUM_DATA_DIR||join(root,'data'), mediaDir=join(dataDir,'media'), jobsDir=join(dataDir,'jobs');
-await mkdir(mediaDir,{recursive:true}); await mkdir(jobsDir,{recursive:true});
+const root=process.env.VYRELUM_ROOT||process.cwd();
+const {dataDir,mediaDir,jobsDir,databasePath}=await projectStorePaths(process.env.VYRELUM_DATA_DIR||join(root,'data'));
 const releaseEngineOwnership=await acquireEngineOwnership(dataDir);
-const db=new DatabaseSync(join(dataDir,'vyrelum.sqlite'));
+const db=new DatabaseSync(databasePath);
 initializeFlagshipCatalogue(db);
 db.exec(`PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS projects (id TEXT PRIMARY KEY, revision INTEGER NOT NULL, document TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL); CREATE TABLE IF NOT EXISTS project_revisions (project_id TEXT NOT NULL, revision INTEGER NOT NULL, document TEXT NOT NULL, created_at TEXT NOT NULL, PRIMARY KEY(project_id, revision)); CREATE TABLE IF NOT EXISTS assets (id TEXT PRIMARY KEY, project_id TEXT, document TEXT NOT NULL, path TEXT NOT NULL, created_at TEXT NOT NULL); CREATE TABLE IF NOT EXISTS jobs (id TEXT PRIMARY KEY, project_id TEXT, revision INTEGER, type TEXT NOT NULL, status TEXT NOT NULL, progress REAL, stage TEXT, input TEXT, output TEXT, error TEXT, attempts INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL, updated_at TEXT NOT NULL);`);
 for(const project of db.prepare('SELECT id,revision,document,created_at FROM projects').all()) db.prepare('INSERT OR IGNORE INTO project_revisions VALUES (?,?,?,?)').run(project.id,project.revision,project.document,project.created_at);
 const token=randomUUID(), children=new Map(), now=()=>new Date().toISOString(); let gpuLease=null;
 const providerRegistry=createProviderRegistry();
-const formatCatalogue={schemaVersion:1,validatedFormats:validateAllFormats().length,variantCount:countVariants(),presets:validateAllPresets(),platforms:Object.entries(PLATFORM_SPECS).map(([id,spec])=>({id,label:spec.label,canvas:spec.canvas,safeArea:spec.safeArea,safeAreaConfidence:spec.safeAreaConfidence})),formats:FORMAT_IDS.map(id=>{const format=FORMATS[id];return{id,label:format.label,niche:format.niche,platforms:format.platforms,seconds:format.seconds,hook:format.hook,captions:format.captions,audio:format.audio,grade:format.grade,pacing:format.pacing,beatCount:format.beats.length};})};
+const formatCatalogue={schemaVersion:1,draftCreation:true,validatedFormats:validateAllFormats().length,variantCount:countVariants(),presets:validateAllPresets(),platforms:Object.entries(PLATFORM_SPECS).map(([id,spec])=>({id,label:spec.label,canvas:spec.canvas,safeArea:spec.safeArea,safeAreaConfidence:spec.safeAreaConfidence})),formats:FORMAT_IDS.map(id=>{const format=FORMATS[id];return{id,label:format.label,niche:format.niche,platforms:format.platforms,seconds:format.seconds,hook:format.hook,captions:format.captions,audio:format.audio,grade:format.grade,pacing:format.pacing,beatCount:format.beats.length};})};
 const execFileAsync=promisify(execFile), cancelling=new Set();
 async function terminateProcessTree(child){
   if(!child?.pid)return;
@@ -222,8 +228,28 @@ async function runJob(id){
   });
 }async function api(req,res,path){
  if(path==='/api/session'&&req.method==='GET'){res.writeHead(200,{'content-type':'application/json','set-cookie':`vyrelum_token=${token}; HttpOnly; SameSite=Strict`});return res.end(JSON.stringify({token,mode:'local'}));}if(!auth(req,res))return;
- if(path==='/api/state'&&req.method==='GET'){const [capabilityState,hardware,flagships]=await Promise.all([inspectCapabilities({root}),detectHardware(),listFlagships({db})]);return send(res,200,{projects:db.prepare('SELECT * FROM projects ORDER BY updated_at DESC').all().map(pdoc),assets:db.prepare('SELECT * FROM assets ORDER BY created_at DESC').all().map(adoc),jobs:db.prepare('SELECT * FROM jobs ORDER BY updated_at DESC').all().map(jdoc),flagships,capabilities:capabilityState.capabilities,hardware,formatCatalogue,capabilityCatalogue:{schemaVersion:capabilityState.schemaVersion,attribution:capabilityState.attribution,screenedReferences:capabilityState.screenedReferences}});}
+ if(path==='/api/state'&&req.method==='GET'){const [capabilityState,hardware,flagships]=await Promise.all([inspectCapabilities({root}),detectHardware(),listFlagships({db})]);return send(res,200,{projects:db.prepare('SELECT * FROM projects ORDER BY updated_at DESC').all().map(pdoc),assets:db.prepare('SELECT * FROM assets ORDER BY created_at DESC').all().map(adoc),jobs:db.prepare('SELECT * FROM jobs ORDER BY updated_at DESC').all().map(jdoc),flagships,catalogueSelection:readCatalogueSelection(db),features:{independentKeyframes:true,reviewHashBinding:true},capabilities:capabilityState.capabilities,hardware,formatCatalogue,capabilityCatalogue:{schemaVersion:capabilityState.schemaVersion,attribution:capabilityState.attribution,screenedReferences:capabilityState.screenedReferences}});}
+ const conversationPath=path.match(/^\/api\/projects\/([a-zA-Z0-9-]+)\/conversation$/);
+ if(conversationPath&&['GET','POST'].includes(req.method)){
+   try{return send(res,200,req.method==='GET'?{turns:readConversation(db,conversationPath[1])}:await sendConversation({db,projectId:conversationPath[1],input:json(await readBody(req))}));}
+   catch(error){return send(res,error.status||500,{error:error.message,code:error.code||'CHAT_FAILED'});}
+ }
+ if(path==='/api/creator/workflows'&&req.method==='GET')return send(res,200,await inspectCreatorWorkflows({root,runtimeDirectory:process.env.VYRELUM_RUNTIME_DIR||join(dataDir,'runtime')}));
+ if(path==='/api/creator/workflows/plan'&&req.method==='POST'){
+   try{const input=json(await readBody(req)),catalogue=await inspectCreatorWorkflows({root,runtimeDirectory:process.env.VYRELUM_RUNTIME_DIR||join(dataDir,'runtime')});return send(res,201,saveCreatorWorkflowPlan({db,input,capabilities:catalogue.capabilities}));}
+   catch(error){const status=error.code==='CREATOR_PROJECT_NOT_FOUND'?404:error.code==='CREATOR_REVISION_CONFLICT'?409:error.code==='CREATOR_INPUT_INVALID'||error.code==='CREATOR_ASSET_INVALID'?400:500;return send(res,status,{error:error.message,code:error.code||'CREATOR_PLAN_SAVE_FAILED'});}
+ }
+ const characterPath=path.match(/^\/api\/projects\/([a-zA-Z0-9-]+)\/characters$/);
+ if(characterPath&&req.method==='POST'){
+   try{return send(res,200,saveCharacter({db,projectId:characterPath[1],input:json(await readBody(req))}));}
+   catch(error){return send(res,error.status||500,{error:error.message,code:error.code||'CHARACTER_SAVE_FAILED'});}
+ }
  if(path==='/api/catalog/flagships'&&req.method==='GET')return send(res,200,{entries:await listFlagships({db})});
+ if(path==='/api/catalog/selection'&&req.method==='GET')return send(res,200,readCatalogueSelection(db));
+ if(path==='/api/catalog/selection'&&req.method==='PUT'){
+   try{return send(res,200,setCatalogueSelection(db,json(await readBody(req))));}
+   catch(error){return send(res,400,{error:error.message,code:error.code||'CATALOGUE_SELECTION_INVALID'});}
+ }
  if(path==='/api/catalog/flagships'&&req.method==='POST'){
    const x=json(await readBody(req));
    if(typeof x.projectId!=='string'||!Number.isSafeInteger(x.expectedRevision)||Object.keys(x).some(key=>!['projectId','expectedRevision','title','description'].includes(key)))return send(res,400,{error:'Select a saved project revision; caller output paths and review evidence are not accepted'});
@@ -350,12 +376,17 @@ async function runJob(id){
    if(db.prepare("SELECT id FROM jobs WHERE project_id=? AND type IN ('generation-test','generation-shot') AND status IN ('queued','running','cancelling')").get(project.id))return send(res,409,{error:'This project already has a generation job in progress'});
    if(typeof x.brief!=='string'||!x.brief.trim()||x.brief.length>6000)return send(res,400,{error:'Describe the next shot in 1–6000 characters'});
    const sourceJob=typeof x.referenceJobId==='string'&&db.prepare('SELECT * FROM jobs WHERE id=? AND project_id=?').get(x.referenceJobId,project.id);
-   const result=sourceJob?.output?json(Buffer.from(sourceJob.output)):null;
-   if(!result?.provenance?.evidenceHash||result.review?.verdict!=='passed'||!result.provenance.keyframe?.outputHash)return send(res,409,{error:'A reviewed local keyframe-and-motion generation from this project is required first',code:'REVIEWED_REFERENCE_REQUIRED'});
-   const referencePath=result.provenance.keyframe.sourceJobId?join(jobsDir,sourceJob.id,'reference.png'):join(jobsDir,sourceJob.id,'keyframe','frames','00000.png');
-   if(!existsSync(referencePath))return send(res,409,{error:'The original generated reference keyframe is missing'});
-   const id=randomUUID(),t=now(),input={projectId:project.id,revision:project.revision,brief:x.brief.trim(),seed:Number.isSafeInteger(x.seed)&&x.seed>=0?x.seed:7092027,append:true,reference:{path:referencePath,sourceJobId:sourceJob.id,sha256:result.provenance.keyframe.outputHash,promptId:result.provenance.keyframe.promptId}};
-   db.prepare('INSERT INTO jobs (id,project_id,revision,type,status,progress,stage,input,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)').run(id,project.id,project.revision,'generation-shot','queued',0,'queued with locked character keyframe',JSON.stringify(input),t,t);void runJob(id);return send(res,202,jdoc(db.prepare('SELECT * FROM jobs WHERE id=?').get(id)));
+   let result=sourceJob?.output?json(Buffer.from(sourceJob.output)):null,input;
+   try{
+     input=prepareNextShotInput({request:x,project,sourceJob,receipt:result,jobsDir});
+     const checked=await verifyReviewTarget({db,jobsDir,mediaDir,job:sourceJob,output:result});result=checked.output;
+     input=prepareNextShotInput({request:x,project,sourceJob,receipt:result,jobsDir});
+     if(input.reference&&!existsSync(input.reference.path))throw new Error('The original generated reference keyframe is missing');
+   }catch(error){return send(res,error.code==='SHOT_SOURCE_MODE_INVALID'?400:409,{error:error.message,code:error.code||'REVIEWED_REFERENCE_REQUIRED'});}
+   // Verification is asynchronous: recheck the revision and queue before writing.
+   if(db.prepare('SELECT revision FROM projects WHERE id=?').get(project.id)?.revision!==project.revision||db.prepare("SELECT id FROM jobs WHERE project_id=? AND type IN ('generation-test','generation-shot') AND status IN ('queued','running','cancelling')").get(project.id))return send(res,409,{error:'The project or generation queue changed; refresh before starting the shot'});
+   const id=randomUUID(),t=now();
+   db.prepare('INSERT INTO jobs (id,project_id,revision,type,status,progress,stage,input,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)').run(id,project.id,project.revision,'generation-shot','queued',0,input.sourceMode==='new-keyframe'?'queued for a new independent keyframe':'queued with locked character keyframe',JSON.stringify(input),t,t);void runJob(id);return send(res,202,jdoc(db.prepare('SELECT * FROM jobs WHERE id=?').get(id)));
  }
  if(path==='/api/releases'&&req.method==='GET') return send(res,200,await releaseStore.list());
  if(path==='/api/releases'&&req.method==='POST'){
@@ -367,6 +398,10 @@ async function runJob(id){
      const asset=json(Buffer.from(aid.document)), release=await releaseStore.create({project:{id:pr.id,revision:String(pr.revision)},output:{path:aid.path,sha256:await hashOutput(aid.path),mimeType:asset.mime},metadata:{channelId:x.channelId,title:x.title,description:x.description||doc.brief||'',tags:x.tags||[],privacyStatus:x.privacyStatus||'private',...(x.publishAt?{publishAt:x.publishAt}:{})},channel:{id:x.channelId,title:x.channelTitle||''},aiDisclosure:{containsSyntheticMedia:Boolean(x.containsSyntheticMedia),rationale:x.aiRationale||''},rightsLedger:Array.isArray(x.rightsLedger)?x.rightsLedger:[],captions:Array.isArray(x.captions)?x.captions:[],thumbnail:null});
      return send(res,201,release);
    }catch(e){return send(res,400,{error:e.message,code:e.code||'INVALID_RELEASE',details:e.details||{}});}
+ }
+ if(['/api/formats/preview','/api/formats/draft'].includes(path)&&req.method==='POST'){
+   try{const input=json(await readBody(req));return path.endsWith('/preview')?send(res,200,prepareRecipeProject(input)):send(res,201,createRecipeProject({db,input}));}
+   catch(error){return send(res,error.code==='RECIPE_DRAFT_INVALID'?400:500,{error:error.message,code:error.code||'RECIPE_DRAFT_SAVE_FAILED'});}
  }
  if(path==='/api/projects/import'&&req.method==='POST'){
    try{
@@ -405,9 +440,11 @@ async function runJob(id){
   const vm=path.match(/^\/api\/projects\/([^/]+)\/variations$/);if(vm&&req.method==='POST'){const r=db.prepare('SELECT * FROM projects WHERE id=?').get(vm[1]);if(!r)return send(res,404,{error:'Project not found'});const x=json(await readBody(req));if(x.expectedRevision&&Number(x.expectedRevision)!==r.revision)return send(res,409,{error:'Revision conflict',project:pdoc(r)});const current=json(Buffer.from(r.document)),result=buildViralVariants({brief:current.brief||current.name,count:x.count||120,format:x.format,platform:x.platform}),t=now(),nextRevision=r.revision+1,nextDocument=JSON.stringify({...current,variations:result.variants,variationCount:result.count,variationSource:result.source,variationResearchBasis:result.researchBasis,variationDisclaimer:result.disclaimer});db.exec('BEGIN IMMEDIATE');try{db.prepare('UPDATE projects SET revision=?,document=?,updated_at=? WHERE id=?').run(nextRevision,nextDocument,t,vm[1]);db.prepare('INSERT INTO project_revisions VALUES (?,?,?,?)').run(vm[1],nextRevision,nextDocument,t);db.exec('COMMIT');}catch(error){try{db.exec('ROLLBACK');}catch{} throw error;}return send(res,200,{...pdoc(db.prepare('SELECT * FROM projects WHERE id=?').get(vm[1])),variations:result.variants,variationCount:result.count});}
   const pm=path.match(/^\/api\/projects\/([^/]+)$/);if(pm&&req.method==='GET'){const r=db.prepare('SELECT * FROM projects WHERE id=?').get(pm[1]);return r?send(res,200,pdoc(r)):send(res,404,{error:'Project not found'});}if(pm&&req.method==='PATCH'){const r=db.prepare('SELECT * FROM projects WHERE id=?').get(pm[1]);if(!r)return send(res,404,{error:'Project not found'});const x=json(await readBody(req)),patch=x.patch||x;if(x.expectedRevision&&Number(x.expectedRevision)!==r.revision)return send(res,409,{error:'Revision conflict',project:pdoc(r)});delete patch.expectedRevision;if(['id','revision','createdAt','updatedAt','latestOutput','latestAudio','latestSoundDesign','transcriptSource','directorEvidence'].some(key=>Object.hasOwn(patch,key)))return send(res,400,{error:'Generation evidence and output fields are managed by workers, not project edits'});if(Object.hasOwn(patch,'transcript')){try{prepareTimedCaptions(patch.transcript,(patch.timeline||json(Buffer.from(r.document)).timeline||[]).reduce((sum,clip)=>sum+Number(clip.duration||0),0));}catch(error){return send(res,400,{error:error.message});}}const t=now(),nextRevision=r.revision+1,nextDocument=JSON.stringify({...json(Buffer.from(r.document)),...patch});db.exec('BEGIN IMMEDIATE');try{db.prepare('UPDATE projects SET revision=?,document=?,updated_at=? WHERE id=?').run(nextRevision,nextDocument,t,pm[1]);db.prepare('INSERT INTO project_revisions VALUES (?,?,?,?)').run(pm[1],nextRevision,nextDocument,t);db.exec('COMMIT');}catch(error){try{db.exec('ROLLBACK');}catch{} throw error;}return send(res,200,pdoc(db.prepare('SELECT * FROM projects WHERE id=?').get(pm[1])));}
   if(path==='/api/jobs'&&req.method==='POST'){const x=json(await readBody(req)),allowed=new Set(['direct','scene','render','produce']);if(!allowed.has(x.type||'render'))return send(res,400,{error:'Unsupported job type'});const project=x.projectId&&db.prepare('SELECT * FROM projects WHERE id=?').get(x.projectId);if(x.projectId&&!project)return send(res,404,{error:'Project not found'});if(project&&x.expectedRevision&&Number(x.expectedRevision)!==Number(project.revision))return send(res,409,{error:'Revision conflict',project:pdoc(project)});const id=randomUUID(),t=now(),revision=project?.revision||x.revision||null,input={...x,revision};delete input.expectedRevision;db.prepare('INSERT INTO jobs (id,project_id,revision,type,status,progress,stage,input,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)').run(id,x.projectId||null,revision,x.type||'render','queued',0,'queued',JSON.stringify(input),t,t);void runJob(id);return send(res,202,jdoc(db.prepare('SELECT * FROM jobs WHERE id=?').get(id)));}if(path==='/api/jobs'&&req.method==='GET')return send(res,200,db.prepare('SELECT * FROM jobs ORDER BY updated_at DESC').all().map(jdoc));
- const jm=path.match(/^\/api\/jobs\/([^/]+)(?:\/(cancel|retry))?$/);if(jm&&jm[2]==='cancel'&&req.method==='POST'){const id=jm[1],row=db.prepare('SELECT status FROM jobs WHERE id=?').get(id);if(!row)return send(res,404,{error:'Job not found'});if(['queued','running','staging','validating'].includes(row.status)){cancelling.add(id);db.prepare("UPDATE jobs SET status='cancelling',stage='cancellation requested',updated_at=? WHERE id=?").run(now(),id);await cancelOwnedProviderJob(id);await terminateProcessTree(children.get(id));if(!children.has(id))db.prepare("UPDATE jobs SET status='cancelled',stage='cancelled',updated_at=? WHERE id=?").run(now(),id);}return send(res,200,jdoc(db.prepare('SELECT * FROM jobs WHERE id=?').get(id)));}
+ const jm=path.match(/^\/api\/jobs\/([^/]+)(?:\/(cancel|retry))?$/);if(jm&&jm[2]==='cancel'&&req.method==='POST'){const id=jm[1],row=db.prepare('SELECT status,type FROM jobs WHERE id=?').get(id);if(!row)return send(res,404,{error:'Job not found'});if(row.type==='ltx-qualification')return send(res,409,{code:'QUALIFICATION_RUNNER_CONTROL_REQUIRED',error:'This experimental job is owned by the qualification runner. Use its --stop-job command; generic Cancel cannot control that process.'});if(['queued','running','staging','validating'].includes(row.status)){cancelling.add(id);db.prepare("UPDATE jobs SET status='cancelling',stage='cancellation requested',updated_at=? WHERE id=?").run(now(),id);await cancelOwnedProviderJob(id);await terminateProcessTree(children.get(id));if(!children.has(id))db.prepare("UPDATE jobs SET status='cancelled',stage='cancelled',updated_at=? WHERE id=?").run(now(),id);}return send(res,200,jdoc(db.prepare('SELECT * FROM jobs WHERE id=?').get(id)));}
  if(jm&&jm[2]==='retry'&&req.method==='POST'){
-   if(!db.prepare('SELECT id FROM jobs WHERE id=?').get(jm[1]))return send(res,404,{error:'Job not found'});
+   const retryJob=db.prepare('SELECT id,type FROM jobs WHERE id=?').get(jm[1]);
+   if(!retryJob)return send(res,404,{error:'Job not found'});
+   if(retryJob.type==='ltx-qualification')return send(res,409,{code:'QUALIFICATION_RUNNER_CONTROL_REQUIRED',error:'Rerun this experimental profile through the qualification runner. Generic Retry has no qualified LTX worker and cannot run this job.'});
    // Preserve the original revision, input, receipts and provider prompt IDs.
    // A stale retry may retain an output but cannot replace a newer project edit.
    const changed=db.prepare("UPDATE jobs SET status='queued',progress=0,stage='retry queued',error=NULL,updated_at=? WHERE id=? AND (status IN ('failed','cancelled') OR (status='blocked' AND type IN ('generation-test','generation-shot')))").run(now(),jm[1]);

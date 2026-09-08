@@ -1,0 +1,213 @@
+{
+  "status": "cpu-comparison-verified",
+  "comparedSourceToItself": true,
+  "samplerInvoked": false,
+  "decodeInvoked": false,
+  "qualification": "unqualified",
+  "comparison": {
+    "ssim": {
+      "frames": 121,
+      "mean": 1,
+      "min": 1
+    },
+    "psnr": {
+      "frames": 121,
+      "mean": "infinite",
+      "min": "infinite"
+    },
+    "temporal": {
+      "standard": {
+        "frames": 120,
+        "meanFrameDifference": 5.063874,
+        "maxFrameDifference": 13.8666
+      },
+      "tiled": {
+        "frames": 120,
+        "meanFrameDifference": 5.063874,
+        "maxFrameDifference": 13.8666
+      }
+    },
+    "contactSheet": "comparison-contact-sheet.png",
+    "contactSheetRows": [
+      "retained standard decode",
+      "same retained standard decode; CPU harness test only"
+    ],
+    "semanticReview": "required",
+    "qualification": "unqualified"
+  },
+  "videoVerification": {
+    "ok": true,
+    "checks": {
+      "exists": {
+        "ok": true,
+        "actual": {
+          "bytes": 1533185
+        },
+        "expected": "non-empty regular file",
+        "message": ""
+      },
+      "probe": {
+        "ok": true,
+        "actual": "valid",
+        "expected": "valid ffprobe JSON",
+        "message": ""
+      },
+      "videoStream": {
+        "ok": true,
+        "actual": {
+          "codec": "h264"
+        },
+        "expected": "at least one video stream",
+        "message": ""
+      },
+      "resolution": {
+        "ok": true,
+        "actual": {
+          "width": 1024,
+          "height": 576
+        },
+        "expected": {
+          "width": 1024,
+          "height": 576
+        },
+        "message": ""
+      },
+      "duration": {
+        "ok": true,
+        "actual": 5,
+        "expected": 5,
+        "message": ""
+      },
+      "frameRate": {
+        "ok": true,
+        "actual": 24,
+        "expected": 24,
+        "message": ""
+      },
+      "audio": {
+        "ok": true,
+        "actual": null,
+        "expected": "optional",
+        "message": ""
+      },
+      "visualLuma": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 95.131,
+          "maxRange": 236,
+          "maxFrameLumaDelta": 39.8292
+        },
+        "expected": "mean luma between 24 and 232",
+        "message": ""
+      },
+      "visualContrast": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 95.131,
+          "maxRange": 236,
+          "maxFrameLumaDelta": 39.8292
+        },
+        "expected": "at least 12 levels of luma range",
+        "message": ""
+      },
+      "visualMotion": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 95.131,
+          "maxRange": 236,
+          "maxFrameLumaDelta": 39.8292
+        },
+        "expected": "non-static frame samples",
+        "message": ""
+      }
+    },
+    "diagnostics": [],
+    "probe": {
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "h264",
+          "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+          "profile": "High",
+          "codec_type": "video",
+          "codec_tag_string": "avc1",
+          "codec_tag": "0x31637661",
+          "mime_codec_string": "avc1.64001f",
+          "width": 1024,
+          "height": 576,
+          "coded_width": 1024,
+          "coded_height": 576,
+          "has_b_frames": 2,
+          "pix_fmt": "yuv420p",
+          "level": 31,
+          "chroma_location": "left",
+          "field_order": "progressive",
+          "is_avc": "true",
+          "nal_length_size": "4",
+          "id": "0x1",
+          "r_frame_rate": "24/1",
+          "avg_frame_rate": "24/1",
+          "time_base": "1/12288",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "duration_ts": 61440,
+          "duration": "5.000000",
+          "bit_rate": "2449404",
+          "bits_per_raw_sample": "8",
+          "nb_frames": "120",
+          "extradata_size": 46,
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0,
+            "multilayer": 0
+          },
+          "tags": {
+            "language": "und",
+            "handler_name": "VideoHandler",
+            "encoder": "Lavc62.28.101 libx264"
+          }
+        }
+      ],
+      "format": {
+        "filename": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\benchmarks\\latent-decode\\9d2427be-0618-4d65-86c4-2acf5a10d5d4\\cpu-reference-copy.mp4",
+        "nb_streams": 1,
+        "nb_programs": 0,
+        "nb_stream_groups": 0,
+        "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+        "format_long_name": "QuickTime / MOV",
+        "start_time": "0.000000",
+        "duration": "5.000000",
+        "size": "1533185",
+        "bit_rate": "2453096",
+        "probe_score": 100,
+        "tags": {
+          "major_brand": "isom",
+          "minor_version": "512",
+          "compatible_brands": "isomiso2avc1mp41",
+          "encoder": "Lavf62.12.101"
+        }
+      }
+    },
+    "decodedFrameCount": 120
+  },
+  "video": "cpu-reference-copy.mp4"
+}

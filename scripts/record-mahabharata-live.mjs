@@ -64,13 +64,15 @@ const provenance = value => value ? Object.fromEntries(['generationStatus','sour
 async function closeOwnedBrowser() {
   if (!browserServer) { await bounded(browser?.close().catch(() => {}),10000,'BROWSER_CLOSE_TIMEOUT').catch(() => {}); browser = null; return; }
   const ownedProcess = browserServer.process();
-  await bounded(browser?.close().catch(() => {}),10000,'BROWSER_CLOSE_TIMEOUT').catch(() => {});
-  try { await bounded(browserServer.close(),10000,'BROWSER_SERVER_CLOSE_TIMEOUT'); }
-  catch { await event('owned_browser_force_close', { pid:ownedProcess.pid }); await bounded(browserServer.kill(),15000,'OWNED_BROWSER_KILL_TIMEOUT'); }
+  await bounded(browser?.close().catch(() => {}),5000,'BROWSER_CLOSE_TIMEOUT').catch(() => {});
   if (ownedProcess.exitCode === null && ownedProcess.signalCode === null) {
+    await event('owned_browser_force_close', { pid:ownedProcess.pid });
+    // Windows profile cleanup can hang after the actual browser process exits.
+    // Wait for that owned process exit, never spawn over a live predecessor.
+    void browserServer.kill().catch(error => { void event('profile_cleanup_pending', { code:errorCode(error) }); });
     await bounded(new Promise(resolveExit => ownedProcess.once('exit',resolveExit)),15000,'OWNED_BROWSER_STILL_RUNNING');
   }
-  await event('owned_browser_closed', { pid:ownedProcess.pid });
+  await event('owned_browser_closed', { pid:ownedProcess.pid, exitCode:ownedProcess.exitCode, signalCode:ownedProcess.signalCode });
   browser = null; browserServer = null;
 }
 
@@ -216,6 +218,7 @@ try {
     finally {
       const stoppedObservingAt = new Date().toISOString();
       browser.off('disconnected', disconnected);
+      try { await bounded(page.close(),15000,'PAGE_CLOSE_TIMEOUT'); } catch (error) { interrupted = true; interruptionReason ||= errorCode(error); }
       try { await bounded(currentContext.close(), 30000, 'CONTEXT_CLOSE_TIMEOUT'); } catch (error) { interrupted = true; interruptionReason ||= errorCode(error); }
       currentContext = null;
       const finalPath = join(runDir, `${name}.webm`);

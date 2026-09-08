@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "mode": "time-sampled-app-observation",
+  "continuousRecording": false,
+  "windowIndex": 4,
+  "windowStartedAt": "2026-09-08T00:57:46.393Z",
+  "endedAt": "2026-09-08T01:02:47.054Z",
+  "nominalIntervalSeconds": 15,
+  "actualSampleCount": 19,
+  "firstCapturedAt": "2026-09-08T00:57:47.590Z",
+  "lastCapturedAt": "2026-09-08T01:02:32.807Z",
+  "longestIntervalSeconds": 18.461,
+  "samples": [
+    {
+      "file": "sample-00056-2026-09-08T00-57-47-485Z.png",
+      "requestedAt": "2026-09-08T00:57:47.485Z",
+      "capturedAt": "2026-09-08T00:57:47.590Z",
+      "captureOperationSeconds": 0.105,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00057-2026-09-08T00-58-02-814Z.png",
+      "requestedAt": "2026-09-08T00:58:02.814Z",
+      "capturedAt": "2026-09-08T00:58:02.940Z",
+      "captureOperationSeconds": 0.126,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00058-2026-09-08T00-58-18-269Z.png",
+      "requestedAt": "2026-09-08T00:58:18.269Z",
+      "capturedAt": "2026-09-08T00:58:18.478Z",
+      "captureOperationSeconds": 0.209,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00059-2026-09-08T00-58-33-636Z.png",
+      "requestedAt": "2026-09-08T00:58:33.636Z",
+      "capturedAt": "2026-09-08T00:58:33.809Z",
+      "captureOperationSeconds": 0.173,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00060-2026-09-08T00-58-48-977Z.png",
+      "requestedAt": "2026-09-08T00:58:48.977Z",
+      "capturedAt": "2026-09-08T00:58:49.236Z",
+      "captureOperationSeconds": 0.259,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00061-2026-09-08T00-59-04-477Z.png",
+      "requestedAt": "2026-09-08T00:59:04.477Z",
+      "capturedAt": "2026-09-08T00:59:04.647Z",
+      "captureOperationSeconds": 0.17,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00062-2026-09-08T00-59-19-963Z.png",
+      "requestedAt": "2026-09-08T00:59:19.963Z",
+      "capturedAt": "2026-09-08T00:59:20.136Z",
+      "captureOperationSeconds": 0.173,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00063-2026-09-08T00-59-35-337Z.png",
+      "requestedAt": "2026-09-08T00:59:35.337Z",
+      "capturedAt": "2026-09-08T00:59:35.435Z",
+      "captureOperationSeconds": 0.098,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00064-2026-09-08T00-59-50-718Z.png",
+      "requestedAt": "2026-09-08T00:59:50.718Z",
+      "capturedAt": "2026-09-08T00:59:50.843Z",
+      "captureOperationSeconds": 0.125,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00065-2026-09-08T01-00-06-048Z.png",
+      "requestedAt": "2026-09-08T01:00:06.048Z",
+      "capturedAt": "2026-09-08T01:00:06.235Z",
+      "captureOperationSeconds": 0.187,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00066-2026-09-08T01-00-21-440Z.png",
+      "requestedAt": "2026-09-08T01:00:21.440Z",
+      "capturedAt": "2026-09-08T01:00:21.624Z",
+      "captureOperationSeconds": 0.184,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00067-2026-09-08T01-00-36-783Z.png",
+      "requestedAt": "2026-09-08T01:00:36.783Z",
+      "capturedAt": "2026-09-08T01:00:40.085Z",
+      "captureOperationSeconds": 3.302,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00068-2026-09-08T01-00-55-418Z.png",
+      "requestedAt": "2026-09-08T01:00:55.418Z",
+      "capturedAt": "2026-09-08T01:00:55.643Z",
+      "captureOperationSeconds": 0.225,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00069-2026-09-08T01-01-10-939Z.png",
+      "requestedAt": "2026-09-08T01:01:10.939Z",
+      "capturedAt": "2026-09-08T01:01:11.275Z",
+      "captureOperationSeconds": 0.336,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00070-2026-09-08T01-01-27-298Z.png",
+      "requestedAt": "2026-09-08T01:01:27.298Z",
+      "capturedAt": "2026-09-08T01:01:27.575Z",
+      "captureOperationSeconds": 0.277,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00071-2026-09-08T01-01-42-966Z.png",
+      "requestedAt": "2026-09-08T01:01:42.966Z",
+      "capturedAt": "2026-09-08T01:01:43.136Z",
+      "captureOperationSeconds": 0.17,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00072-2026-09-08T01-01-58-576Z.png",
+      "requestedAt": "2026-09-08T01:01:58.576Z",
+      "capturedAt": "2026-09-08T01:02:00.277Z",
+      "captureOperationSeconds": 1.701,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00073-2026-09-08T01-02-16-115Z.png",
+      "requestedAt": "2026-09-08T01:02:16.115Z",
+      "capturedAt": "2026-09-08T01:02:17.272Z",
+      "captureOperationSeconds": 1.157,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00074-2026-09-08T01-02-32-646Z.png",
+      "requestedAt": "2026-09-08T01:02:32.646Z",
+      "capturedAt": "2026-09-08T01:02:32.807Z",
+      "captureOperationSeconds": 0.161,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    }
+  ],
+  "limitations": "Only the listed instants were captured. No frames or activity between them are asserted."
+}

@@ -1,0 +1,10 @@
+{
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "expectedRevision": 6,
+  "prompt": "Photorealistic live-action over-shoulder Indian epic shot in the same timber chariot at Kurukshetra dawn. An original adult Indian epic prince portraying Arjuna, approximately 30, clean-shaven, shoulder-length loose wavy black hair swept back from the face without a bun or topknot, warm medium-brown skin with natural pores, dark brown eyes, an attentive expressive face. Ivory cotton dhoti with a narrow woven gold border; deep saffron angavastra draped diagonally over one shoulder with visible silk-cotton weave; modest hammered-gold kundala earrings, a simple gold armlet and a low repoussé gold diadem. Bare upper arm, simple leather archery wrist guard, no segmented shoulder armour. Original fictional casting, no actor likeness. Arjuna listens quietly to Krishna. Only Arjuna's face is visible. A softly blurred corner of Krishna's yellow silk shoulder and dark curl occupies the near left foreground, Arjuna's clean-shaven face and saffron drape are sharp in midground, carved wood rail, dust and crimson cloth standards layer the background. Established warm key camera-left and cool fill; 65mm cinema lens, physical depth, realistic draped fabric and skin, no armour, bun, facial hair, text or watermark. The new approved Arjuna reference must determine the face.",
+  "seed": 730605,
+  "width": 1024,
+  "height": 576,
+  "steps": 20,
+  "queuePolicy": "fifo"
+}

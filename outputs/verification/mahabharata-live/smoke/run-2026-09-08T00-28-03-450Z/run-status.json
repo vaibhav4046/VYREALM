@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 2,
+  "state": "stopped",
+  "pid": 37128,
+  "startedAt": "2026-09-08T00:28:03.450Z",
+  "updatedAt": "2026-09-08T00:29:06.737Z",
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "firstJobId": "a707a1a2-66da-415d-9051-c8ff805cb915",
+  "origin": "http://127.0.0.1:4173",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "startedAfterFirstKeyframe": true,
+  "recordedSurface": "real local VYREALM browser UI only",
+  "audioCapture": "Playwright records browser pixels only; final film audio must be inspected separately",
+  "timing": "original unretimed segments, individually duration-validated; all gaps and interruptions retained",
+  "maxSeconds": 20,
+  "chunkSeconds": 20,
+  "currentSegment": null,
+  "completedSegments": [
+    {
+      "index": 1,
+      "state": "complete",
+      "file": "segment-0001-2026-09-08T00-28-20-642Z.webm",
+      "startedAt": "2026-09-08T00:28:20.816Z",
+      "stoppedObservingAt": "2026-09-08T00:28:34.602Z",
+      "finalizedAt": "2026-09-08T00:28:56.359Z",
+      "realElapsedSeconds": 13.786,
+      "bytes": 557066,
+      "sha256": "6abc3c3c8a7d29b494a98ccf525eb34abca56b5ad32e2f8dc412f40c8c2ca243",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 1280,
+            "height": 720,
+            "avg_frame_rate": "25/1"
+          }
+        ],
+        "format": {
+          "duration": "13.880000"
+        }
+      },
+      "validation": {
+        "state": "complete",
+        "reasons": [],
+        "wallSeconds": 13.786,
+        "capturedSeconds": 13.88,
+        "durationDeltaSeconds": 0.0940000000000012,
+        "toleranceSeconds": 2,
+        "missingSeconds": 0,
+        "timing": "original unretimed recording; wall-clock duration verified"
+      },
+      "interruptionReason": null,
+      "timing": "original unretimed recording; wall-clock duration verified"
+    }
+  ],
+  "captureGap": {
+    "startedAt": "2026-09-08T00:28:34.602Z",
+    "reason": "SEGMENT_FINALIZATION_AND_PAGE_RELOAD"
+  },
+  "lastSnapshot": {
+    "file": "snapshot-2026-09-08T00-28-28-167Z.json",
+    "at": "2026-09-08T00:28:28.167Z",
+    "sha256": "7fb093e1adfc3febbc3dc1f6327556c6affcc7d75a19c85f4494d2e70d8f3b35"
+  },
+  "currentView": "Jobs",
+  "controlPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\smoke\\run-2026-09-08T00-28-03-450Z\\capture-command.json",
+  "stopPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\smoke\\run-2026-09-08T00-28-03-450Z\\STOP",
+  "stopReason": "duration-limit"
+}

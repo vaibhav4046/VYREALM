@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-09-08T00:30:45.9802292Z",
+  "state": "incomplete",
+  "method": "FFmpeg stream copy remux of interrupted original browser recording; frame timestamps and video codec preserved",
+  "originalFile": "segment-0001-raw-interrupted.webm",
+  "originalSha256": "5d9a1dc13ede937965954b05bc681557c48800b2fa127096bcf0d44bdbfcdde8",
+  "recoveredFile": "segment-0001-PARTIAL-recovered.webm",
+  "recoveredSha256": "5f8fee131c91110ab4f8e00693073a1fbd7632ca16de159f46a0459ccf763fea",
+  "frameCount": 5889,
+  "capturedSeconds": 235.56,
+  "originalWallSeconds": 305.288,
+  "unprovenSeconds": 69.728,
+  "width": 1280,
+  "height": 720,
+  "audioCaptured": false,
+  "limitations": [
+    "Original container ended prematurely.",
+    "Recovery adds container metadata; it does not replace or reconstruct missing footage.",
+    "This is not an uninterrupted recording of the full production."
+  ]
+}

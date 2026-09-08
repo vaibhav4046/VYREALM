@@ -452,7 +452,8 @@ test('a missing estimate is refused, never silently priced at zero', () => {
   // measurement rather than short-circuiting at zero.
   const fellThrough = estimateJobMs({ id: 'shot', kind: 'neural', estimatedMs: null, model: 'ltx-2b-distilled-q8', frames: 97 });
   assert.equal(Math.round(fellThrough.ms), 196000, 'a null estimate must fall through to the measured basis, not price at 0');
-  assert.ok(fellThrough.basis.includes('measured on this box'));
+  assert.ok(typeof fellThrough.basis === 'string' && fellThrough.basis.trim().length > 0, 'an estimate retains its evidence and limitations');
+  assert.doesNotMatch(fellThrough.basis, /fits entirely in 6 GB VRAM/);
 
   // An absent canvas is not an off-spec canvas: it must not be labelled as an
   // extrapolation away from the measured point it actually sits on.

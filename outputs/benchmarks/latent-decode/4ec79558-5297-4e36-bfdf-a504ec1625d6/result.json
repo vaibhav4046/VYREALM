@@ -1,0 +1,323 @@
+{
+  "schemaVersion": 1,
+  "status": "review_required",
+  "operation": "decoded-from-prior-latent",
+  "operationId": "4ec79558-5297-4e36-bfdf-a504ec1625d6",
+  "samplerInvoked": false,
+  "newFilmGenerated": false,
+  "profile": {
+    "id": "wan22-vae-tiled-256-t128",
+    "qualification": "unqualified",
+    "tile_size": 256,
+    "overlap": 64,
+    "temporal_size": 128,
+    "temporal_overlap": 8
+  },
+  "source": {
+    "sourceJobId": "7555bcc4-9323-41f4-bfde-e6c1fb0cc406",
+    "projectId": "c2689d21-5add-4ffc-9ff4-4c7239236353",
+    "jobRoot": "C:\\Users\\lalwa\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Roaming\\vyrelum\\data\\jobs\\7555bcc4-9323-41f4-bfde-e6c1fb0cc406",
+    "stageRoot": "C:\\Users\\lalwa\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Roaming\\vyrelum\\data\\jobs\\7555bcc4-9323-41f4-bfde-e6c1fb0cc406\\motion",
+    "sourceVideo": "C:\\Users\\lalwa\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Roaming\\vyrelum\\data\\jobs\\7555bcc4-9323-41f4-bfde-e6c1fb0cc406\\generated-source.mp4",
+    "sourceVideoHash": "74f76581b90e121888dd61cff0b46376e335f487baab908ec9d44f9bbc4c6a92",
+    "latentPath": "C:\\Users\\lalwa\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Roaming\\vyrelum\\data\\jobs\\7555bcc4-9323-41f4-bfde-e6c1fb0cc406\\motion\\generated.latent",
+    "latentHash": "e44af235c97d7ce257529994b8f0aed1e3a3dab00ef194295d08c9485a12f252",
+    "latentBytes": 13716408,
+    "tensor": {
+      "dtype": "F32",
+      "shape": [
+        1,
+        48,
+        31,
+        36,
+        64
+      ],
+      "headerBytes": 2992,
+      "version": "latent_format_version_0"
+    },
+    "frames": 121,
+    "width": 1024,
+    "height": 576,
+    "fps": 24,
+    "durationSeconds": 5,
+    "providerPromptId": "9e370d46-9453-4255-9a6d-1725702b830e",
+    "workflowHash": "6bdd17afe89f971555f1e06375192c60e52db1a22e51d6c0d30d131d302ca3d5",
+    "namespace": "vyrealm/c4116ec0-5f81-4e3a-a4a2-27fd47b10b03",
+    "resultHash": "2c2905af2acc26c683325ed52d889dad80eb7fbe986906019f0af4d7fc70769a",
+    "standardTiming": {
+      "scope": "whole-original-generation-not-isolated-decode",
+      "renderTimeMs": 1413336,
+      "vramPeakGb": 5.8486328125
+    },
+    "evidenceHashes": {
+      "history": "4e07fcab8bc6f33aaec0e4b8a9680987053ef05753406f024af078665112fc34",
+      "providerLog": "737173bb00e208b6fc1feaf8bfa5fcc4bc973adc341ec80ff4e1b6ae160838e8",
+      "frameLedger": "40adc34ac087c41bf219e7acca1880885fcbeb8cb444bb8d64b0f5a2eac3526a",
+      "latentLedger": "9b0c4b6e3ef5e199f4755610ca966a736741ea84ca9cdf7d9cefbeadb52ba580"
+    }
+  },
+  "runtime": {
+    "root": "D:\\VYREALM-runtime",
+    "inputDirectory": "D:\\VYREALM-runtime\\ComfyUI\\input",
+    "commit": "fbed745c8d7d62573b099cd61fe51cb64b9b807e",
+    "nodesSha256": "518551ba0f38d1bf1bfb233365b41eef843f6ecee66c62ecb7c7e8502274ad30",
+    "vae": {
+      "name": "wan2.2_vae.safetensors",
+      "path": "D:\\VYREALM-runtime\\ComfyUI\\models\\vae\\wan2.2_vae.safetensors",
+      "sha256": "e40321bd36b9709991dae2530eb4ac303dd168276980d3e9bc4b6e2b75fed156",
+      "bytes": 1409400960
+    }
+  },
+  "nodeSchemaHash": "89d7cb7649007889bcbd0ab34e83f6635006e3514ebd2f503686da5f7710eee2",
+  "queuePolicy": "idle",
+  "hardware": {
+    "platform": "win32",
+    "arch": "x64",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12450HX",
+    "totalRamGb": 15.714714050292969
+  },
+  "qualification": "unqualified",
+  "input": {
+    "name": "vyrealm-decode-4ec79558-5297-4e36-bfdf-a504ec1625d6.latent",
+    "path": "D:\\VYREALM-runtime\\ComfyUI\\input\\vyrealm-decode-4ec79558-5297-4e36-bfdf-a504ec1625d6.latent",
+    "sha256": "e44af235c97d7ce257529994b8f0aed1e3a3dab00ef194295d08c9485a12f252",
+    "sourceJobId": "7555bcc4-9323-41f4-bfde-e6c1fb0cc406",
+    "operation": "decoded-from-prior-latent"
+  },
+  "candidate": {
+    "promptId": "8bb726ca-1eaa-4680-bd26-4ff58fe77e8f",
+    "workflowHash": "e39ca7810b73066350bc1a92dedc0e6ba8795eeee946d3814000e2a634bfd1df",
+    "timing": {
+      "wallMs": 186176,
+      "providerExecutionMs": 182689,
+      "scope": "wall includes queue/load/decode/frame retrieval; provider time excludes FIFO wait"
+    },
+    "providerLog": "candidate/decode/provider.jsonl",
+    "resources": {
+      "systemGpuMemoryPeakGb": 2.6611328125,
+      "minimumSystemFreeRamGb": 3.0557022094726562,
+      "scope": "system-wide during queued decode and frame retrieval; not isolated model allocation"
+    }
+  },
+  "standard": {
+    "method": "retained original standard frames",
+    "isolatedDecodeTimingAvailable": false
+  },
+  "outputs": {
+    "video": "decoded-source.mp4",
+    "sha256": "ffcaf37a26974b1daf24e1991216ab58aee75d54807d7471f9423b8342176917",
+    "contactSheet": "comparison-contact-sheet.png"
+  },
+  "verification": {
+    "ok": true,
+    "checks": {
+      "exists": {
+        "ok": true,
+        "actual": {
+          "bytes": 1514293
+        },
+        "expected": "non-empty regular file",
+        "message": ""
+      },
+      "probe": {
+        "ok": true,
+        "actual": "valid",
+        "expected": "valid ffprobe JSON",
+        "message": ""
+      },
+      "videoStream": {
+        "ok": true,
+        "actual": {
+          "codec": "h264"
+        },
+        "expected": "at least one video stream",
+        "message": ""
+      },
+      "resolution": {
+        "ok": true,
+        "actual": {
+          "width": 1024,
+          "height": 576
+        },
+        "expected": {
+          "width": 1024,
+          "height": 576
+        },
+        "message": ""
+      },
+      "duration": {
+        "ok": true,
+        "actual": 5,
+        "expected": 5,
+        "message": ""
+      },
+      "frameRate": {
+        "ok": true,
+        "actual": 24,
+        "expected": 24,
+        "message": ""
+      },
+      "audio": {
+        "ok": true,
+        "actual": null,
+        "expected": "optional",
+        "message": ""
+      },
+      "visualLuma": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 95.157,
+          "maxRange": 238,
+          "maxFrameLumaDelta": 39.8054
+        },
+        "expected": "mean luma between 24 and 232",
+        "message": ""
+      },
+      "visualContrast": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 95.157,
+          "maxRange": 238,
+          "maxFrameLumaDelta": 39.8054
+        },
+        "expected": "at least 12 levels of luma range",
+        "message": ""
+      },
+      "visualMotion": {
+        "ok": true,
+        "actual": {
+          "samples": 12,
+          "meanLuma": 95.157,
+          "maxRange": 238,
+          "maxFrameLumaDelta": 39.8054
+        },
+        "expected": "non-static frame samples",
+        "message": ""
+      }
+    },
+    "diagnostics": [],
+    "probe": {
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "h264",
+          "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+          "profile": "High",
+          "codec_type": "video",
+          "codec_tag_string": "avc1",
+          "codec_tag": "0x31637661",
+          "mime_codec_string": "avc1.64001f",
+          "width": 1024,
+          "height": 576,
+          "coded_width": 1024,
+          "coded_height": 576,
+          "has_b_frames": 2,
+          "pix_fmt": "yuv420p",
+          "level": 31,
+          "chroma_location": "left",
+          "field_order": "progressive",
+          "is_avc": "true",
+          "nal_length_size": "4",
+          "id": "0x1",
+          "r_frame_rate": "24/1",
+          "avg_frame_rate": "24/1",
+          "time_base": "1/12288",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "duration_ts": 61440,
+          "duration": "5.000000",
+          "bit_rate": "2419177",
+          "bits_per_raw_sample": "8",
+          "nb_frames": "120",
+          "extradata_size": 46,
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "non_diegetic": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0,
+            "multilayer": 0
+          },
+          "tags": {
+            "language": "und",
+            "handler_name": "VideoHandler",
+            "encoder": "Lavc62.28.101 libx264"
+          }
+        }
+      ],
+      "format": {
+        "filename": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\benchmarks\\latent-decode\\4ec79558-5297-4e36-bfdf-a504ec1625d6\\decoded-source.mp4",
+        "nb_streams": 1,
+        "nb_programs": 0,
+        "nb_stream_groups": 0,
+        "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+        "format_long_name": "QuickTime / MOV",
+        "start_time": "0.000000",
+        "duration": "5.000000",
+        "size": "1514293",
+        "bit_rate": "2422868",
+        "probe_score": 100,
+        "tags": {
+          "major_brand": "isom",
+          "minor_version": "512",
+          "compatible_brands": "isomiso2avc1mp41",
+          "encoder": "Lavf62.12.101"
+        }
+      }
+    },
+    "decodedFrameCount": 120
+  },
+  "comparison": {
+    "ssim": {
+      "frames": 121,
+      "mean": 0.9973652975206615,
+      "min": 0.996775
+    },
+    "psnr": {
+      "frames": 121,
+      "mean": 52.26652892561985,
+      "min": 50.01
+    },
+    "temporal": {
+      "standard": {
+        "frames": 120,
+        "meanFrameDifference": 5.063874,
+        "maxFrameDifference": 13.8666
+      },
+      "tiled": {
+        "frames": 120,
+        "meanFrameDifference": 5.049585500000002,
+        "maxFrameDifference": 13.8407
+      }
+    },
+    "contactSheet": "comparison-contact-sheet.png",
+    "contactSheetRows": [
+      "retained standard decode",
+      "candidate tiled decode"
+    ],
+    "semanticReview": "required",
+    "qualification": "unqualified"
+  },
+  "reviewRequired": [
+    "spatial tile seams",
+    "temporal flicker and motion continuity",
+    "face/material detail",
+    "actual speed and memory against an isolated standard decode"
+  ],
+  "completedAt": "2026-09-08T01:41:22.429Z"
+}

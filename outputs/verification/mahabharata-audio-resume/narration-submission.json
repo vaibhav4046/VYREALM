@@ -1,0 +1,49 @@
+{
+  "operation": "voiceover",
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "revision": 6,
+  "text": "At Kurukshetra, Krishna halts the chariot. Arjuna sees his kin and teachers. His breath catches. His bow slips. Krishna counsels action without attachment to reward. The weight of kinship remains. Arjuna lifts his gaze, listening. Between the armies, he must understand what duty demands.",
+  "cues": [
+    {
+      "start": 0,
+      "end": 5,
+      "text": "At Kurukshetra, Krishna halts the chariot."
+    },
+    {
+      "start": 5,
+      "end": 10,
+      "text": "Arjuna sees his kin and teachers."
+    },
+    {
+      "start": 10,
+      "end": 15,
+      "text": "His breath catches. His bow slips."
+    },
+    {
+      "start": 15,
+      "end": 20,
+      "text": "Krishna counsels action without attachment to reward."
+    },
+    {
+      "start": 20,
+      "end": 25,
+      "text": "The weight of kinship remains. Arjuna lifts his gaze, listening."
+    },
+    {
+      "start": 25,
+      "end": 30,
+      "text": "Between the armies, he must understand what duty demands."
+    }
+  ],
+  "durationSeconds": 30,
+  "id": "ffce69f3-2e26-44a3-a47a-52e4a1d1b61d",
+  "type": "voiceover",
+  "status": "queued",
+  "progress": 0,
+  "stage": "queued for local audio",
+  "output": null,
+  "error": null,
+  "attempts": 0,
+  "createdAt": "2026-09-08T01:29:47.852Z",
+  "updatedAt": "2026-09-08T01:29:47.852Z"
+}

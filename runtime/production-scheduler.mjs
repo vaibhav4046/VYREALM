@@ -73,7 +73,7 @@ export const MEASURED_NEURAL_RUNS = Object.freeze({
     totalMs: 196000,
     steps: 8,
     cfg: 1.0,
-    basis: 'measured on this box: 97 frames at 768x512 in 196 s (~2.0 s/frame), 8 steps, cfg 1.0; the model fits entirely in 6 GB VRAM.'
+    basis: 'Legacy local timing anchor: 97 frames at 768x512 in 196 s, 8 steps, cfg 1.0. Full pipeline residency is not established: later external local runs took 215–290 s and offloaded the VAE. Apply a safety factor and qualify VYREALM-owned output separately.'
   })
 });
 

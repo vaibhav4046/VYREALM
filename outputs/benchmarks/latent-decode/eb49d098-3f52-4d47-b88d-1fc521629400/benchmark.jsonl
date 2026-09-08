@@ -1,0 +1,2 @@
+{"at":"2026-09-08T00:59:54.672Z","type":"preflight_started","operationId":"eb49d098-3f52-4d47-b88d-1fc521629400","sourceJobId":"7555bcc4-9323-41f4-bfde-e6c1fb0cc406","samplerInvoked":false}
+{"at":"2026-09-08T00:59:54.680Z","type":"benchmark_failed","code":"SOURCE_PATH_ESCAPE"}

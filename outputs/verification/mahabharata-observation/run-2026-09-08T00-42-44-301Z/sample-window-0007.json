@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "mode": "time-sampled-app-observation",
+  "continuousRecording": false,
+  "windowIndex": 7,
+  "windowStartedAt": "2026-09-08T01:12:48.286Z",
+  "endedAt": "2026-09-08T01:17:00.149Z",
+  "nominalIntervalSeconds": 15,
+  "actualSampleCount": 16,
+  "firstCapturedAt": "2026-09-08T01:12:59.397Z",
+  "lastCapturedAt": "2026-09-08T01:16:50.049Z",
+  "longestIntervalSeconds": 16.28,
+  "samples": [
+    {
+      "file": "sample-00110-2026-09-08T01-12-59-343Z.png",
+      "requestedAt": "2026-09-08T01:12:59.343Z",
+      "capturedAt": "2026-09-08T01:12:59.397Z",
+      "captureOperationSeconds": 0.054,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00111-2026-09-08T01-13-14-616Z.png",
+      "requestedAt": "2026-09-08T01:13:14.616Z",
+      "capturedAt": "2026-09-08T01:13:14.711Z",
+      "captureOperationSeconds": 0.095,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00112-2026-09-08T01-13-29-947Z.png",
+      "requestedAt": "2026-09-08T01:13:29.947Z",
+      "capturedAt": "2026-09-08T01:13:30.009Z",
+      "captureOperationSeconds": 0.062,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00113-2026-09-08T01-13-45-100Z.png",
+      "requestedAt": "2026-09-08T01:13:45.100Z",
+      "capturedAt": "2026-09-08T01:13:45.155Z",
+      "captureOperationSeconds": 0.055,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00114-2026-09-08T01-14-00-295Z.png",
+      "requestedAt": "2026-09-08T01:14:00.295Z",
+      "capturedAt": "2026-09-08T01:14:00.356Z",
+      "captureOperationSeconds": 0.061,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00115-2026-09-08T01-14-15-523Z.png",
+      "requestedAt": "2026-09-08T01:14:15.523Z",
+      "capturedAt": "2026-09-08T01:14:15.578Z",
+      "captureOperationSeconds": 0.055,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00116-2026-09-08T01-14-30-649Z.png",
+      "requestedAt": "2026-09-08T01:14:30.649Z",
+      "capturedAt": "2026-09-08T01:14:30.705Z",
+      "captureOperationSeconds": 0.056,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00117-2026-09-08T01-14-45-857Z.png",
+      "requestedAt": "2026-09-08T01:14:45.857Z",
+      "capturedAt": "2026-09-08T01:14:46.883Z",
+      "captureOperationSeconds": 1.026,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00118-2026-09-08T01-15-02-022Z.png",
+      "requestedAt": "2026-09-08T01:15:02.022Z",
+      "capturedAt": "2026-09-08T01:15:02.543Z",
+      "captureOperationSeconds": 0.521,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00119-2026-09-08T01-15-18-344Z.png",
+      "requestedAt": "2026-09-08T01:15:18.344Z",
+      "capturedAt": "2026-09-08T01:15:18.823Z",
+      "captureOperationSeconds": 0.479,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00120-2026-09-08T01-15-33-915Z.png",
+      "requestedAt": "2026-09-08T01:15:33.915Z",
+      "capturedAt": "2026-09-08T01:15:33.976Z",
+      "captureOperationSeconds": 0.061,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00121-2026-09-08T01-15-49-082Z.png",
+      "requestedAt": "2026-09-08T01:15:49.082Z",
+      "capturedAt": "2026-09-08T01:15:49.143Z",
+      "captureOperationSeconds": 0.061,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00122-2026-09-08T01-16-04-295Z.png",
+      "requestedAt": "2026-09-08T01:16:04.295Z",
+      "capturedAt": "2026-09-08T01:16:04.370Z",
+      "captureOperationSeconds": 0.075,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00123-2026-09-08T01-16-19-535Z.png",
+      "requestedAt": "2026-09-08T01:16:19.535Z",
+      "capturedAt": "2026-09-08T01:16:19.606Z",
+      "captureOperationSeconds": 0.071,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00124-2026-09-08T01-16-34-751Z.png",
+      "requestedAt": "2026-09-08T01:16:34.751Z",
+      "capturedAt": "2026-09-08T01:16:34.808Z",
+      "captureOperationSeconds": 0.057,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    },
+    {
+      "file": "sample-00125-2026-09-08T01-16-49-974Z.png",
+      "requestedAt": "2026-09-08T01:16:49.974Z",
+      "capturedAt": "2026-09-08T01:16:50.049Z",
+      "captureOperationSeconds": 0.075,
+      "sha256": "5da848948258d28a42731153133e2641918c6ac4281eeaac9d7d673abb88168d",
+      "view": "Jobs",
+      "reason": "scheduled"
+    }
+  ],
+  "limitations": "Only the listed instants were captured. No frames or activity between them are asserted."
+}

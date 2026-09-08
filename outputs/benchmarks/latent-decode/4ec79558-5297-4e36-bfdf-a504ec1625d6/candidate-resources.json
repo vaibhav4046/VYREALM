@@ -1,0 +1,5 @@
+{
+  "systemGpuMemoryPeakGb": 2.6611328125,
+  "minimumSystemFreeRamGb": 3.0557022094726562,
+  "scope": "system-wide during queued decode and frame retrieval; not isolated model allocation"
+}

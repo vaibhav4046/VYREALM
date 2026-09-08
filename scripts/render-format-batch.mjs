@@ -18,7 +18,8 @@ import { join, dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { expandVariants, lintPlan } from '../runtime/format-library.mjs';
-import { renderPlan } from '../runtime/format-render.mjs';
+import { renderAndScore, summariseBatch } from '../runtime/scored-render.mjs';
+import { DEFAULT_THRESHOLDS } from '../runtime/quality-detectors.mjs';
 import { readFile } from 'node:fs/promises';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -64,12 +65,18 @@ export const SHOT_LIBRARY = {
 };
 
 function parseArgs(argv) {
-  const args = { limit: Infinity, out: 'outputs/formats', retimes: false, extend: false };
+  // Scoring is OFF by default. It probes every rendered file with the python
+  // pixel probe, and the probe DOMINATES the cost: measured on this box for one
+  // 8 s 1080x1080 / 240-frame clip, 8.814 s to render and 99.666 s to probe and
+  // score it (108.8 s total). Scoring a hundred-plan batch is hours, so the
+  // existing fast path stays fast unless the operator asks for the measurement.
+  const args = { limit: Infinity, out: 'outputs/formats', retimes: false, extend: false, score: false };
   for (let i = 0; i < argv.length; i++) {
     if (argv[i] === '--limit') args.limit = Number(argv[++i]);
     else if (argv[i] === '--out') args.out = argv[++i];
     else if (argv[i] === '--retimes') args.retimes = true;
     else if (argv[i] === '--extend') args.extend = true;
+    else if (argv[i] === '--score') args.score = true;
   }
   return args;
 }
@@ -113,6 +120,9 @@ async function main() {
   const hooks = await loadHooks();
   const hasMusic = existsSync(MUSIC_BED);
   console.log(`hooks loaded: ${Object.keys(hooks).length} | music bed: ${hasMusic ? 'yes' : 'no'}`);
+  console.log(args.score
+    ? 'quality scoring: ON - every rendered file is probed and scored, which adds real seconds per video'
+    : 'quality scoring: off (pass --score to measure every rendered file)');
 
   const assetIds = Object.fromEntries(Object.keys(resolved).map(role => [role, { assetId: role }]));
   const variants = expandVariants({
@@ -131,13 +141,14 @@ async function main() {
 
   const started = Date.now();
   const receipts = [];
+  const results = [];
   const failures = [];
 
   for (const [index, plan] of queue.entries()) {
     const name = `${String(index + 1).padStart(3, '0')}-${plan.formatId}-${plan.platform}-${plan.durationSeconds}s.mp4`;
     const label = `[${index + 1}/${queue.length}] ${plan.formatId} @ ${plan.platform} ${plan.durationSeconds}s`;
     try {
-      const receipt = await renderPlan({
+      const result = await renderAndScore({
         plan,
         shotLibrary: resolved,
         output: join(outDir, name),
@@ -147,8 +158,11 @@ async function main() {
         // Only supply audio when the bed can actually be satisfied. A bed that
         // wants narration we do not have must render silent, not fail the whole
         // video - the module is right to refuse a half-built mix.
-        audioSources: buildAudioSources(plan)
+        audioSources: buildAudioSources(plan),
+        skipScoring: !args.score
       });
+      results.push(result);
+      const receipt = result.render;
       const drift = Math.abs(receipt.measured.seconds - receipt.requestedSeconds);
       receipt.durationDriftSeconds = Number(drift.toFixed(3));
       receipt.durationExact = drift < 0.1;
@@ -158,8 +172,29 @@ async function main() {
         .filter(b => b.shotRole !== 'black')
         .map(b => resolved[b.shotRole]?.provenance)
         .filter(Boolean))];
+      // Compact per-video quality on the receipt; the thresholds behind the
+      // verdicts are recorded once for the whole batch rather than copied N
+      // times, and the full audit record is result.evidence.
+      if (args.score) {
+        receipt.scoring = result.scored
+          ? {
+              scored: true,
+              overall: result.scores.overall,
+              mean: result.scores.mean,
+              worst: result.scores.worst,
+              verdicts: result.scores.verdicts,
+              action: result.decision.action,
+              strategies: result.decision.strategies,
+              reasoning: result.decision.reasoning,
+              scoreMs: result.scoreMs
+            }
+          : { scored: false, diagnostic: result.diagnostics[0]?.message ?? null, scoreMs: result.scoreMs };
+      }
+      const quality = !args.score ? ''
+        : result.scored ? ` | score ${result.scores.overall} ${result.decision.action} (+${(result.scoreMs / 1000).toFixed(1)}s)`
+        : ' | UNSCORED';
+      console.log(`${label} -> ${receipt.measured.width}x${receipt.measured.height} ${receipt.measured.seconds}s ${receipt.durationExact ? 'exact' : `DRIFT ${drift.toFixed(3)}s`} ${receipt.renderMs}ms${quality}`);
       receipts.push(receipt);
-      console.log(`${label} -> ${receipt.measured.width}x${receipt.measured.height} ${receipt.measured.seconds}s ${receipt.durationExact ? 'exact' : `DRIFT ${drift.toFixed(3)}s`} ${receipt.renderMs}ms`);
     } catch (error) {
       failures.push({ formatId: plan.formatId, platform: plan.platform, error: error.message });
       console.error(`${label} -> FAILED ${error.message}`);
@@ -179,6 +214,17 @@ async function main() {
       failed: failures.length,
       exactDuration: receipts.filter(r => r.durationExact).length,
       wallClockMs: Date.now() - started
+    },
+    // The differentiator, aggregated: what we measured on our own output. The
+    // thresholds sit here once so a reader can audit every verdict in
+    // receipts[].scoring without them being repeated per video.
+    scoring: {
+      enabled: args.score,
+      summary: summariseBatch(results),
+      thresholds: args.score ? DEFAULT_THRESHOLDS : null,
+      note: args.score
+        ? 'Scores measure the DELIVERED file, compositing and encoding included. Thresholds are provisional; each carries its own calibratedOn and confidence.'
+        : 'Scoring was not requested (--score), so no quality claim is made about these videos.'
     },
     skippedRoles: [...new Set(skipped.flatMap(p => p.missingShotRoles))],
     failures,

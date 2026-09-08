@@ -1,0 +1,109 @@
+{"at":"2026-09-08T01:00:47.264Z","type":"preflight_started","operationId":"4d21e102-d11b-4bfa-b509-10d8e4f6348b","sourceJobId":"7555bcc4-9323-41f4-bfde-e6c1fb0cc406","samplerInvoked":false}
+{"at":"2026-09-08T01:00:51.038Z","type":"preflight_passed","sourceJobId":"7555bcc4-9323-41f4-bfde-e6c1fb0cc406","latentHash":"e44af235c97d7ce257529994b8f0aed1e3a3dab00ef194295d08c9485a12f252","profile":"wan22-vae-tiled-256-t128"}
+{"at":"2026-09-08T01:11:51.713Z","type":"preflight_started","operationId":"4d21e102-d11b-4bfa-b509-10d8e4f6348b","sourceJobId":"7555bcc4-9323-41f4-bfde-e6c1fb0cc406","samplerInvoked":false}
+{"at":"2026-09-08T01:11:52.004Z","type":"preflight_passed","sourceJobId":"7555bcc4-9323-41f4-bfde-e6c1fb0cc406","latentHash":"e44af235c97d7ce257529994b8f0aed1e3a3dab00ef194295d08c9485a12f252","profile":"wan22-vae-tiled-256-t128"}
+{"at":"2026-09-08T01:11:59.031Z","type":"candidate_progress","stage":"decode: submitting one owned graph to the local GPU FIFO","queuePolicy":"fifo","pendingAhead":4}
+{"at":"2026-09-08T01:11:59.582Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":0,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:02.601Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":3,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:05.629Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":6,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:08.634Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":9,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:11.650Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":12,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:14.656Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":15,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:22.676Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":23,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:25.693Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":26,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:28.703Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":29,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:31.720Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":32,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:34.726Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":35,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:37.743Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":38,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:40.747Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":41,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:43.752Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":44,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:46.770Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":47,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:49.774Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":50,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:52.777Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":53,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:55.794Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":56,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:12:58.814Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":59,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:01.830Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":62,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:04.847Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":65,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:07.856Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":68,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:10.879Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":71,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:13.889Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":74,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:16.913Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":77,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:19.937Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":80,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:23.017Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":83,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:26.046Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":86,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:29.056Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":89,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:32.061Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":92,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:35.074Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":95,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:38.081Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":99,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:41.094Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":102,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:44.101Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":105,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:47.118Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":108,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:50.124Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":111,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:53.135Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":114,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:56.149Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":117,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:13:59.161Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":120,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:02.176Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":123,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:05.192Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":126,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:08.197Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":129,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:11.209Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":132,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:14.221Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":135,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:17.234Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":138,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:20.241Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":141,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:23.246Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":144,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:26.263Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":147,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:29.274Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":150,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:32.286Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":153,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:35.291Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":156,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:38.303Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":159,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:41.498Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":162,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:44.503Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":165,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:47.819Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":168,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:50.829Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":171,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:53.836Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":174,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:14:57.151Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":178,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:00.165Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":181,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:03.177Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":184,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:06.189Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":187,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:09.201Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":190,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:12.205Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":193,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:15.213Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":196,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:18.220Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":199,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:21.228Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":202,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:24.235Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":205,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:27.242Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":208,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:30.248Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":211,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:33.260Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":214,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:36.267Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":217,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:39.280Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":220,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:42.287Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":223,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:45.299Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":226,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:48.308Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":229,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:51.315Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":232,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:54.329Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":235,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:15:57.343Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":238,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:00.349Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":241,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:03.361Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":244,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:06.364Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":247,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:09.375Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":250,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:12.386Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":253,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:15.392Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":256,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:18.406Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":259,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:21.420Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":262,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:24.426Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":265,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:27.443Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":268,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:30.447Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":271,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:33.461Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":274,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:36.468Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":277,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:39.488Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":280,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:42.502Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":283,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:45.515Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":286,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:48.525Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":289,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:51.538Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":292,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:54.556Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":295,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:16:57.568Z","type":"candidate_progress","stage":"decode: queued in local GPU FIFO (position 5)","elapsedSeconds":298,"providerState":"queued","queuePosition":5}
+{"at":"2026-09-08T01:17:00.578Z","type":"candidate_progress","stage":"decode: awaiting owned provider history","elapsedSeconds":301,"providerState":"awaiting-history","queuePosition":null}
+{"at":"2026-09-08T01:17:03.585Z","type":"candidate_progress","stage":"decode: awaiting owned provider history","elapsedSeconds":304,"providerState":"awaiting-history","queuePosition":null}
+{"at":"2026-09-08T01:17:06.590Z","type":"candidate_progress","stage":"decode: awaiting owned provider history","elapsedSeconds":307,"providerState":"awaiting-history","queuePosition":null}
+{"at":"2026-09-08T01:17:09.612Z","type":"candidate_progress","stage":"decode: awaiting owned provider history","elapsedSeconds":310,"providerState":"awaiting-history","queuePosition":null}
+{"at":"2026-09-08T01:17:12.615Z","type":"candidate_progress","stage":"decode: awaiting owned provider history","elapsedSeconds":313,"providerState":"awaiting-history","queuePosition":null}
+{"at":"2026-09-08T01:17:15.620Z","type":"candidate_progress","stage":"decode: awaiting owned provider history","elapsedSeconds":316,"providerState":"awaiting-history","queuePosition":null}

@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "status": "preflight-only",
+  "operation": "decoded-from-prior-latent",
+  "operationId": "4d21e102-d11b-4bfa-b509-10d8e4f6348b",
+  "samplerInvoked": false,
+  "newFilmGenerated": false,
+  "profile": {
+    "id": "wan22-vae-tiled-256-t128",
+    "qualification": "unqualified",
+    "tile_size": 256,
+    "overlap": 64,
+    "temporal_size": 128,
+    "temporal_overlap": 8
+  },
+  "source": {
+    "sourceJobId": "7555bcc4-9323-41f4-bfde-e6c1fb0cc406",
+    "projectId": "c2689d21-5add-4ffc-9ff4-4c7239236353",
+    "jobRoot": "C:\\Users\\lalwa\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Roaming\\vyrelum\\data\\jobs\\7555bcc4-9323-41f4-bfde-e6c1fb0cc406",
+    "stageRoot": "C:\\Users\\lalwa\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Roaming\\vyrelum\\data\\jobs\\7555bcc4-9323-41f4-bfde-e6c1fb0cc406\\motion",
+    "sourceVideo": "C:\\Users\\lalwa\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Roaming\\vyrelum\\data\\jobs\\7555bcc4-9323-41f4-bfde-e6c1fb0cc406\\generated-source.mp4",
+    "sourceVideoHash": "74f76581b90e121888dd61cff0b46376e335f487baab908ec9d44f9bbc4c6a92",
+    "latentPath": "C:\\Users\\lalwa\\AppData\\Local\\Packages\\OpenAI.Codex_2p2nqsd0c76g0\\LocalCache\\Roaming\\vyrelum\\data\\jobs\\7555bcc4-9323-41f4-bfde-e6c1fb0cc406\\motion\\generated.latent",
+    "latentHash": "e44af235c97d7ce257529994b8f0aed1e3a3dab00ef194295d08c9485a12f252",
+    "latentBytes": 13716408,
+    "tensor": {
+      "dtype": "F32",
+      "shape": [
+        1,
+        48,
+        31,
+        36,
+        64
+      ],
+      "headerBytes": 2992,
+      "version": "latent_format_version_0"
+    },
+    "frames": 121,
+    "width": 1024,
+    "height": 576,
+    "fps": 24,
+    "durationSeconds": 5,
+    "providerPromptId": "9e370d46-9453-4255-9a6d-1725702b830e",
+    "workflowHash": "6bdd17afe89f971555f1e06375192c60e52db1a22e51d6c0d30d131d302ca3d5",
+    "namespace": "vyrealm/c4116ec0-5f81-4e3a-a4a2-27fd47b10b03",
+    "resultHash": "2c2905af2acc26c683325ed52d889dad80eb7fbe986906019f0af4d7fc70769a",
+    "standardTiming": {
+      "scope": "whole-original-generation-not-isolated-decode",
+      "renderTimeMs": 1413336,
+      "vramPeakGb": 5.8486328125
+    },
+    "evidenceHashes": {
+      "history": "4e07fcab8bc6f33aaec0e4b8a9680987053ef05753406f024af078665112fc34",
+      "providerLog": "737173bb00e208b6fc1feaf8bfa5fcc4bc973adc341ec80ff4e1b6ae160838e8",
+      "frameLedger": "40adc34ac087c41bf219e7acca1880885fcbeb8cb444bb8d64b0f5a2eac3526a",
+      "latentLedger": "9b0c4b6e3ef5e199f4755610ca966a736741ea84ca9cdf7d9cefbeadb52ba580"
+    }
+  },
+  "runtime": {
+    "root": "D:\\VYREALM-runtime",
+    "inputDirectory": "D:\\VYREALM-runtime\\ComfyUI\\input",
+    "commit": "fbed745c8d7d62573b099cd61fe51cb64b9b807e",
+    "nodesSha256": "518551ba0f38d1bf1bfb233365b41eef843f6ecee66c62ecb7c7e8502274ad30",
+    "vae": {
+      "name": "wan2.2_vae.safetensors",
+      "path": "D:\\VYREALM-runtime\\ComfyUI\\models\\vae\\wan2.2_vae.safetensors",
+      "sha256": "e40321bd36b9709991dae2530eb4ac303dd168276980d3e9bc4b6e2b75fed156",
+      "bytes": 1409400960
+    }
+  },
+  "nodeSchemaHash": "6d843d8bf284b0523c50441045b977d5c29d40a6b32a0f4a68c3fea242a02011",
+  "queuePolicy": "fifo",
+  "hardware": {
+    "platform": "win32",
+    "arch": "x64",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12450HX",
+    "totalRamGb": 15.714714050292969
+  },
+  "qualification": "unqualified"
+}

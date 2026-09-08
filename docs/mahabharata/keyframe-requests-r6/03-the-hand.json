@@ -1,0 +1,10 @@
+{
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "expectedRevision": 6,
+  "prompt": "Photorealistic live-action close insert in the same chariot at the same dawn. Arjuna's natural right hand, five fingers and simple dark leather wrist guard, gently holding Gandiva's cloth-bound wooden bow grip. A narrow edge of the same deep saffron angavastra and ivory dhoti with gold border is visible; no metal shoulder armour. Foreground softly blurred carved wood rail, midground sharply detailed skin creases, fingernails, leather and woven grip; behind, textured timber floor and dust-lit battlefield beyond. The bow has a single coherent curved limb and taut string. Warm side light camera-left, soft cool fill, 75mm cinema lens, natural depth of field. No jewellery over the knuckles, extra fingers, text or watermark.",
+  "seed": 730603,
+  "width": 1024,
+  "height": 576,
+  "steps": 20,
+  "queuePolicy": "fifo"
+}

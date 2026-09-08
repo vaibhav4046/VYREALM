@@ -32,26 +32,11 @@
       "fps": 25,
       "provenance": "local-neural-source"
     },
-    "vinyl-spin": {
-      "file": "vinyl-spin.mp4",
-      "prompt": "A vinyl record spinning on a turntable, warm lamp light raking across the grooves, slow push in. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
-      "seed": 90005,
-      "generationSeconds": 294.4,
-      "model": "ltxv-2b-0.9.8-distilled-q8_0",
-      "steps": 8,
-      "resolution": {
-        "width": 768,
-        "height": 512
-      },
-      "frames": 97,
-      "fps": 25,
-      "provenance": "local-neural-source"
-    },
-    "snow-pines": {
-      "file": "snow-pines.mp4",
-      "prompt": "Snow falling heavily through dark pine trees at dusk, blue hour light, static wide shot. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
-      "seed": 90006,
-      "generationSeconds": 219.6,
+    "city-timelapse": {
+      "file": "city-timelapse.mp4",
+      "prompt": "Clouds moving fast over a dense city skyline at golden hour, long shadows across towers, slow push in. Photoreal, cinematic lighting, shallow depth of field, film grain, coherent physics. No text, no watermark, no logos, no captions.",
+      "seed": 90007,
+      "generationSeconds": 2266.2,
       "model": "ltxv-2b-0.9.8-distilled-q8_0",
       "steps": 8,
       "resolution": {

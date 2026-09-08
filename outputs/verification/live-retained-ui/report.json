@@ -1,0 +1,63 @@
+{
+  "startedAt": "2026-09-08T01:12:33.960Z",
+  "jobId": "a707a1a2-66da-415d-9051-c8ff805cb915",
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "views": [
+    {
+      "width": 1280,
+      "playback": {
+        "duration": 5,
+        "currentTime": 5,
+        "ended": true,
+        "videoWidth": 1920,
+        "videoHeight": 1080,
+        "currentSrc": "http://127.0.0.1:4173/media/fd3f26c6-289f-4545-b0c3-741cba1d078d",
+        "error": null,
+        "quality": {
+          "totalVideoFrames": 120,
+          "droppedVideoFrames": 0
+        }
+      },
+      "bodyWidth": 1280,
+      "viewport": 1280
+    },
+    {
+      "width": 424,
+      "playback": {
+        "duration": 5,
+        "currentTime": 5,
+        "ended": true,
+        "videoWidth": 1920,
+        "videoHeight": 1080,
+        "currentSrc": "http://127.0.0.1:4173/media/fd3f26c6-289f-4545-b0c3-741cba1d078d",
+        "error": null,
+        "quality": {
+          "totalVideoFrames": 120,
+          "droppedVideoFrames": 0
+        }
+      },
+      "bodyWidth": 424,
+      "viewport": 424
+    }
+  ],
+  "journeyPassed": true,
+  "nativeCleanup": {
+    "pid": 17508,
+    "osExitVerified": true,
+    "state": "terminated",
+    "reportedPids": [
+      9032,
+      12556,
+      17508,
+      28128
+    ],
+    "treeTerminationConfirmed": true,
+    "nativeExitCode": 255,
+    "nativeError": "ERROR: The process with PID 9032 (child process of PID 17508) could not be terminated.\r\nReason: There is no running instance of the task.",
+    "nativeOutput": "SUCCESS: The process with PID 12556 (child process of PID 17508) has been terminated.\r\nSUCCESS: The process with PID 28128 (child process of PID 17508) has been terminated.\r\nSUCCESS: The process with PID 17508 (child process of PID 16912) has been terminated."
+  },
+  "cleanupError": "Error: BROWSER_LISTENER_REMAINS_OPEN\n    at Socket.<anonymous> (file:///C:/Users/lalwa/Documents/Codex/2026-09-06/j/outputs/verification/verify-live-retained-ui.mjs:75:41)\n    at Object.onceWrapper (node:events:622:28)\n    at Socket.emit (node:events:508:28)\n    at afterConnect (node:net:1622:10)\n    at afterConnectMultiple (node:net:1729:3)",
+  "finishedAt": "2026-09-08T01:13:27.297Z"
+}

@@ -1,0 +1,8 @@
+{
+  "status": "failed",
+  "operation": "decoded-from-prior-latent",
+  "code": "SOURCE_PATH_ESCAPE",
+  "samplerInvoked": false,
+  "qualification": "unqualified",
+  "at": "2026-09-08T00:59:54.678Z"
+}

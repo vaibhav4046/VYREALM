@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 2,
+  "state": "stopped",
+  "pid": 20032,
+  "startedAt": "2026-09-08T00:30:09.225Z",
+  "updatedAt": "2026-09-08T00:36:52.288Z",
+  "projectId": "e92789c9-ef27-44fc-b29d-aa01d3eea25b",
+  "firstJobId": "a707a1a2-66da-415d-9051-c8ff805cb915",
+  "origin": "http://127.0.0.1:4173",
+  "viewport": {
+    "width": 1280,
+    "height": 720
+  },
+  "startedAfterFirstKeyframe": true,
+  "recordedSurface": "real local VYREALM browser UI only",
+  "audioCapture": "Playwright records browser pixels only; final film audio must be inspected separately",
+  "timing": "original unretimed segments, individually duration-validated; all gaps and interruptions retained",
+  "maxSeconds": 14400,
+  "chunkSeconds": 300,
+  "currentSegment": null,
+  "completedSegments": [
+    {
+      "index": 1,
+      "state": "incomplete",
+      "file": null,
+      "startedAt": "2026-09-08T00:30:15.460Z",
+      "stoppedObservingAt": "2026-09-08T00:35:18.292Z",
+      "finalizedAt": "2026-09-08T00:36:19.151Z",
+      "realElapsedSeconds": 302.832,
+      "bytes": 0,
+      "sha256": null,
+      "probe": null,
+      "validation": {
+        "state": "incomplete",
+        "reasons": [
+          "VIDEO_DURATION_UNVERIFIED",
+          "OBSERVATION_INTERRUPTED"
+        ],
+        "wallSeconds": 302.832,
+        "capturedSeconds": null,
+        "durationDeltaSeconds": null,
+        "toleranceSeconds": 2,
+        "missingSeconds": null,
+        "timing": "original unretimed recording; incomplete evidence"
+      },
+      "interruptionReason": "CONTEXT_CLOSE_TIMEOUT",
+      "timing": "original unretimed recording; incomplete evidence"
+    }
+  ],
+  "captureGap": {
+    "startedAt": "2026-09-08T00:35:18.292Z",
+    "reason": "CONTEXT_CLOSE_TIMEOUT"
+  },
+  "lastSnapshot": {
+    "file": "snapshot-2026-09-08T00-35-10-511Z.json",
+    "at": "2026-09-08T00:35:10.511Z",
+    "sha256": "4cab5f2f6d42072ae49901dc04cd201288271af95ebb42722edaca7c6a2c6fc8"
+  },
+  "currentView": "Export",
+  "controlPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-30-09-225Z\\capture-command.json",
+  "stopPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-30-09-225Z\\STOP",
+  "stopReason": "recorder-error:OWNED_BROWSER_STILL_RUNNING"
+}

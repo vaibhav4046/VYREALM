@@ -1,0 +1,7 @@
+{
+  "name": "vyrealm-decode-4ec79558-5297-4e36-bfdf-a504ec1625d6.latent",
+  "path": "D:\\VYREALM-runtime\\ComfyUI\\input\\vyrealm-decode-4ec79558-5297-4e36-bfdf-a504ec1625d6.latent",
+  "sha256": "e44af235c97d7ce257529994b8f0aed1e3a3dab00ef194295d08c9485a12f252",
+  "sourceJobId": "7555bcc4-9323-41f4-bfde-e6c1fb0cc406",
+  "operation": "decoded-from-prior-latent"
+}

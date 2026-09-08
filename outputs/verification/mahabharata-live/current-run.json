@@ -1,7 +1,7 @@
 {
-  "pid": 25084,
-  "startedAt": "2026-09-08T00:17:46.349Z",
-  "runDir": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-17-46-349Z",
-  "controlPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-17-46-349Z\\capture-command.json",
-  "stopPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-17-46-349Z\\STOP"
+  "pid": 20032,
+  "startedAt": "2026-09-08T00:30:09.225Z",
+  "runDir": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-30-09-225Z",
+  "controlPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-30-09-225Z\\capture-command.json",
+  "stopPath": "C:\\Users\\lalwa\\Documents\\Codex\\2026-09-06\\j\\outputs\\verification\\mahabharata-live\\run-2026-09-08T00-30-09-225Z\\STOP"
 }

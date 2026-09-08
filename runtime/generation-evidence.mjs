@@ -2,10 +2,45 @@ import { readFile, realpath } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import { relative, isAbsolute, resolve, join } from 'node:path';
 import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
+import { promisify, isDeepStrictEqual } from 'node:util';
 const exec = promisify(execFile);
 const sha = b=>createHash('sha256').update(b).digest('hex');
 const fail=(code,message)=>Object.assign(new Error(message),{code});
+
+// Explicit exception for one fixed installed LTX graph. A SamplerCustom node is
+// not interchangeable with Wan's KSampler: its seed, schedule, conditioning and
+// output chain must all be proven. This whitelist accepts no extra nodes/inputs.
+export function verifyRecordedModelGraph(workflow, o) {
+  if (o.modelId === 'ltxv-2b-0.9.8-distilled-q8_0.gguf') {
+    const prefix = workflow?.['10']?.inputs?.filename_prefix;
+    const imageName = workflow?.['11']?.inputs?.image;
+    const tiled = workflow?.['9']?.class_type === 'VAEDecodeTiled';
+    if (!Number.isSafeInteger(o.seed) || o.seed < 0 || typeof o.prompt !== 'string' || !o.prompt.trim() || o.prompt.length > 6000 || ![[512,288],[1024,576]].some(([w,h]) => o.width === w && o.height === h) || o.fps !== 24 || o.durationSeconds !== 5 || !/^vyrealm\/[a-zA-Z0-9_-]+\/motion$/.test(prefix || '') || typeof imageName !== 'string' || !/^[a-zA-Z0-9_./ -]+\.png$/.test(imageName) || imageName.startsWith('/') || imageName.split('/').some(p => !p || p === '.' || p === '..')) throw fail('MODEL_INVOCATION_MISMATCH', 'MODEL_INVOCATION_MISMATCH: The LTX profile, seed, prompt or owned input is unsupported');
+    const expected = {
+      '1': { class_type: 'UnetLoaderGGUF', inputs: { unet_name: 'ltxv-2b-0.9.8-distilled-q8_0.gguf' } },
+      '2': { class_type: 'CLIPLoaderGGUF', inputs: { clip_name: 't5-v1_1-xxl-encoder-Q5_K_M.gguf', type: 'ltxv' } },
+      '3': { class_type: 'VAELoader', inputs: { vae_name: 'ltxv-0.9.8-2b-distilled-vae.safetensors' } },
+      '4': { class_type: 'ModelSamplingLTXV', inputs: { model: ['1', 0], max_shift: 2.05, base_shift: 0.95, latent: ['7', 2] } },
+      '5': { class_type: 'CLIPTextEncode', inputs: { clip: ['2', 0], text: o.prompt } },
+      '6': { class_type: 'CLIPTextEncode', inputs: { clip: ['2', 0], text: 'static frozen image, slideshow, vector art, cartoon, geometric primitives, text, subtitles, watermark, black empty background, distorted face, deformed hands, duplicated limbs, unstable geometry, oversaturated, low quality' } },
+      '7': { class_type: 'LTXVImgToVideo', inputs: { positive: ['5', 0], negative: ['6', 0], vae: ['3', 0], image: ['11', 0], width: o.width, height: o.height, length: 121, batch_size: 1, strength: 1 } },
+      '8': { class_type: 'SamplerCustom', inputs: { model: ['4', 0], add_noise: true, noise_seed: o.seed, cfg: 1, positive: ['13', 0], negative: ['13', 1], sampler: ['15', 0], sigmas: ['14', 0], latent_image: ['7', 2] } },
+      '9': { class_type: tiled ? 'VAEDecodeTiled' : 'VAEDecode', inputs: { samples: ['8', 0], vae: ['3', 0], ...(tiled ? { tile_size: 256, overlap: 64, temporal_size: 32, temporal_overlap: 8 } : {}) } },
+      '10': { class_type: 'SaveImage', inputs: { images: ['9', 0], filename_prefix: prefix } },
+      '11': { class_type: 'LoadImage', inputs: { image: imageName } },
+      '12': { class_type: 'SaveLatent', inputs: { samples: ['8', 0], filename_prefix: `${prefix}_latent` } },
+      '13': { class_type: 'LTXVConditioning', inputs: { positive: ['7', 0], negative: ['7', 1], frame_rate: 24 } },
+      '14': { class_type: 'LTXVScheduler', inputs: { steps: 8, max_shift: 2.05, base_shift: 0.95, stretch: true, terminal: 0.1, latent: ['7', 2] } },
+      '15': { class_type: 'KSamplerSelect', inputs: { sampler_name: 'euler' } },
+    };
+    if (!isDeepStrictEqual(workflow, expected)) throw fail('MODEL_INVOCATION_MISMATCH', 'MODEL_INVOCATION_MISMATCH: LTX evidence must match the exact installed I2V model, sampler, schedule, conditioning and saved-output graph');
+    return true;
+  }
+  const sampler=workflow['8'], model=workflow['1'];
+  if(model?.class_type!=='UnetLoaderGGUF'||model.inputs?.unet_name!==o.modelId||sampler?.class_type!=='KSampler'||Number(sampler.inputs?.seed)!==Number(o.seed)||workflow['5']?.inputs?.text!==o.prompt||workflow['10']?.class_type!=='SaveImage')throw fail('MODEL_INVOCATION_MISMATCH','MODEL_INVOCATION_MISMATCH: The recorded model, seed and prompt must match the actual sampler graph');
+  if(JSON.stringify(sampler.inputs.model)!=='["4",0]'||JSON.stringify(workflow['4']?.inputs?.model)!=='["1",0]'||JSON.stringify(workflow['9']?.inputs?.samples)!=='["8",0]'||JSON.stringify(workflow['10']?.inputs?.images)!=='["9",0]')throw fail('MODEL_OUTPUT_DISCONNECTED','MODEL_OUTPUT_DISCONNECTED: Saved frames must come from the model sampler and VAE');
+  return true;
+}
 
 // Evidence is an audit of this local job, not a cryptographic attestation of a
 // potentially compromised host. It prevents accidental import/upscale promotion.
@@ -29,9 +64,7 @@ export async function verifyGenerationEvidence(o){
     if(hash!==o.hashJson(o.workflow)||history.prompt?.[1]!==e.promptId||o.hashJson(history.prompt?.[2])!==hash)throw fail('PROVIDER_WORKFLOW_MISMATCH','Provider history must match the full submitted graph');
     if(history.status?.completed!==true||history.status?.status_str!=='success')throw fail('PROVIDER_EXECUTION_UNCONFIRMED','Provider did not report successful execution');
     for(const event of ['submitted','completed'])if(!logs.some(l=>l.event===event&&l.promptId===e.promptId&&l.workflowHash===hash))throw fail('PROVIDER_LOG_MISSING',`Missing matching ${event} provider log`);
-    const sampler=workflow['8'], model=workflow['1'];
-    if(model?.class_type!=='UnetLoaderGGUF'||model.inputs?.unet_name!==o.modelId||sampler?.class_type!=='KSampler'||Number(sampler.inputs?.seed)!==Number(o.seed)||workflow['5']?.inputs?.text!==o.prompt||workflow['10']?.class_type!=='SaveImage')throw fail('MODEL_INVOCATION_MISMATCH','The recorded model, seed and prompt must match the actual sampler graph');
-    if(JSON.stringify(sampler.inputs.model)!=='["4",0]'||JSON.stringify(workflow['4']?.inputs?.model)!=='["1",0]'||JSON.stringify(workflow['9']?.inputs?.samples)!=='["8",0]'||JSON.stringify(workflow['10']?.inputs?.images)!=='["9",0]')throw fail('MODEL_OUTPUT_DISCONNECTED','Saved frames must come from the model sampler and VAE');
+    verifyRecordedModelGraph(workflow, o);
     const expectedFrames=Math.round(Number(o.durationSeconds)*Number(o.fps));
     if(!Number.isSafeInteger(expectedFrames)||expectedFrames<2||!Array.isArray(ledger)||ledger.length<expectedFrames||ledger.length>expectedFrames+1)throw fail('PROVIDER_FRAME_COUNT','Recorded frame count does not match the requested video');
     const descriptors=history.outputs?.['10']?.images||[];

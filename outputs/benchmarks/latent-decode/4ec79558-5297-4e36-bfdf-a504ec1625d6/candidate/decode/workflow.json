@@ -1,0 +1,41 @@
+{
+  "3": {
+    "class_type": "VAELoader",
+    "inputs": {
+      "vae_name": "wan2.2_vae.safetensors"
+    }
+  },
+  "7": {
+    "class_type": "LoadLatent",
+    "inputs": {
+      "latent": "vyrealm-decode-4ec79558-5297-4e36-bfdf-a504ec1625d6.latent"
+    }
+  },
+  "9": {
+    "class_type": "VAEDecodeTiled",
+    "inputs": {
+      "samples": [
+        "7",
+        0
+      ],
+      "vae": [
+        "3",
+        0
+      ],
+      "tile_size": 256,
+      "overlap": 64,
+      "temporal_size": 128,
+      "temporal_overlap": 8
+    }
+  },
+  "10": {
+    "class_type": "SaveImage",
+    "inputs": {
+      "images": [
+        "9",
+        0
+      ],
+      "filename_prefix": "vyrealm/4ec79558-5297-4e36-bfdf-a504ec1625d6/decode"
+    }
+  }
+}

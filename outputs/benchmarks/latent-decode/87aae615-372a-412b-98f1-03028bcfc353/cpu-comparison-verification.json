@@ -1,0 +1,38 @@
+{
+  "status": "cpu-comparison-verified",
+  "comparedSourceToItself": true,
+  "samplerInvoked": false,
+  "decodeInvoked": false,
+  "qualification": "unqualified",
+  "comparison": {
+    "ssim": {
+      "frames": 121,
+      "mean": 1,
+      "min": 1
+    },
+    "psnr": {
+      "frames": 121,
+      "mean": "infinite",
+      "min": null
+    },
+    "temporal": {
+      "standard": {
+        "frames": 120,
+        "meanFrameDifference": 5.063874,
+        "maxFrameDifference": 13.8666
+      },
+      "tiled": {
+        "frames": 120,
+        "meanFrameDifference": 5.063874,
+        "maxFrameDifference": 13.8666
+      }
+    },
+    "contactSheet": "comparison-contact-sheet.png",
+    "contactSheetRows": [
+      "retained standard decode",
+      "candidate tiled decode"
+    ],
+    "semanticReview": "required",
+    "qualification": "unqualified"
+  }
+}

@@ -1,0 +1,352 @@
+{
+  "status": "review_required",
+  "validated": true,
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 3.66,
+      "text": "At Cura-chetra, Krsna halts the chariot.",
+      "words": [
+        {
+          "start": 0.0,
+          "end": 0.36,
+          "word": " At",
+          "probability": 0.6924874782562256
+        },
+        {
+          "start": 0.36,
+          "end": 0.68,
+          "word": " Cura",
+          "probability": 0.4103795140981674
+        },
+        {
+          "start": 0.68,
+          "end": 1.34,
+          "word": "-chetra,",
+          "probability": 0.45622652396559715
+        },
+        {
+          "start": 1.64,
+          "end": 2.0,
+          "word": " Krsna",
+          "probability": 0.6168151795864105
+        },
+        {
+          "start": 2.0,
+          "end": 2.58,
+          "word": " halts",
+          "probability": 0.5971861928701401
+        },
+        {
+          "start": 2.58,
+          "end": 2.88,
+          "word": " the",
+          "probability": 0.9775556325912476
+        },
+        {
+          "start": 2.88,
+          "end": 3.66,
+          "word": " chariot.",
+          "probability": 0.727059006690979
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "start": 5.1,
+      "end": 7.66,
+      "text": "Argener sees his kin and teachers.",
+      "words": [
+        {
+          "start": 5.1,
+          "end": 5.66,
+          "word": " Argener",
+          "probability": 0.4777330110470454
+        },
+        {
+          "start": 5.66,
+          "end": 5.96,
+          "word": " sees",
+          "probability": 0.9674168825149536
+        },
+        {
+          "start": 5.96,
+          "end": 6.28,
+          "word": " his",
+          "probability": 0.9031814932823181
+        },
+        {
+          "start": 6.28,
+          "end": 6.6,
+          "word": " kin",
+          "probability": 0.9365922212600708
+        },
+        {
+          "start": 6.6,
+          "end": 6.94,
+          "word": " and",
+          "probability": 0.9816769361495972
+        },
+        {
+          "start": 6.94,
+          "end": 7.66,
+          "word": " teachers.",
+          "probability": 0.8118401765823364
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "start": 10.04,
+      "end": 12.84,
+      "text": "His breath catches his bow slits.",
+      "words": [
+        {
+          "start": 10.04,
+          "end": 10.26,
+          "word": " His",
+          "probability": 0.9523252844810486
+        },
+        {
+          "start": 10.26,
+          "end": 10.58,
+          "word": " breath",
+          "probability": 0.6827921867370605
+        },
+        {
+          "start": 10.58,
+          "end": 11.08,
+          "word": " catches",
+          "probability": 0.9251617193222046
+        },
+        {
+          "start": 11.08,
+          "end": 11.6,
+          "word": " his",
+          "probability": 0.5698502063751221
+        },
+        {
+          "start": 11.6,
+          "end": 11.98,
+          "word": " bow",
+          "probability": 0.23238606750965118
+        },
+        {
+          "start": 11.98,
+          "end": 12.84,
+          "word": " slits.",
+          "probability": 0.811956524848938
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "start": 15.06,
+      "end": 18.54,
+      "text": "Krsna counsels action without attachment to reward.",
+      "words": [
+        {
+          "start": 15.06,
+          "end": 15.5,
+          "word": " Krsna",
+          "probability": 0.9819107254346212
+        },
+        {
+          "start": 15.5,
+          "end": 16.26,
+          "word": " counsels",
+          "probability": 0.5664727687835693
+        },
+        {
+          "start": 16.26,
+          "end": 16.62,
+          "word": " action",
+          "probability": 0.9634121656417847
+        },
+        {
+          "start": 16.62,
+          "end": 17.02,
+          "word": " without",
+          "probability": 0.9833781719207764
+        },
+        {
+          "start": 17.02,
+          "end": 17.58,
+          "word": " attachment",
+          "probability": 0.9901448488235474
+        },
+        {
+          "start": 17.58,
+          "end": 18.0,
+          "word": " to",
+          "probability": 0.996658444404602
+        },
+        {
+          "start": 18.0,
+          "end": 18.54,
+          "word": " reward.",
+          "probability": 0.997810423374176
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "start": 19.88,
+      "end": 21.52,
+      "text": "The weight of Krsna remains.",
+      "words": [
+        {
+          "start": 19.88,
+          "end": 20.22,
+          "word": " The",
+          "probability": 0.9701789021492004
+        },
+        {
+          "start": 20.22,
+          "end": 20.42,
+          "word": " weight",
+          "probability": 0.9246495962142944
+        },
+        {
+          "start": 20.42,
+          "end": 20.66,
+          "word": " of",
+          "probability": 0.998331606388092
+        },
+        {
+          "start": 20.66,
+          "end": 20.96,
+          "word": " Krsna",
+          "probability": 0.7746601700782776
+        },
+        {
+          "start": 20.96,
+          "end": 21.52,
+          "word": " remains.",
+          "probability": 0.9581809639930725
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "start": 22.1,
+      "end": 24.0,
+      "text": "Argener lifts his gaze listening.",
+      "words": [
+        {
+          "start": 22.1,
+          "end": 22.46,
+          "word": " Argener",
+          "probability": 0.944227933883667
+        },
+        {
+          "start": 22.46,
+          "end": 22.74,
+          "word": " lifts",
+          "probability": 0.975571870803833
+        },
+        {
+          "start": 22.74,
+          "end": 23.1,
+          "word": " his",
+          "probability": 0.9747599959373474
+        },
+        {
+          "start": 23.1,
+          "end": 23.38,
+          "word": " gaze",
+          "probability": 0.9943374991416931
+        },
+        {
+          "start": 23.38,
+          "end": 24.0,
+          "word": " listening.",
+          "probability": 0.6230201721191406
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "start": 25.06,
+      "end": 29.0,
+      "text": "Between the armies, he must understand what duty demands.",
+      "words": [
+        {
+          "start": 25.06,
+          "end": 25.42,
+          "word": " Between",
+          "probability": 0.9881138205528259
+        },
+        {
+          "start": 25.42,
+          "end": 25.74,
+          "word": " the",
+          "probability": 0.997383177280426
+        },
+        {
+          "start": 25.74,
+          "end": 26.12,
+          "word": " armies,",
+          "probability": 0.9763344526290894
+        },
+        {
+          "start": 26.62,
+          "end": 26.76,
+          "word": " he",
+          "probability": 0.9599085450172424
+        },
+        {
+          "start": 26.76,
+          "end": 27.06,
+          "word": " must",
+          "probability": 0.9991955161094666
+        },
+        {
+          "start": 27.06,
+          "end": 27.72,
+          "word": " understand",
+          "probability": 0.9973393082618713
+        },
+        {
+          "start": 27.72,
+          "end": 28.0,
+          "word": " what",
+          "probability": 0.9980525970458984
+        },
+        {
+          "start": 28.0,
+          "end": 28.32,
+          "word": " duty",
+          "probability": 0.8791427612304688
+        },
+        {
+          "start": 28.32,
+          "end": 29.0,
+          "word": " demands.",
+          "probability": 0.9766778349876404
+        }
+      ]
+    }
+  ],
+  "durationSeconds": 30.0,
+  "outputs": {
+    "captions": "captions.srt",
+    "quality": "audio-evidence.json"
+  },
+  "provenance": {
+    "generationStatus": "transcribed",
+    "mediaType": "transcript",
+    "providerId": "faster-whisper-local-cpu",
+    "modelId": "tiny.en",
+    "sourceHash": "b3de84faf3845208d800e482cca08f8a6b9e069f31ecc01eed9aa410afdd8fa7",
+    "outputHash": "a16d0774f8d82b906d63e39928c2a56dca28b5579baaff76609e484f7fc1b577",
+    "renderTimeMs": 2350
+  },
+  "diagnostics": [
+    {
+      "code": "TRANSCRIPT_REVIEW_REQUIRED",
+      "message": "Local speech recognition completed. Review words, names and timing; diarization is not enabled."
+    }
+  ]
+}

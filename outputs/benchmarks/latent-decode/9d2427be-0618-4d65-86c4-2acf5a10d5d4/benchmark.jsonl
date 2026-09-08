@@ -1,0 +1,2 @@
+{"at":"2026-09-08T01:11:02.031Z","type":"preflight_started","operationId":"9d2427be-0618-4d65-86c4-2acf5a10d5d4","sourceJobId":"7555bcc4-9323-41f4-bfde-e6c1fb0cc406","samplerInvoked":false}
+{"at":"2026-09-08T01:11:05.882Z","type":"preflight_passed","sourceJobId":"7555bcc4-9323-41f4-bfde-e6c1fb0cc406","latentHash":"e44af235c97d7ce257529994b8f0aed1e3a3dab00ef194295d08c9485a12f252","profile":"wan22-vae-tiled-256-t128"}

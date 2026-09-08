@@ -4,6 +4,9 @@ import {readFile,writeFile,mkdir,stat,rename,rm} from 'node:fs/promises';
 import {existsSync,createReadStream} from 'node:fs';
 import {resolve,join,basename,extname} from 'node:path';
 import {verifyMedia} from '../runtime/media-verifier.mjs';
+import {rawFramingFilter} from '../runtime/raw-footage-plan.mjs';
+import {buildCaptionFilter} from '../runtime/format-captions.mjs';
+import {DEFAULT_CAPTION_FONT} from '../runtime/format-render.mjs';
 import {prepareTimedCaptions} from '../runtime/timed-captions.mjs';
 
 const CACHE_VERSION='timeline-base-v1';
@@ -29,6 +32,10 @@ export async function renderTimeline(request,{output,ffmpeg,ffprobe,cacheDir,onP
   const settings=request.settings||{}, width=Number(settings.width), height=Number(settings.height), fps=Number(settings.fps);
   if(!Number.isInteger(width)||!Number.isInteger(height)||width<16||height<16||width>4096||height>4096||width*height>16777216||width%2||height%2) throw new Error('settings width/height must be even integers between 16 and 4096');
   if(!finite(fps,60)||fps<1) throw new Error('settings fps must be between 1 and 60');
+  const profile=settings.rawEditProfile||{},framing=settings.framing??profile.framing??(settings.fit==='cover'?'crop-center':'fit'),audioTargetLUFS=settings.audioTargetLUFS??profile.audioTargetLUFS??-14,rawCaptionStyle=settings.captionStyle??profile.captionStyle;
+  if(!['fit','crop-left','crop-right','crop-center'].includes(framing))throw new Error('Invalid settings.framing');
+  if(typeof audioTargetLUFS!=='number'||!Number.isFinite(audioTargetLUFS)||audioTargetLUFS< -24||audioTargetLUFS> -10)throw new Error('settings.audioTargetLUFS must be between -24 and -10');
+  if(rawCaptionStyle!==undefined&&!['minimal-lower','generic'].includes(rawCaptionStyle))throw new Error('Invalid settings.captionStyle');
   const clips=request.timeline?.clips; if(!Array.isArray(clips)||!clips.length||clips.length>64) throw new Error('timeline.clips must contain 1-64 clips');
   const out=resolve(output), cache=resolve(cacheDir||process.env.VYRELUM_RUNTIME_DIR||resolve('work'),'cache','timeline-v1'); await mkdir(out,{recursive:true}); await mkdir(cache,{recursive:true});
   const bases=[], receiptClips=[]; let total=0;
@@ -42,14 +49,14 @@ export async function renderTimeline(request,{output,ffmpeg,ffprobe,cacheDir,onP
     const sourceHash=await fileHash(p); let sourceProbe=null;
     if(c.kind==='video') { sourceProbe=await probe(ffprobe,p); const d=Number(sourceProbe.format?.duration||0); if(!d||trim>=d||trim+duration>d+0.08) throw new Error(`clip ${i} trim exceeds source duration`); }
     const frames=Math.max(1,Math.round(duration*fps)), actual=frames/fps;
-    const key=createHash('sha256').update(JSON.stringify({v:CACHE_VERSION,sourceHash,kind:c.kind,trim,duration:actual,width,height,fps,fit:settings.fit||'contain'})).digest('hex');
+    const key=createHash('sha256').update(JSON.stringify({v:CACHE_VERSION,sourceHash,kind:c.kind,trim,duration:actual,width,height,fps,framing})).digest('hex');
     const base=join(cache,`${key}.mkv`), manifest=join(cache,`${key}.json`); let hit=false;
     if(existsSync(base)&&existsSync(manifest)) { try { const m=JSON.parse(await readFile(manifest,'utf8')); hit=m.key===key&&(await stat(base)).size>1000; } catch { hit=false; } }
     if(!hit) {
       const tmp=join(cache,`${key}.${process.pid}.${Date.now()}.tmp.mkv`), args=['-y','-protocol_whitelist','file,pipe'];
       if(c.kind==='image') args.push('-loop','1','-framerate',String(fps),'-i',p); else args.push('-ss',String(trim),'-i',p);
       const hasAudio=sourceProbe?.streams?.some(s=>s.codec_type==='audio'); if(!hasAudio) args.push('-f','lavfi','-i','anullsrc=channel_layout=stereo:sample_rate=48000'); const ai=hasAudio?0:1;
-      args.push('-filter:v',`${settings.fit==='cover'?`scale=${width}:${height}:force_original_aspect_ratio=increase:force_divisible_by=2,crop=${width}:${height}`:`scale=${width}:${height}:force_original_aspect_ratio=decrease:force_divisible_by=2,pad=${width}:${height}:(ow-iw)/2:(oh-ih)/2`},setsar=1,fps=${fps},trim=duration=${actual},setpts=PTS-STARTPTS`,'-map','0:v:0','-map',`${ai}:a:0`,'-t',String(actual),'-frames:v',String(frames),'-c:v','libx264','-preset','veryfast','-pix_fmt','yuv420p','-c:a','pcm_s16le','-ar','48000','-ac','2',tmp);
+      args.push('-filter:v',`${rawFramingFilter(width,height,framing).replace('force_original_aspect_ratio=increase','force_original_aspect_ratio=increase:force_divisible_by=2').replace('force_original_aspect_ratio=decrease','force_original_aspect_ratio=decrease:force_divisible_by=2')},setsar=1,fps=${fps},trim=duration=${actual},setpts=PTS-STARTPTS`,'-map','0:v:0','-map',`${ai}:a:0`,'-t',String(actual),'-frames:v',String(frames),'-c:v','libx264','-preset','veryfast','-pix_fmt','yuv420p','-c:a','pcm_s16le','-ar','48000','-ac','2',tmp);
       await run(ffmpeg,args); try { await rename(tmp,base); } catch { await rm(tmp,{force:true}); } await writeFile(manifest,JSON.stringify({key,sourceHash}));
     }
     bases.push(base); receiptClips.push({id:c.id??String(i),assetId:c.assetId??null,sourceHash,cacheKey:key,cacheHit:hit,duration:actual,requestedDuration:duration,trimStart:trim}); onProgress?.({stage:'base',index:i,cacheHit:hit});
@@ -73,26 +80,26 @@ export async function renderTimeline(request,{output,ffmpeg,ffprobe,cacheDir,onP
     audioEvidence.push({assetId:layer.assetId||null,sourceHash:await fileHash(sp),start,trimStart:trim,gain,provenance:layer.provenance||null});
   }
   if(layers.length){fc+=`;[acat]${layers.map((_,i)=>`[layer${i}]`).join('')}amix=inputs=${layers.length+1}:duration=first:dropout_transition=0:normalize=0[mix]`;audio='[mix]';}
-  const loudnessPass=await run(ffmpeg,['-hide_banner','-nostats',...inputs,'-filter_complex',fc+`;${audio}loudnorm=I=-14:TP=-2:LRA=11:print_format=json[analysis]`,'-map','[vcat]','-map','[analysis]','-f','null','-'],{captureStderr:true,timeout:300000});
+  const loudnessPass=await run(ffmpeg,['-hide_banner','-nostats',...inputs,'-filter_complex',fc+`;${audio}loudnorm=I=${audioTargetLUFS}:TP=-2:LRA=11:print_format=json[analysis]`,'-map','[vcat]','-map','[analysis]','-f','null','-'],{captureStderr:true,timeout:300000});
   const loudnessJson=loudnessPass.stderr.match(/\{\s*"input_i"\s*:[\s\S]*?\}/);
   if(!loudnessJson)throw new Error('AUDIO_LOUDNESS_MEASUREMENT_FAILED');
   const loudness=JSON.parse(loudnessJson[0]),measured=['input_i','input_tp','input_lra','input_thresh','target_offset'].every(key=>Number.isFinite(Number(loudness[key])));
-  const audioNormalization={method:measured?'two-pass-loudnorm':'silent-source',targetLufs:-14,truePeakCeilingDb:-2,analysis:loudness};
-  const normalize=measured?`loudnorm=I=-14:TP=-2:LRA=11:measured_I=${Number(loudness.input_i)}:measured_TP=${Number(loudness.input_tp)}:measured_LRA=${Number(loudness.input_lra)}:measured_thresh=${Number(loudness.input_thresh)}:offset=${Number(loudness.target_offset)}:linear=true`:'anull';
+  const audioNormalization={method:measured?'two-pass-loudnorm':'silent-source',targetLufs:audioTargetLUFS,truePeakCeilingDb:-2,analysis:loudness};
+  const normalize=measured?`loudnorm=I=${audioTargetLUFS}:TP=-2:LRA=11:measured_I=${Number(loudness.input_i)}:measured_TP=${Number(loudness.input_tp)}:measured_LRA=${Number(loudness.input_lra)}:measured_thresh=${Number(loudness.input_thresh)}:offset=${Number(loudness.target_offset)}:linear=true`:'anull';
   fc+=`;${audio}${normalize}[aout]`;audio='[aout]';
   // Short, transient-heavy edits may miss the target even after two-pass
   // loudnorm. Correct the PCM master in bounded passes before video encoding.
   let master=join(out,'audio-master-0.wav');
   await run(ffmpeg,['-y',...inputs,'-filter_complex',fc+';[vcat]nullsink','-map',audio,'-t',String(cursor),'-c:a','pcm_f32le','-ar','48000','-ac','2',master],{timeout:300000});
   const measureAudio=async path=>{
-    const {stderr}=await run(ffmpeg,['-hide_banner','-nostats','-i',path,'-vn','-af','loudnorm=I=-14:TP=-3:LRA=11:print_format=json','-f','null','-'],{captureStderr:true,timeout:300000});
+    const {stderr}=await run(ffmpeg,['-hide_banner','-nostats','-i',path,'-vn','-af',`loudnorm=I=${audioTargetLUFS}:TP=-3:LRA=11:print_format=json`,'-f','null','-'],{captureStderr:true,timeout:300000});
     const match=stderr.match(/\{\s*"input_i"\s*:[\s\S]*?\}/);if(!match)throw new Error('AUDIO_LOUDNESS_MEASUREMENT_FAILED');return JSON.parse(match[0]);
   };
   audioNormalization.corrections=[];
   // AAC can lower integrated loudness by a few tenths of a LU on short,
   // transient-heavy edits. Master PCM slightly above the delivery target so
   // the encoded file lands at -14 LUFS while retaining the true-peak margin.
-  const masterTargetLufs=-13.8,masterToleranceLufs=0.35;
+  const masterTargetLufs=audioTargetLUFS+0.2,masterToleranceLufs=0.35;
   let masterLevel=await measureAudio(master);
   for(let pass=1;measured&&pass<=6&&(Math.abs(Number(masterLevel.input_i)-masterTargetLufs)>masterToleranceLufs||Number(masterLevel.input_tp)>-2.5);pass++){
     const next=join(out,`audio-master-${pass}.wav`);
@@ -106,6 +113,6 @@ export async function renderTimeline(request,{output,ffmpeg,ffprobe,cacheDir,onP
   let videoLabel='[vcat]';const colorGrade=settings.colorGrade||null;
   if(colorGrade){const {contrast=1,saturation=1,gamma=1}=colorGrade;if([contrast,saturation,gamma].some(v=>typeof v!=='number'||!Number.isFinite(v)||v<0.5||v>1.5))throw new Error('Color grade values must be between 0.5 and 1.5');fc+=`;[vcat]eq=contrast=${contrast}:saturation=${saturation}:gamma=${gamma}[vgraded]`;videoLabel='[vgraded]';}
   const captionStyle=`Fontname=Arial,Fontsize=${Math.max(11,Math.round(height/90))},Bold=1,Outline=2,Shadow=0,MarginV=${Math.max(34,Math.round(height/22))},Alignment=2,PrimaryColour=&H00F5F3FF,OutlineColour=&H900B0715`;
-  const subtitleFilter=captions.length ? `;${videoLabel}subtitles='${filterPath(captionsFile)}':force_style='${captionStyle}'[vout]` : '';
-  const video=join(out,'render.mp4'), finalArgs=['-y',...inputs,'-filter_complex',fc+subtitleFilter,'-map',captions.length?'[vout]':videoLabel,'-map',audio,'-c:v','libx264','-threads','4','-preset','fast','-profile:v','high',...(width*height>=3840*2160?['-b:v','60M','-minrate','60M','-maxrate','60M','-bufsize','120M','-x264-params','nal-hrd=cbr:force-cfr=1']:['-crf','18']),'-pix_fmt','yuv420p','-c:a','aac','-b:a','192k','-ar','48000','-ac','2','-movflags','+faststart','-shortest',video]; await run(ffmpeg,finalArgs); audioNormalization.deliveryMeasurement=await measureAudio(video); if(measured&&(Math.abs(Number(audioNormalization.deliveryMeasurement.input_i)+14)>0.9||Number(audioNormalization.deliveryMeasurement.input_tp)>-1.5))throw new Error('AUDIO_DELIVERY_VERIFICATION_FAILED: Encoded audio missed loudness or peak limits'); await run(ffmpeg,['-v','error','-i',video,'-f','null','-']); const poster=join(out,'poster.png'); await run(ffmpeg,['-y','-i',video,'-frames:v','1',poster]); const fp=await probe(ffprobe,video); const renderDuration=receiptClips.reduce((sum,clip)=>sum+Number(clip.duration||0),0); const verification=await verifyMedia({videoPath:video,ffprobe,ffmpeg,expected:{width,height,fps,durationSeconds:renderDuration,requireAudio:true,requireVisual:true},captionsPath:captionsFile,requireCaptions:captions.length>0}); if(!verification.ok) throw new Error(`Rendered output failed technical verification: ${verification.diagnostics.map(d=>d.code).join(', ')}`); await writeFile(join(out,'ffprobe.json'),JSON.stringify(fp,null,2)); const inputHash=createHash('sha256').update(JSON.stringify(request)).digest('hex'); const receipt={schemaVersion:1,kind:'timeline',projectId:request.projectId??null,revision:request.revision??null,inputHash,provenance:{generationStatus:'edited',providerId:'ffmpeg-local',sourceMethod:'local-timeline-edit',outputHash:await fileHash(video),deliveryResolution:{width,height},fps,renderTimeMs:Date.now()-started,sources:receiptClips.map((c,i)=>({assetId:c.assetId,sourceHash:c.sourceHash,upstream:clips[i].provenance||{generationStatus:'imported'}})),fourKMethod:clips.some(c=>c.provenance?.generationStatus==='upscaled')?'Edit of verified AI-upscaled source':'Timeline canvas resize; no AI upscaling invoked'},audioNormalization,colorGrade,audioLayers:audioEvidence,cache:{clips:receiptClips},outputs:{video:'render.mp4',poster:'poster.png',captions:'captions.srt',ffprobe:'ffprobe.json'},ffprobe:fp,verification}; await writeFile(join(out,'result.json'),JSON.stringify(receipt,null,2)); onProgress?.({stage:'complete',outputs:receipt.outputs,verification}); return receipt;
+  const subtitleFilter=captions.length ? (rawCaptionStyle==='minimal-lower'?`;${videoLabel}${buildCaptionFilter({cues:captionRows,style:'minimal-lower',canvas:{width,height,fps},safeArea:{top:Math.round(height*.08),bottom:Math.round(height*.2),left:Math.round(width*.07),right:Math.round(width*.14)},fontFile:DEFAULT_CAPTION_FONT})}[vout]`:`;${videoLabel}subtitles='${filterPath(captionsFile)}':force_style='${captionStyle}'[vout]`) : '';
+  const video=join(out,'render.mp4'), finalArgs=['-y',...inputs,'-filter_complex',fc+subtitleFilter,'-map',captions.length?'[vout]':videoLabel,'-map',audio,'-c:v','libx264','-threads','4','-preset','fast','-profile:v','high',...(width*height>=3840*2160?['-b:v','60M','-minrate','60M','-maxrate','60M','-bufsize','120M','-x264-params','nal-hrd=cbr:force-cfr=1']:['-crf','18']),'-pix_fmt','yuv420p','-c:a','aac','-b:a','192k','-ar','48000','-ac','2','-movflags','+faststart','-shortest',video]; await run(ffmpeg,finalArgs); audioNormalization.deliveryMeasurement=await measureAudio(video); if(measured&&(Math.abs(Number(audioNormalization.deliveryMeasurement.input_i)-audioTargetLUFS)>0.9||Number(audioNormalization.deliveryMeasurement.input_tp)>-1.5))throw new Error('AUDIO_DELIVERY_VERIFICATION_FAILED: Encoded audio missed loudness or peak limits'); await run(ffmpeg,['-v','error','-i',video,'-f','null','-']); const poster=join(out,'poster.png'); await run(ffmpeg,['-y','-i',video,'-frames:v','1',poster]); const fp=await probe(ffprobe,video); const renderDuration=receiptClips.reduce((sum,clip)=>sum+Number(clip.duration||0),0); const verification=await verifyMedia({videoPath:video,ffprobe,ffmpeg,expected:{width,height,fps,durationSeconds:renderDuration,requireAudio:true,requireVisual:true},captionsPath:captionsFile,requireCaptions:captions.length>0}); if(!verification.ok) throw new Error(`Rendered output failed technical verification: ${verification.diagnostics.map(d=>d.code).join(', ')}`); await writeFile(join(out,'ffprobe.json'),JSON.stringify(fp,null,2)); const inputHash=createHash('sha256').update(JSON.stringify(request)).digest('hex'); const receipt={schemaVersion:1,kind:'timeline',projectId:request.projectId??null,revision:request.revision??null,inputHash,provenance:{generationStatus:'edited',providerId:'ffmpeg-local',sourceMethod:'local-timeline-edit',outputHash:await fileHash(video),deliveryResolution:{width,height},fps,renderTimeMs:Date.now()-started,sources:receiptClips.map((c,i)=>({assetId:c.assetId,sourceHash:c.sourceHash,upstream:clips[i].provenance||{generationStatus:'imported'}})),fourKMethod:clips.some(c=>c.provenance?.generationStatus==='upscaled')?'Edit of verified AI-upscaled source':'Timeline canvas resize; no AI upscaling invoked'},audioNormalization,renderProfile:{framing,audioTargetLUFS,captionStyle:rawCaptionStyle||'generic'},colorGrade,audioLayers:audioEvidence,cache:{clips:receiptClips},outputs:{video:'render.mp4',poster:'poster.png',captions:'captions.srt',ffprobe:'ffprobe.json'},ffprobe:fp,verification}; await writeFile(join(out,'result.json'),JSON.stringify(receipt,null,2)); onProgress?.({stage:'complete',outputs:receipt.outputs,verification}); return receipt;
 }

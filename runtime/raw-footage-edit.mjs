@@ -37,12 +37,12 @@ export function planRawRanges(sources,durationSeconds){
 export function buildRawEditPlan({sources,...request}){
   const plan=planRawPrompt(request,sources);
   return {...plan,ranges:plan.mode==='explicit-ranges'?plan.ranges:planRawRanges(sources,plan.durationSeconds),editMethod:plan.mode,
-    captionsEnabled:request.captionsEnabled??true,captionStyle:'minimal-lower',audioTargetLUFS:-16,audioMethod:'retain-original',fps:24};
+    captionStyle:'minimal-lower',audioTargetLUFS:-16,audioMethod:'retain-original',fps:24};
 }
 
 export async function editRawFootage(request,{ffmpeg,ffprobe,onProgress=()=>{}}={}){
-  const started=Date.now(), {projectId,revision,brief,captionsEnabled=true,audioConfigPath}=request;
-  if(!projectId||!Number.isSafeInteger(revision)||revision<1||typeof brief!=='string'||!brief.trim()||typeof captionsEnabled!=='boolean')fail('RAW_REQUEST','A saved project, brief, aspect and caption choice are required');
+  const started=Date.now(), {projectId,revision,brief,captionsEnabled:requestedCaptionsEnabled=true,audioConfigPath}=request;
+  if(!projectId||!Number.isSafeInteger(revision)||revision<1||typeof brief!=='string'||!brief.trim()||typeof requestedCaptionsEnabled!=='boolean')fail('RAW_REQUEST','A saved project, brief, aspect and caption choice are required');
   if(!Array.isArray(request.sourceAssets)||!request.sourceAssets.length||request.sourceAssets.length>12)fail('RAW_ASSETS','Select up to twelve uploaded video assets');
   const outputDir=resolve(request.outputDir);await mkdir(outputDir,{recursive:true});const outputRoot=await realpath(outputDir),inventory=[],seen=new Set();
   for(const asset of request.sourceAssets){
@@ -58,7 +58,7 @@ export async function editRawFootage(request,{ffmpeg,ffprobe,onProgress=()=>{}}=
   // Compare the complete saved contract against this version's validated plan.
   // A changed plan or changed defaults must fail rather than silently alter output.
   if(request.editPlan&&JSON.stringify(request.editPlan)!==JSON.stringify(promptPlan))fail('RAW_PLAN_MISMATCH','Saved edit plan differs from the validated request; create a new job.');
-  const {durationSeconds,aspect,framing,ranges}=request.editPlan||promptPlan;
+  const {durationSeconds,aspect,framing,ranges,captionsEnabled}=request.editPlan||promptPlan;
   const width=aspect==='9:16'?1080:1920,height=aspect==='9:16'?1920:1080;
   const segments=[];let hasAudio=false;onProgress({stage:'Editing uploaded footage',progress:0.1});const editStarted=Date.now();
   for(const [index,range]of ranges.entries()){

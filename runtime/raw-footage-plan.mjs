@@ -5,6 +5,16 @@ export function planRawPrompt(request,sources){
  let rest=String(request.brief||'').toLowerCase(),ranges=[],applied=[],diagnostics=[];
  if(/\b(?:no|not|never|without|avoid|don't)\s+(?:\w+\s+){0,2}(?:crop|fit|letterbox|portrait|vertical|landscape|horizontal|source|duration)\b/.test(rest))invalid('Negated edit directives are ambiguous. State the desired framing, aspect and source ranges explicitly.');
  const consume=(pattern,fn)=>{rest=rest.replace(pattern,(...args)=>{fn(...args);return ' ';});};
+ let captionsEnabled=request.captionsEnabled??true;
+ consume(/\b(?:no|without|disable) captions\b/g,match=>{captionsEnabled=false;applied.push(match);});
+ consume(/\b(?:add|enable|with) captions\b/g,match=>{captionsEnabled=true;applied.push(match);});
+ consume(/\b(?:preserve|keep|retain) (?:the )?original audio\b/g,match=>applied.push(match));
+ rest=rest.replace(/\b(first|last)\s+(\d+(?:\.\d+)?)\s*(?:seconds?|secs?|s)\b/g,(match,which,n)=>{
+  if(sources.length!==1)invalid('First/last trims require one selected source.');
+  const duration=Number(n),end=which==='first'?duration:Math.floor(sources[0].durationSeconds*24)/24,start=which==='first'?0:end-duration;
+  if(start<0||duration<=0)invalid('First/last trim exceeds the source duration.');
+  return `source 1 from ${start}s to ${end}s`;
+ });
  const number='(\\d+(?:\\.\\d+)?)',unit='\\s*(?:seconds?|secs?|s)?';
  const rangePattern=new RegExp('(?:source\\s+(\\d+)\\s+)?(?:from\\s+)?'+number+unit+'\\s*(?:to|–|-)\\s*'+number+unit,'g');
  consume(rangePattern,(match,index,start,end)=>{
@@ -14,9 +24,9 @@ export function planRawPrompt(request,sources){
   if(ranges.some(r=>r.assetId===source.id&&a<r.start+r.duration&&b>r.start))invalid('Source ranges overlap; repeated footage is not supported.');
   ranges.push({assetId:source.id,start:a,duration:tick(b-a)});applied.push(match);
  });
- if(/\b(?:source\s+\d+|from\b|range\b|start\b|end\b)/.test(rest))invalid('Use source N from STARTs to ENDs for explicit ranges.');
+ if(/\b(?:source\s+\d+|from\s+\d|range\s+\d|start\s+\d|end\s+\d)/.test(rest))invalid('Use source N from STARTs to ENDs for explicit ranges.');
  let explicitDuration;
- consume(/\b(?:duration\s*:?\s*|make (?:it )?)(\d+(?:\.\d+)?)\s*(?:seconds?|secs?|s)\b/g,(match,n)=>{
+ consume(/\b(?:(?:duration\s*:?\s*|make (?:it |a )?))?(\d+(?:\.\d+)?)\s*[- ]?\s*(?:seconds?|secs?|s)\b/g,(match,n)=>{
   if(explicitDuration!==undefined&&explicitDuration!==tick(Number(n)))invalid('Conflicting durations.');explicitDuration=tick(Number(n));applied.push(match);
  });
  let aspect=request.aspect||'9:16',chosenAspect;
@@ -36,10 +46,11 @@ export function planRawPrompt(request,sources){
  if(!['9:16','16:9'].includes(aspect))invalid('Supported aspects are 9:16 and 16:9.');
  const unsupported=rest.match(/\b(?:music|soundtrack|titles?|text|transitions?|zoom|slow motion|speed ramp|voiceover|narration|generate|cinematic|highlights?)\b/g)||[];
  if(unsupported.length)diagnostics.push({code:'RAW_PROMPT_UNSUPPORTED',message:`Not applied: ${[...new Set(unsupported)].join(', ')}. This worker applies explicit trims and framing only, retaining original audio.`});
+ rest=rest.replace(/\b(?:make|create|edit)\s+(?:a\s+)?/g,' ').replace(/\b(?:reel|video|short)\b/g,' ').replace(/\bfrom (?:my|the) uploaded footage\b/g,' ');
  const remainder=rest.replace(/\b(?:then|and)\b/g,' ').replace(/[\s,;.]+/g,' ').trim();
  if(remainder)diagnostics.push({code:'RAW_PROMPT_REMAINDER',message:`Uninterpreted brief text: ${remainder}. No visual-semantic interpretation was performed.`});
  if(!ranges.length)diagnostics.push({code:'RAW_PROMPT_DEFAULT_SELECTION',message:'No explicit ranges supplied; chronological evenly spaced coverage was selected.'});
- return {schemaVersion:1,mode:ranges.length?'explicit-ranges':'chronological',ranges,durationSeconds,aspect,framing,applied,diagnostics};
+ return {schemaVersion:1,mode:ranges.length?'explicit-ranges':'chronological',ranges,durationSeconds,aspect,framing,captionsEnabled,applied,diagnostics};
 }
 
 export function rawFramingFilter(width,height,framing){

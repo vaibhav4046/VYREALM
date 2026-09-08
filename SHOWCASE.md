@@ -1,6 +1,6 @@
 # Showcase
 
-28 finished videos in `outputs/showcase/`, 749 MB, one per distinct format.
+19 finished videos in `outputs/showcase/`, 553 MB, one per distinct format.
 
 Every file was assembled on one Windows machine with an RTX 3050 (6 GB VRAM), with no
 cloud service, no API key and no account. Captions come from local Whisper, narration

@@ -1,238 +1,274 @@
 # VYREALM
 
-A local creator studio for turning your footage and ideas into editable video projects. Plan in chat, work with shots and captions, add narration and sound, then export actual video files. Projects and media stay on your machine; optional online research and YouTube features are separate actions.
+**A complete video studio that runs on one Windows laptop, and refuses to lie about what it made.**
 
-Source repository: [vaibhav4046/VYREALM](https://github.com/vaibhav4046/VYREALM).
+A written brief becomes a shot plan, a rendered film, local narration, timed captions, a synthesised
+sound bed, a 4K thumbnail and a private YouTube upload. No cloud service, no API key, no account,
+no rented GPU. Every model runs locally on a 6 GB consumer card or on CPU, and every output carries
+a receipt naming the model, the seed and the hash that produced it.
 
-**[See the showcase](SHOWCASE.md)** — 28 finished videos in `outputs/showcase/`, with an
-honest account of what they are: 151 rendered variants cut from about 91 seconds of source,
-curated down to one file per distinct picture. The script that does the curation, and the
-reasoning it prints, are in `scripts/curate-showcase.mjs`.
+Repository: [vaibhav4046/VYREALM](https://github.com/vaibhav4046/VYREALM). Package name is `vyrelum`.
 
-The [1.0.8 Windows installer](https://github.com/vaibhav4046/VYREALM/releases/tag/v1.0.8) has been installed and exercised: upload, trim, save, render, play, download, restart and reopen. Templates, the local automation review boundary and the MCP bridge were also exercised in that installed application. Local cinematic generation and later source changes have separate qualification requirements. macOS has not been qualified.
+**Watch first:** `outputs/demo/VYREALM_SHOWCASE_FILM_1080P.mp4`. 110.6 seconds, 1920x1080, h264 + aac,
+25 narration beats, 104 seconds of local Piper speech synthesised one line per beat so the captions
+cannot drift off the audio. Built by `scripts/build-showcase-film.mjs` with the same FFmpeg binary the
+studio itself uses. Nothing in that film reached the network.
 
-The current source checkout additionally includes guided audio setup and an original-shot workspace. Those additions require their own packaged qualification before being described as part of the installed release.
+---
 
-## Before running the tests
+## The honest part, up front
 
-`npm test` renders and probes real video, so it needs FFmpeg on disk. The binaries are
-about 227 MB each and are not committed. Put `ffmpeg.exe` and `ffprobe.exe` in
-`workers/tools/`, or point `VYRELUM_FFMPEG` and `VYRELUM_FFPROBE` at an existing install.
-`npm test` checks this first and tells you exactly what is missing; `npm run doctor`
-verifies the rest of the local runtime.
+The format library defines **36 formats across 5 delivery platforms**. Expanded with the evidence
+retimes that is **151 renderable variants** (105 without them). Those 151 variants are cut from
+**seven source clips totalling about 91 seconds of footage**, and two of the seven are not filmed
+material at all: they are generated stills panned for five seconds each.
 
-## Start the basic studio
+| Source clip | Length | What it is |
+|---|---:|---|
+| `VYREALM_RAINLINE_TRAILER_1080P.mp4` | 15.0 s | locally generated |
+| `VYREALM_CINEMATIC_15S_TRAILER_1080P.mp4` | 15.0 s | composited |
+| `VYREALM_ASSET_FIRST_TRAILER_1080P.mp4` | 30.0 s | composited |
+| `VYREALM_UI_PROJECT_OUTPUT_1080P.mp4` | 15.0 s | composited |
+| `ODYSSEY_FILM_CINEMATIC_1080P.mp4` | 6.0 s | Blender 3D render |
+| `VYREALM_ANIME_HERO_5S.mp4` | 5.04 s | generated still, panned |
+| `VYREALM_TALKING_HEAD_5S.mp4` | 5.04 s | generated still, panned |
+| **Total** | **91.1 s** | |
 
-Download or clone this repository, then open PowerShell in its folder. Install **Node.js 24** first; version **24.12.0** was tested.
+A 151-file catalogue built from 91 seconds of source advertises the repetition, not the engine. So the
+batch was curated **down**, not shipped whole. `scripts/curate-showcase.mjs` hashed 170 rendered files
+and kept **19 distinct pictures**:
+
+| Dropped | Count | Why |
+|---|---:|---|
+| Same picture | 70 | Reels / TikTok / Shorts share a 1080x1920 canvas; siblings differ only in caption placement |
+| Evidence retimes | 56 | The 53 s / 150 s / 300 s variants are the same cut slowed or ping-ponged |
+| Byte-identical | 16 | Groups of files with matching SHA-256 content hashes |
+| Visual review | rest | Flat-vector mascot and plain gradient title-card families: they render correctly, they are just not worth showing |
+
+Run `node scripts/curate-showcase.mjs` and it re-derives those counts against whatever is currently in
+`outputs/`, hashes every file and prints its own reasoning. Add `--write` to repopulate
+`outputs/showcase/`.
+
+The interesting claim here was never "we made 151 videos". It is that a brief becomes a shot plan, a
+render, timed captions, a sound bed, a thumbnail and an upload without a single network call, on
+consumer hardware, with a provenance receipt attached to every output.
+
+---
+
+## Quickstart
+
+Install **Node.js 24** (24.12.0 is what was tested), then:
 
 ```powershell
+git clone https://github.com/vaibhav4046/VYREALM
+cd VYREALM
 node server.js
 ```
 
-Open [http://127.0.0.1:4173](http://127.0.0.1:4173). The Creator workspace starts in Studio chat. Use **Upload footage**, describe the edit, then choose **Produce video**. Uploading creates a project when needed. Stop the server with `Ctrl+C`.
+Open <http://127.0.0.1:4173>. Stop with `Ctrl+C`.
 
-The basic browser studio uses Node's built-in modules, including SQLite. It boots without npm dependencies, AI models, an account, API keys or a GPU. A clean source snapshot was tested with empty user directories: the app loaded, created a project and reopened it with no browser errors or external browser requests. The browser test harness used an existing Playwright installation outside that snapshot.
+That is the whole install. The studio boots with **zero npm dependencies**, using Node's built-in
+modules including `node:sqlite`. No models, no GPU, no API key and no account are needed to start it,
+create a project, import media and reopen the library. The server listens on loopback, not on your
+network interface.
 
-By default, source runs save projects under `data/` in the repository. To choose another location before starting:
+Projects land in `data/` inside the repo by default. To put them somewhere else, set the paths before
+starting and keep using the same ones to reopen that library:
 
 ```powershell
-$env:VYRELUM_DATA_DIR = Join-Path $env:LOCALAPPDATA 'VYREALM\projects'
+$env:VYRELUM_DATA_DIR    = Join-Path $env:LOCALAPPDATA 'VYREALM\projects'
 $env:VYRELUM_RUNTIME_DIR = Join-Path $env:LOCALAPPDATA 'VYREALM\runtime'
 node server.js
 ```
 
-Keep using the same paths to reopen that library. The app listens on loopback, not your network interface.
+### Rendering your own footage
 
-## What works, and what needs setup
-
-| Area | Current status |
-|---|---|
-| Studio chat and project context | Persistent conversations, character information and workflow plans; local-model replies require a configured model. A saved plan is not a rendered film. |
-| Projects | SQLite revisions, local media import, portable project export/import and reopening verified. |
-| Editing and export | Timeline, captions, sound layers, colour settings and landscape/portrait/square MP4 exports verified with original test media and FFmpeg. |
-| Timeline controls | Video preview, playhead seeking, trim, split, clip ordering and save/reopen have a real browser verification path. |
-| Creator materials | Extracts a real 1280×720 video frame and prepares text drafts from the saved brief. These are not trend research or generated-image claims. |
-| Narration and transcription | Local Piper narration and Whisper captions verified on the configured CPU runtime. Models are installed separately. |
-| Templates | Six editable presets create a new project and saved workflow plan. They do not generate footage, narration or a finished film. |
-| Local automations | A real UI journey rendered a saved timeline, verified its file and prepared creator materials, then stopped at `needs-review`. Scheduling uses the running local app. |
-| MCP connection | Optional stdio configuration and a real local bridge check: initialization, tool listing and a read-only project-list call. Assistant-client setup is separate. |
-| Local cinematic generation | Optional ComfyUI/Wan route. Outputs need technical checks and visual review; no current showcase is advertised as approved. |
-| YouTube | Live Desktop OAuth, actual channel readback, analytics and Windows DPAPI persistence verified. No upload or publication has occurred; the upload route is private-only. |
-| Desktop distribution | Windows 1.0.7 was installed through NSIS and verified with a native UI export and download. Version 1.0.8 installation is pending. macOS is unqualified. |
-
-Missing runtimes must be configured before the relevant media operation can succeed. The source repository does not contain model weights, user projects or large executable tools.
-
-### Export your own footage
-
-Install an FFmpeg build with H.264/AAC support and its matching FFprobe. Set their absolute paths in the same terminal before starting the server:
+Exporting video needs an FFmpeg build with H.264/AAC support plus its matching FFprobe. Drop
+`ffmpeg.exe` and `ffprobe.exe` into `workers/tools/`, or point at an existing install:
 
 ```powershell
-$env:VYRELUM_FFMPEG = 'C:\tools\ffmpeg\bin\ffmpeg.exe'
+$env:VYRELUM_FFMPEG  = 'C:\tools\ffmpeg\bin\ffmpeg.exe'
 $env:VYRELUM_FFPROBE = 'C:\tools\ffmpeg\bin\ffprobe.exe'
 node server.js
 ```
 
-These are example locations; use the files you installed. In a project, import media, open **Timeline**, adjust the clips and choose **Export edit**. **Download video** retrieves the resulting MP4. **Export portable** includes project media within the supported size limits; keep a backup of important originals.
+Import media, open **Timeline**, cut, then **Export edit**. `npm run doctor` verifies the rest of the
+local runtime and tells you what is missing.
 
-For a direct edit from Studio chat, try a concrete instruction such as:
+### Optional local runtimes
 
-```text
-First 5 seconds. Landscape. Fit. No captions.
-```
+| Capability | What it needs | How |
+|---|---|---|
+| Chat / shot planning | Ollama with a local model (default `qwen3:4b-instruct`) | set `OLLAMA_HOST`, `VYRELUM_CHAT_MODEL` |
+| Narration and captions | Piper + faster-whisper on CPU | **Settings → Voice & captions → Install**, or `.\scripts\Setup-AudioRuntime.ps1` |
+| Generated shots | ComfyUI, a compatible GPU, ~25 GB free disk | `npm run setup:neural` (needs Git and uv) |
 
-For a single uploaded source, an explicit range is `from 2s to 6s; landscape; crop right`. With multiple sources, specify their order: `source 2 from 0s to 3s; then source 1 from 5s to 8s; portrait; fit`. The source must contain the requested range. Invalid, overlapping or ambiguous ranges are rejected; unsupported creative requests are disclosed rather than silently treated as completed effects.
+The guided audio install verifies eight model files and 26 pinned package versions, generates a real
+Piper sample and transcribes it with Whisper before registering the configuration. Measured footprint
+including caches and proof files: about 808 MiB. Pinned hashes live in
+`runtime/audio-models.lock.json` and `runtime/audio-requirements-windows.lock.txt`.
 
-Use Timeline to preview and seek, trim or split clips, change their order, save and render the edit. After rendering, open **Export → Prepare creator pack** for an extracted thumbnail, title, description, hashtags and platform copy drafts. These materials use the saved brief and actual render; review them before posting. The pack does not publish anything or claim current trend analysis.
+---
 
-### Start from a reusable template
+## What it does
 
-Open **Templates** and choose **Original film**, **Product story**, **Talking-head edit**, **Social recut**, **Tutorial**, or **Narrated explainer**. Edit the project name, brief, target duration, aspect ratio, visual source choice, narration preference and captions. Each preset shows the sources it needs and a proposed sequence.
+| Stage | Runs on | Notes |
+|---|---|---|
+| **Plan** | local LLM via Ollama | Brief becomes a concrete shot plan against the 36-format library |
+| **Render** | FFmpeg | 1080p landscape, portrait or square; duration drift measured per file |
+| **Narrate** | Piper `en_US-ljspeech-high`, CPU | One WAV per line, so captions cannot drift |
+| **Caption** | faster-whisper `tiny.en`, CPU | Returns `review_required`; a draft transcriber is not trusted verbatim |
+| **Score** | ACE-Step | Sound bed synthesised locally, mixed as editable layers |
+| **Thumbnail** | FFmpeg | 4K thumbnail produced alongside the film, not after it |
+| **Publish** | `publishing/` | Private YouTube upload, hash-verified, thumbnail bound to the video |
 
-**Create project from template** creates a separate project and saves its workflow plan against the returned project revision. Defaults use your local media and no added narration. Choosing local generation or Piper records a later step; it does not install models or start a media job. Open the saved project in Studio chat, add the required media and review the plan before production.
+Generation is real when the hardware allows it: LTX-Video 2B distilled Q8 GGUF and Wan2.2-TI2V-5B
+Q4_K_M GGUF run under a local ComfyUI on an RTX 3050 with 6 GB of VRAM. Wan2.2 peaks at **5.85 GiB**.
+Every downstream choice in this project is shaped by that remaining sliver of headroom.
 
-If the project is created but its plan cannot be saved, **Retry saving this plan** uses the same project. **Open saved project** lets you continue from the retained work. If the initial creation response is uncertain, automatic creation retry stops; check Dashboard for the project before creating another.
+---
 
-### Work in Audio
+## Provenance: the receipts
 
-Select a saved project, then open **Audio** from the studio navigation. The workspace contains narration, captions and the available sound-layer controls for that project.
+Most of the engineering here is a provenance system that constrains the product rather than
+flattering it. This is the part worth reading the source for.
 
-1. Enter the exact words under **Narration** and choose **Generate narration** to invoke the configured local Piper voice. Job progress appears in Jobs.
-2. Return to Audio and select the narration or a speech-containing recording under **Transcribe project media**. **Generate timed captions** invokes local Whisper.
-3. Inspect and edit the returned words and timestamps. Word-timestamp results are grouped into short caption pages; the original transcription remains in the job evidence. Transcription is not a substitute for listening to the recording.
-4. Set **Include captions in the next render**, then choose **Save audio & caption edits**. Open Timeline and export the edit to apply the saved audio and captions to a new file.
+**`runtime/generation-gate.mjs`** will not let anything be labelled "generated" on the strength of a
+detected executable. It requires a reachable provider, the exact pinned models
+(`Wan2.2-TI2V-5B-Q4_K_M.gguf`, `umt5-xxl-encoder-Q4_K_S.gguf`, `wan2.2_vae.safetensors`), eleven named
+ComfyUI nodes, a measurable GPU with at least 4 GB of VRAM, and a verified output that physically
+exists inside the durable job directory. Anything short of that returns
+`BLOCKED_NEURAL_GENERATION` and tells you which precondition failed. A provider that is installed but
+has no reviewed adapter returns `NEURAL_ADAPTER_SMOKE_TEST_REQUIRED` rather than quietly counting as
+capability.
 
-Piper and Whisper are optional CPU runtimes. The narration operation does not perform lip-sync, speaker cloning or multilingual dubbing. Sound layers must fit the actual footage and remain editable; no sound preset is automatically a match for a scene.
+`recordGeneratedProvenance` writes the receipt: provider id, model id, workflow hash, seed, prompt,
+output SHA-256, resolution, fps, frame count, VRAM peak, render time, provider prompt id, and a
+lineage chain. An artifact outside its own job directory is refused outright
+(`GENERATED_OUTPUT_OUTSIDE_JOB`).
 
-### Automate a saved edit locally
+**`runtime/format-render.mjs`** stamps `sourceMethod: 'composited-from-existing-footage'` on every
+batch output, so a recut can never be mistaken for a generation.
 
-Open **Automations → Render & prepare**, select a saved project with a timeline, and name the workflow. Choose **Run now** or **Schedule for later** with a local start time. Save any pending timeline changes before scheduling.
+**`scripts/render-format-batch.mjs`** writes, into its own evidence file, the sentence:
 
-The workflow is **Render video → Verify file → Prepare materials → Your review**. It uses the saved canvas, clips, captions and audio. Verification checks the actual output, including a full decode and its hash; creator materials contain an extracted thumbnail and draft publishing copy. The workflow ends at **Ready for your review** (`needs-review`). It does not generate new neural footage, approve the output or publish it.
+> "No pixels were generated by this batch."
 
-Keep VYREALM open for a scheduled run. There is no operating-system wake-up service: if the app is closed before the start time, a due saved run starts after the app is reopened. Recovery reconciles the saved workflow and owned job records. An interrupted or failed worker can leave **Needs attention**; inspect the diagnostic instead of assuming it resumed or finished. If the project revision changes, the workflow pauses as **Project changed**. Save the revised edit and create a new workflow for that revision. Cancellation retains completed files and project history.
+It also refuses to substitute stand-in footage: plans whose shot roles have no honest source are
+skipped and reported by name, never filled in.
 
-### Connect an optional MCP client
+**Generated stills sit at `review_required`** until a human inspects the image and writes down its
+specific defects. Approval is bound to that image's SHA-256, so editing the project cannot silently
+re-approve an older frame.
 
-Open **MCP tools**, keep VYREALM running, and choose **Copy configuration**. Add that machine-specific configuration to a compatible assistant's MCP settings. It points to the local stdio bridge and this app's loopback API; the studio itself does not require an assistant subscription.
+**`assertNotBulkPublishable`** in `runtime/format-library.mjs` blocks mass-uploading recut variants
+outright, citing YouTube's and Instagram's own policies on repetitive and unoriginal content. Format
+variants are production plans, not approved uploads.
 
-**Test local bridge** starts the bridge process and performs `initialize`, `tools/list`, and a read-only `list_projects` call through the real transport. A pass verifies this local bridge and project-store access. It does not confirm that a separate assistant client has loaded the configuration, nor does it run a model, create media or publish anything. Start with `list_projects` in the connected client. The UI separates available tools from capabilities that remain unavailable.
+**Uploads are private-only and hash-gated.** `publishing/youtube-service.mjs` re-reads the approved
+file, re-hashes it with SHA-256 and compares against the expected hash before a byte is sent
+(`YOUTUBE_FILE_CHANGED` if it moved). It re-checks the connected channel against the channel you
+confirmed (`YOUTUBE_CHANNEL_MISMATCH`), refuses anything whose visual review did not pass
+(`YOUTUBE_REVIEW_REQUIRED`), refuses files outside the profile's media folder
+(`YOUTUBE_ASSET_BOUNDARY`), and requires an explicit synthetic-media disclosure boolean. Credentials
+sit in a Windows DPAPI-protected vault and are never logged.
 
-### Add local models when you need them
+The system declines to overstate what it made, including in its own documentation. That is the
+feature.
 
-- **Chat:** run Ollama locally with the configured model. The default is `qwen3:4b-instruct`; `OLLAMA_HOST` and `VYRELUM_CHAT_MODEL` can select an existing local installation.
-- **Voice and captions:** in the current source studio, open **Settings → Voice & captions → Install voice & captions**. No manual configuration or GPU model is needed. Pinned requirements and model hashes are in `runtime/audio-requirements-windows.lock.txt` and `runtime/audio-models.lock.json`.
-- **Generated shots:** Windows x64 setup is separate and needs substantial disk space, a compatible GPU/runtime and model downloads. Settings setup expects the pinned uv helper listed in `runtime/bootstrap.lock.json`; lean source excludes that executable. The developer route `npm run setup:neural` requires Git and uv already installed. Inspect its installation/configuration paths before running it.
+---
 
-Allow at least 25 GB free for the optional video setup, with additional room for footage and render caches. Video-generation feasibility depends on the selected model and this machine's preflight results. Complete fresh-download setup on an unconfigured PC has not been requalified for this checkpoint.
+## Quality detectors
 
-Earlier ComfyUI/Wan2.2 TI2V 5B Q4 runs on this RTX 3050 Laptop 6 GB / 16 GB RAM machine produced five-second, 1024×576, 24 fps shots in 1,838, 1,717 and 1,413 seconds. These are measured tens-of-minutes generation times, not a fast-render promise. They do not establish native 1080p/4K detail or an approved neural showcase.
+`runtime/quality-detectors.mjs` scores delivered video against a catalogue of failure modes, each one
+calibrated against clips this project actually produced, each carrying its own `calibratedOn`,
+`confidence` and source citation. Thresholds are labelled provisional, because two clips of evidence
+is two clips of evidence.
 
-### Optional CPU narration and automatic captions
+| Mode | Signal | Example measurement |
+|---|---|---|
+| Temporal flicker | VBench frame-difference score | 0.9803 accepted, 0.9030 bad on every axis |
+| Motion stall | Run of near-duplicate frame pairs | Re-roll is the only repair |
+| Dead footage | Top-5% optical flow below spec | Gated against shot intent, not applied blind |
+| Detail collapse | Step drop in Laplacian variance | Frame 34 to 35 lost 4.03x its detail, invisible to every frame-difference metric |
+| Terminal detail decay | Monotonic decay over the last ~15 frames | Ends at 50.4% of shot median; trim or crossfade the tail |
+| Morphing geometry | High ORB match ratio, low RANSAC inlier ratio | 0.809 inliers against 0.951 on stable shots |
+| Scene drift | Histogram correlation against frame one | Named as a proxy, not identity |
+| Colour drift | Per-channel means sliding apart | Red draining at 3.02 levels/sec against 0.07 on blue |
+| Stepped cadence | Period-2 autocorrelation structure | Polarity is intent-dependent: correct for anime, a defect in live action |
+| Encode blocking | Gradient energy on the 8x8 transform grid | Measures the encoder, not the generator. Telemetry, not a gate |
 
-Editing uploaded footage with FFmpeg does not require Piper, Whisper or a GPU. Automatic speech captions need Whisper; generated narration also needs Piper. If those models are absent, the basic exported video is a separate capability from automatic captions or narration.
+Four further modes (VAE chunk seam, face below latent resolution, garbled on-screen text, off-bucket
+resolution) are catalogued as **not detectable** on this box and are handled by refusal at
+prompt-compile time instead. Naming an undetectable failure is cheaper than a 26-minute re-roll.
 
-The guided **Settings** installation reserves a conservative 2 GiB, verifies eight model files and 26 package versions, generates a real Piper sample and transcribes it with Whisper before registering the new configuration. A fresh isolated Windows installation and a separate actual-button/reload journey passed. The measured installation, including caches and proof files, occupied approximately 808 MiB. Testing an existing configuration reuses its models; existing configurations are not overwritten. These tests do not establish pronunciation or transcript quality for every script. Package versions are pinned; individual wheel downloads are not all digest-locked.
+Scoring is off by default in batch renders, and the reason is measured: one 8-second 1080x1080 clip
+takes 8.8 s to render and 99.7 s to probe and score. Pass `--score` when you want the measurement, and
+the evidence file then records the thresholds behind every verdict.
 
-From a Windows source checkout, this command creates a private Python environment, installs the pinned CPU packages, downloads and verifies the audio models, registers the configuration, then generates and transcribes a short test phrase:
+---
 
-```powershell
-.\scripts\Setup-AudioRuntime.ps1
-node server.js
-```
-
-By default it stores the audio runtime under `%LOCALAPPDATA%\VYREALM\audio` and writes the source studio's `data\runtime\audio.json`. If you set `VYRELUM_RUNTIME_DIR`, it uses that directory instead. Existing audio configurations are left unchanged; use a different `-ConfigDir` for a separate setup. For the desktop application's standard runtime directory, use:
-
-```powershell
-.\scripts\Setup-AudioRuntime.ps1 -ConfigDir "$env:APPDATA\vyrelum\runtime"
-```
-
-An initial setup needs network access and free disk space. After setup, the test uses local model files. The guided source-studio installation has fresh-install evidence; its installed-desktop qualification remains separate. The command above is retained for developers and source users.
-
-### Generate one original shot
-
-In the source studio, save a project, then open **Film Studio → Original shots**. Write a separate shot direction, or explicitly choose **Use project brief**. Editing instructions are not silently used as an image prompt.
-
-1. **Generate keyframe** submits one owned local Wan image job after preflight.
-2. Inspect the actual image and record specific review notes. Approval is bound to that image's SHA-256 hash.
-3. **Animate 5 seconds** submits the reviewed image to the local image-to-video workflow.
-4. Inspect the complete motion clip before approving it for further use. Source frames, workflow, provider receipts and separate source/delivery hashes are retained.
-
-The measured profile uses 1024×576 source frames and 24 fps, with 120 frames in the five-second delivery. Its 1920×1080 delivery uses Lanczos resizing, not native 1080p generation or AI enhancement. Model execution, source provenance and visual quality are separate checks. Missing providers block the job; a generated file does not automatically enter the catalogue. Retry and cancellation act on the owned stage, and a project edit cannot silently approve an older image.
-
-The HTTP/browser integration test uses an explicitly simulated provider and CPU test frames to exercise review, playback, retries and restart. It is not a neural-quality benchmark. Actual model outputs require separate visual inspection.
-
-## Tested environment and proof
-
-Windows x64, Node 24.12.0, Intel Core i5-12450HX, 12 logical CPUs and 16 GiB RAM. The editing proof used CPU narration/transcription and a locally generated FFmpeg test card. It produced three five-second, 24 fps H.264/AAC videos at 1920×1080, 1080×1920 and 1080×1080. Every file fully decoded, and the project survived portable import, re-render, browser reload and server restart.
-
-This is editing proof, not a claim of neural cinematic quality. Other hardware, macOS and Linux have not been qualified.
-
-See [the verification guide](docs/HACKATHON_VERIFICATION.md) for the exact journey, prerequisites, evidence and limitations. With the audio runtime, tools and browser test dependencies installed:
-
-```powershell
-node scripts/run-hackathon-demo.mjs
-```
-
-The command creates isolated test data and stops its server when finished. It does not connect an account or touch existing projects.
-
-Separate development-workspace evidence records the installed **Windows 1.0.7** native export/download in `work/installed-1.0.7-native-proof/installed-evidence.json`. This does not qualify the pending 1.0.8 installation. `work/youtube-live-proof/evidence.json` records actual Desktop OAuth consent, channel and analytics readback, and fresh-process access to the Windows DPAPI-protected token store. No upload or publication occurred. The configured Google API project remains unverified, and the upload integration is constrained to private videos.
-
-The local automation UI journey in `work/automation-journey-1788841194211/evidence.json` verified a real render, full decode, draft creator materials, matching download hash, playback through the end, reload persistence and cancellation of a scheduled run without creating a render. It stopped at review; it did not publish.
-
-### Earth after dark: an actual footage-based short
-
-The separate **Earth after dark** project was created through VYREALM's visible controls: source import, a four-cut edit, local Piper narration, local Whisper transcription, caption text corrections and FFmpeg export. Its output is 27 seconds at 1920×1080 and 24 fps, with 648 decoded frames and 48 kHz stereo AAC audio. A frame from each second was extracted for contact-sheet inspection. These checks document a rendered file, not an audience reaction or a voice-quality verdict.
-
-The visuals are imported NASA footage, not VYREALM-generated neural video. Daylight footage is credited to **NASA Johnson**, from April 2016 ([source page](https://svs.gsfc.nasa.gov/30771/)). Aurora footage is credited to the **Earth Science and Remote Sensing Unit, NASA Johnson Space Center**, captured on 17 August 2022 ([source page](https://svs.gsfc.nasa.gov/31281/)). Source credits and the original narration script are saved with the project and publishing draft. See [NASA's media guidelines](https://www.nasa.gov/nasa-brand-center/images-and-media/); no NASA endorsement is implied.
-
-The original files and creative project are excluded from the lean source distribution. In the development workspace, `work/earth-selected-proof/evidence.json` records the later visual/technical review and local catalogue selection of the exact output hash; `work/quality-short-review/evidence.json` retains the production and contact-sheet evidence. No subjective listening or voice-performance review is claimed. This is source-app evidence; it does not establish installation or qualification of a new desktop release.
-
-## Development
-
-```powershell
-npm ci
-npm run build
-npm run desktop:dev
-```
-
-`npm ci` installs development dependencies; the desktop command starts Electron from source. Building the web assets does not install the desktop app or optional media runtimes.
+## Testing
 
 ```powershell
-npx playwright install chromium
-node scripts/test-stabilization.mjs
-npm test
+npm ci                            # dev dependencies only; the studio itself needs none
+npx playwright install chromium   # browser journeys
+npm test                          # ~356 node tests
 ```
 
-Media tests require FFmpeg/FFprobe and, for the narrated browser demo, the configured audio runtime. The full suite passed at the recorded checkpoint; later source changes need fresh checks. `npm run mcp` exposes optional local automation. Codex, ChatGPT and MCP are not required to use the studio.
+`npm test` renders and probes real video, so a `pretest` guard checks for FFmpeg and FFprobe first.
+The binaries are about 227 MB each and are deliberately not committed. Without the guard a fresh
+clone fails eleven tests deep with a bare `ENOENT` that explains nothing, so the guard fails
+immediately instead and prints the exact fix, including the download URL and the two environment
+variables.
 
-The application has three main parts:
+`npm run test:release` adds stabilisation, creator-pack, automation and YouTube service suites.
 
-- `app.js`, `studio-chat.js`, `timeline-editor.js`, `youtube-settings.js`: browser workspace and controls.
-- `server.js`, `runtime/`, `publishing/`: local API, SQLite revisions, job coordination and optional integrations.
-- `workers/`, `desktop/`: media processing and the Electron host.
+---
 
-See the [implementation architecture](docs/VYREALM_ARCHITECTURE.md) for the current data flow and runtime boundaries.
+## Architecture
 
-`node scripts/stage-public-source.mjs` creates a new allowlisted source snapshot without databases, credentials, models or media. It does not publish anything. `node scripts/verify-clean-source.mjs <snapshot-directory>` exercises basic startup and project reopening with an isolated home directory. Final publication still requires the owner's secret and licensing audit.
+```
+app.js  studio-chat.js  timeline-editor.js  youtube-settings.js   browser workspace
+server.js  runtime/  publishing/                                  local API, SQLite revisions, jobs
+workers/  desktop/                                                media processing, Electron host
+scripts/                                                          batch render, curation, film build
+```
 
-## Troubleshooting
+- **Storage** is SQLite through `node:sqlite`, with project revisions and portable export/import.
+- **Jobs** are durable rows, recovered on restart. An interrupted worker surfaces as *Needs attention*
+  rather than silently resuming.
+- **MCP**: `npm run mcp` exposes the same engine over stdio, so an agent can drive it. **MCP tools →
+  Test local bridge** performs a real `initialize`, `tools/list` and read-only `list_projects` through
+  the actual transport.
+- **Desktop**: an Electron build exists for Windows via `npm run desktop:dist`.
 
-- **SQLite import error:** use the tested Node 24 line; an older Node installation may be first on your PATH.
-- **Port 4173 is busy:** stop your other studio instance, or set `$env:PORT = '4174'` and open that port. Do not run two servers against the same data directory.
-- **Projects appear missing:** check `VYRELUM_DATA_DIR`; a different path opens a different library.
-- **Render cannot find FFmpeg:** set `VYRELUM_FFMPEG` and `VYRELUM_FFPROBE` to real executable paths and restart the source server.
-- **Voice, chat or generated shots are unavailable:** check the relevant runtime configuration in Settings. Starting the studio does not install those models.
-- **Audio changes are not in the video:** save them in Audio, check the caption toggle, then export the timeline again. A previous MP4 does not change when the project is edited.
-- **Template created a project but no video:** that is its planning step. Add its required media, review source ranges and run production or export a saved timeline.
-- **Template plan save failed:** retry the plan in the retained project. If the initial project creation was not confirmed, inspect Dashboard before creating another.
-- **Scheduled workflow did not run while the app was closed:** reopen VYREALM using the same data directory. Scheduling runs inside the app, not an OS background service. Check workflow diagnostics for interrupted jobs or a changed project revision.
-- **MCP test failed:** keep VYREALM running and copy the current configuration again after moving the app or changing its port. The check needs the indicated executable, bridge script and loopback API to be available.
-- **A job is blocked or rejected:** inspect its diagnostics and source evidence. A successful encode does not replace visual review.
+See `docs/VYREALM_ARCHITECTURE.md` for the data flow and runtime boundaries.
 
-See the [troubleshooting guide](docs/EMBERFORGE_TROUBLESHOOTING.md) for recovery details.
+---
 
-## Credits and licensing
+## Known limits
 
-Built with Node.js, SQLite, Electron and Vite; editing uses FFmpeg, with optional Piper, Whisper, Ollama, ComfyUI/Wan and other separately configured tools. Runtime notices and pinned model information live in `runtime/notices/` and the runtime lock files. Each dependency, executable and model retains its own terms.
+- **Source variety is the binding constraint, not the pipeline.** More formats do not add more
+  footage. Generating genuinely new shots runs at roughly 500 to 1500 seconds per shot on this GPU.
+- **Native generation resolution is low**, 512x288 to 1024x576, and upscaled with Lanczos for
+  delivery. Delivery dimensions do not imply native detail, and no AI enhancement is claimed.
+- **Whisper `tiny.en` is a draft transcriber.** It rendered "Someone" as "some more" in our own demo
+  run. Captions ship marked for review, not as truth.
+- **Bulk publishing is blocked on purpose**, and that is not configurable.
+- **Windows x64 only.** Tested on Node 24.12.0, Intel Core i5-12450HX, 16 GiB RAM, RTX 3050 Laptop
+  6 GB. macOS and Linux are unqualified.
+- **A rendered file is not a reviewed film.** A clean encode and a full decode say nothing about
+  whether the shot is any good, and the system does not pretend otherwise.
 
-Original VYREALM code is available under the [MIT License](LICENSE), copyright 2026 VYREALM contributors. This does not relicense third-party binaries, libraries or models. The Windows FFmpeg/FFprobe build reports GPLv3-or-later; its license and source links are included under `runtime/notices/`. The lean uploaded-footage package excludes Blender, model weights and sample media; optional setup code remains available.
+---
+
+## Credits and licence
+
+Built with Node.js, SQLite, Electron, Vite and FFmpeg, with optional Piper, faster-whisper, Ollama,
+ACE-Step and ComfyUI / Wan2.2 and LTX-Video. Runtime notices and pinned model information are in
+`runtime/notices/` and the runtime lock files. Every dependency, binary and model keeps its own terms;
+the Windows FFmpeg build reports GPLv3-or-later, with its licence and source links included.
+
+Original VYREALM code is [MIT](LICENSE), copyright 2026 VYREALM contributors. That does not relicense
+third-party binaries, libraries or model weights, none of which are in this repository.

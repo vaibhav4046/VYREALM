@@ -1,6 +1,8 @@
-import { app, BrowserWindow, dialog, ipcMain, session } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, session, shell } from 'electron';
+import { createOAuthOpener } from './oauth.mjs';
+import { blenderRuntimePath } from './runtime-paths.mjs';
+import { createDesktopPreferences, findOpenPort, isOwnedDesktopFrame, persistWindowPreferences } from './preferences.mjs';
 import { spawn } from 'node:child_process';
-import { createServer } from 'node:net';
 import { existsSync } from 'node:fs';
 import { mkdir, appendFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -18,26 +20,28 @@ const allowedHost = (url, port) => {
   } catch { return false; }
 };
 
-function findOpenPort(preferred = 4173) {
-  return new Promise(resolve => {
-    const probe = createServer();
-    probe.once('error', () => {
-      const fallback = createServer();
-      fallback.listen(0, '127.0.0.1', () => {
-        const p = fallback.address().port;
-        fallback.close(() => resolve(p));
-      });
-    });
-    probe.listen(preferred, '127.0.0.1', () => {
-      probe.close(() => resolve(preferred));
-    });
-  });
-}
-
 let serverProcess;
 let serverPort;
 let mainWindow;
 let stopping = false;
+let preferences;
+
+ipcMain.on('desktop-preferences:read', event => {
+  const saved = isOwnedDesktopFrame(event, mainWindow, serverPort) ? preferences?.snapshot() : null;
+  event.returnValue = saved ? { selectedProject: saved.selectedProject, selectionRecorded: saved.selectionRecorded, workspace: saved.workspace } : null;
+});
+ipcMain.on('desktop-preferences:save', (event, update) => {
+  if (!isOwnedDesktopFrame(event, mainWindow, serverPort) || !update || typeof update !== 'object' ||
+      Object.keys(update).some(key => !['selectedProject', 'workspace'].includes(key))) return;
+  try { void preferences.save(update).catch(error => logLine(`[preferences] ${error.message}\n`)); }
+  catch { /* ignore invalid preference messages from renderer content */ }
+});
+
+ipcMain.handle('open-google-oauth', createOAuthOpener({
+  getWindow: () => mainWindow,
+  getPort: () => serverPort,
+  openExternal: url => shell.openExternal(url)
+}));
 
 ipcMain.handle('open-local-url', (_event, url) => {
   // The preload validates this too; keep the main-process boundary strict.
@@ -54,7 +58,8 @@ async function logLine(line) {
 }
 
 async function startServer() {
-  serverPort = await findOpenPort();
+  preferences = await createDesktopPreferences(app.getPath('userData'));
+  serverPort = await findOpenPort(preferences.snapshot().preferredPort);
   const serverEntry = join(appRoot, 'server.js');
   if (!existsSync(serverEntry)) throw new Error(`Bundled server is missing: ${serverEntry}`);
   const runtimeNode = process.platform === 'win32'
@@ -77,7 +82,7 @@ async function startServer() {
     VYRELUM_ROOT: appRoot,
     VYRELUM_DATA_DIR: join(app.getPath('userData'), 'data'),
     VYRELUM_RUNTIME_DIR: join(app.getPath('userData'), 'runtime'),
-    VYRELUM_BLENDER: app.isPackaged ? join(process.resourcesPath, 'blender-runtime', 'blender.exe') : undefined,
+    VYRELUM_BLENDER: blenderRuntimePath({configured:process.env.VYRELUM_BLENDER,bundled:app.isPackaged?join(process.resourcesPath,'blender-runtime','blender.exe'):undefined}),
     VYRELUM_FFMPEG: join(appRoot, 'workers', 'tools', 'ffmpeg.exe'),
     VYRELUM_FFPROBE: join(appRoot, 'workers', 'tools', 'ffprobe.exe'),
     NODE_ENV: app.isPackaged ? 'production' : 'development'
@@ -102,7 +107,10 @@ async function startServer() {
   while (Date.now() < deadline) {
     try {
       const response = await fetch(`http://127.0.0.1:${serverPort}/api/session`);
-      if (response.ok) return;
+      if (response.ok && serverProcess.exitCode === null && !serverProcess.killed) {
+        await preferences.save({ preferredPort: serverPort });
+        return;
+      }
     } catch { /* server is still starting */ }
     await new Promise(resolve => setTimeout(resolve, 100));
   }
@@ -129,6 +137,15 @@ function createWindow() {
     if (allowedHost(url, serverPort)) return { action: 'allow' };
     return { action: 'deny' };
   });
+  const ownedWindow = mainWindow;
+  let closingWindow = false;
+  ownedWindow.on('close', event => {
+    if (stopping || closingWindow) return;
+    event.preventDefault(); closingWindow = true;
+    void persistWindowPreferences(ownedWindow, preferences, serverPort)
+      .catch(error => logLine(`[preferences] ${error.message}\n`))
+      .finally(() => { if (!ownedWindow.isDestroyed()) ownedWindow.close(); });
+  });
   mainWindow.on('closed', () => { mainWindow = undefined; });
   return mainWindow.loadURL(`http://127.0.0.1:${serverPort}/`);
 }
@@ -151,12 +168,19 @@ app.whenReady().then(async () => {
 app.on('before-quit', event => {
   if(stopping)return;
   stopping = true;
-  if(serverProcess&&!serverProcess.killed&&serverProcess.connected){
-    event.preventDefault();
-    const timer=setTimeout(()=>{serverProcess.kill();app.quit();},15000);
-    serverProcess.once('exit',()=>{clearTimeout(timer);app.quit();});
-    serverProcess.send({type:'shutdown'});
-  }else if(serverProcess&&!serverProcess.killed)serverProcess.kill();
+  event.preventDefault();
+  void persistWindowPreferences(mainWindow, preferences, serverPort)
+    .catch(error => logLine(`[preferences] ${error.message}\n`))
+    .finally(() => {
+      if(serverProcess&&!serverProcess.killed&&serverProcess.connected){
+        const timer=setTimeout(()=>{serverProcess.kill();app.quit();},15000);
+        serverProcess.once('exit',()=>{clearTimeout(timer);app.quit();});
+        serverProcess.send({type:'shutdown'});
+      }else{
+        if(serverProcess&&!serverProcess.killed)serverProcess.kill();
+        app.quit();
+      }
+    });
 });
 app.on('activate', () => { if (!mainWindow) void createWindow(); });
 app.on('will-quit', () => { if (serverProcess && !serverProcess.killed) serverProcess.kill(); });
